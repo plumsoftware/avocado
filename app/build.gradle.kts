@@ -2,6 +2,10 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.android)
+
+    // Serialization
+    alias(libs.plugins.jetbrains.kotlin.serialization)
+    id("com.google.protobuf") version "0.9.6"
 }
 
 android {
@@ -15,7 +19,7 @@ android {
         minSdk = 24
         targetSdk = 36
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -33,11 +37,30 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+//    kotlin {
+//        jvmToolchain(11)
+//    }
     buildFeatures {
         compose = true
     }
     kotlinOptions {
         jvmTarget = "11"
+    }
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:4.32.1"
+    }
+    generateProtoTasks {
+        all().forEach { task ->
+            task.builtins {
+                create("java") {
+                    option("lite")
+                }
+                create("kotlin")
+            }
+        }
     }
 }
 
@@ -57,4 +80,21 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    // Nav3
+    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.lifecycle.viewmodel.navigation3)
+    implementation(libs.androidx.material3.adaptive.navigation3)
+
+    // Serialization
+    implementation(libs.kotlinx.serialization.core)
+    implementation(libs.protobuf.kotlin.lite)
+
+    // Icons
+    implementation(libs.androidx.compose.material.icons.extended)
+
+    // Proto data store
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.datastore)
 }
