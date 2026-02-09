@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Авокадо</string>
+
+<!--    Main-->
+    <string name="main">Главная</string>
+    <string name="rec">Рецепты</string>
+    <string name="fav">Избранное</string>
+    <string name="settings">Настройки</string>
 </resources>
