@@ -1,8 +1,9 @@
-package ru.plumsoftware.avocado.data.user_preferences
+package ru.plumsoftware.avocado.data.user_preferences.util
 
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
+import ru.plumsoftware.avocado.data.user_preferences.UserPreferencesSerializer
 import ru.plumsoftware.avocado.snippets.proto.UserPreferences
 
 val Context.userPreferencesDataStore: DataStore<UserPreferences> by dataStore(
