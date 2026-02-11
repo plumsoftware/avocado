@@ -4,7 +4,8 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 
 interface Food {
-    val foodType: FoodType
+    val id: String
     @get:StringRes val titleRes: Int
     @get:DrawableRes val imageRes: Int
+    val foodType: FoodType
 }
