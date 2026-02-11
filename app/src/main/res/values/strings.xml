@@ -1,9 +1,38 @@
 <resources>
     <string name="app_name">Авокадо</string>
 
-<!--    Main-->
+    <!--    Main-->
     <string name="main">Главная</string>
     <string name="rec">Рецепты</string>
     <string name="fav">Избранное</string>
     <string name="settings">Настройки</string>
+
+    <!--    Vitamins-->
+    <string name="vitamin_a">Витамин A</string>
+    <string name="vitamin_b1">Витамин B1 (Тиамин)</string>
+    <string name="vitamin_b2">Витамин B2 (Рибофлавин)</string>
+    <string name="vitamin_b3">Витамин B3 (Ниацин)</string>
+    <string name="vitamin_b5">Витамин B5 (Пантотеновая кислота)</string>
+    <string name="vitamin_b6">Витамин B6 (Пиридоксин)</string>
+    <string name="vitamin_b7">Витамин B7 (Биотин)</string>
+    <string name="vitamin_b9">Витамин B9 (Фолиевая кислота)</string>
+    <string name="vitamin_b12">Витамин B12 (Кобаламин)</string>
+    <string name="vitamin_c">Витамин C</string>
+    <string name="vitamin_d">Витамин D</string>
+    <string name="vitamin_e">Витамин E</string>
+    <string name="vitamin_k">Витамин K</string>
+
+    <!--        Дополнительно: минералы и вещества -->
+    <string name="calcium">Кальций</string>
+    <string name="magnesium">Магний</string>
+    <string name="zinc">Цинк</string>
+    <string name="iron">Железо</string>
+    <string name="omega3">Омега-3</string>
+    <string name="coenzyme_q10">Коэнзим Q10</string>
+    <string name="potassium">Калий</string>
+    <string name="selenium">Селен</string>
+    <string name="iodine">Йод</string>
+    <string name="chromium">Хром</string>
+    <string name="copper">Медь</string>
+    <string name="manganese">Марганец</string>
 </resources>
