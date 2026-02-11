@@ -1,11 +1,11 @@
-package ru.plumsoftware.avocado.data.base.model
+package ru.plumsoftware.avocado.data.base.model.receipt
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 
-interface Food {
+interface Receipt {
     val id: String
     @get:StringRes val titleRes: Int
     @get:DrawableRes val imageRes: Int
-    val foodType: FoodType
+    val relatedFood: List<String>
 }
