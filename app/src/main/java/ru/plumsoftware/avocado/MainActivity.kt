@@ -48,9 +48,9 @@ class MainActivity : ComponentActivity() {
                 WindowInsetsCompat.Type.systemGestures()
             )
             view.updatePadding(
-                insets.left,
                 0,
-                insets.right,
+                0,
+                0,
                 0
             )
             WindowInsetsCompat.CONSUMED

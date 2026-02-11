@@ -1,5 +1,6 @@
 package ru.plumsoftware.avocado.ui.screen.main.settings
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,8 +23,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import ru.plumsoftware.avocado.R
 import ru.plumsoftware.avocado.data.user_preferences.util.AppTheme
+import ru.plumsoftware.avocado.ui.getBottomInsetInDp
+import ru.plumsoftware.avocado.ui.getTopInsetInDp
 import ru.plumsoftware.avocado.ui.screen.main.settings.elements.IOSSettingsItem
 import ru.plumsoftware.avocado.ui.theme.Dimen
 
@@ -34,6 +38,7 @@ fun SettingsScreen(
 ) {
     val currentTheme by viewModel.currentTheme.collectAsState()
     val context = LocalContext.current
+    val activity = LocalActivity.current
 
     // Получаем версию приложения
     val appVersion = try {
@@ -44,6 +49,7 @@ fun SettingsScreen(
     }
 
     Scaffold(
+        modifier = Modifier.padding(top = 14.dp),
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
@@ -69,7 +75,7 @@ fun SettingsScreen(
 
             // ЗАГОЛОВОК СЕКЦИИ
             Text(
-                text = "ВНЕШНИЙ ВИД",
+                text = "Внешний вид",
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(start = Dimen.medium, bottom = Dimen.mediumHalf)
@@ -95,15 +101,14 @@ fun SettingsScreen(
                     title = "Темная",
                     isSelected = currentTheme == AppTheme.Dark,
                     onClick = { viewModel.updateTheme(AppTheme.Dark) },
-                    showDivider = false // У последнего элемента нет линии
+                    showDivider = false
                 )
             }
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // ВЕРСИЯ ПРИЛОЖЕНИЯ (Справа внизу)
             Box(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(bottom = 100.dp),
                 contentAlignment = Alignment.BottomEnd
             ) {
                 Text(
