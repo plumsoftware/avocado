@@ -2,6 +2,8 @@ package ru.plumsoftware.avocado.ui.screen.main
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,6 +31,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.plumsoftware.avocado.data.user_preferences.UserPreferencesRepository
+import ru.plumsoftware.avocado.ui.elements.IOSTopBar
 import ru.plumsoftware.avocado.ui.screen.main.elements.BottomNavBar
 import ru.plumsoftware.avocado.ui.screen.main.settings.SettingsScreen
 import ru.plumsoftware.avocado.ui.screen.main.settings.SettingsViewModel
@@ -47,7 +50,22 @@ fun MainScreen(
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = MaterialTheme.colorScheme.background,
+        topBar = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Spacer(modifier = Modifier.height(46.dp))
+                IOSTopBar(
+                    searchQuery = "",
+                    onSearchQueryChange = { it -> },
+                    isSearchFocused = false,
+                    onFocusChange = { it -> },
+                    onFilterClick = {},
+                )
+            }
+        }
     ) { padding ->
         Box(
             modifier = Modifier
@@ -65,6 +83,14 @@ fun MainScreen(
                 }
 
                 MainScreenStates.Empty -> {}
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .align(Alignment.Center)
+            ) {
+
             }
 
             Box(
