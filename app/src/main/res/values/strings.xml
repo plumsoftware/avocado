@@ -35,4 +35,14 @@
     <string name="chromium">Хром</string>
     <string name="copper">Медь</string>
     <string name="manganese">Марганец</string>
+
+    <!--    Фильтры-->
+    <string name="fruits">Фрукты</string>
+    <string name="vegetables">Овощи</string>
+    <string name="meat">Мясо</string>
+    <string name="fish">Рыба</string>
+    <string name="green">Зелень</string>
+    <string name="nut">Орехи</string>
+    <string name="mushrooms">Грибы</string>
+    <string name="seafood">Морепродукты</string>
 </resources>

@@ -45,6 +45,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ru.plumsoftware.avocado.ui.theme.Dimen
 
 @Composable
 fun IOSTopBar(
@@ -62,7 +63,7 @@ fun IOSTopBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(horizontal = Dimen.medium, vertical = Dimen.medium),
         verticalAlignment = Alignment.CenterVertically
     ) {
         AnimatedVisibility(

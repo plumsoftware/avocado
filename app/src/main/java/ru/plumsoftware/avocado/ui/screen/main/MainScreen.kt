@@ -33,6 +33,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.plumsoftware.avocado.data.user_preferences.UserPreferencesRepository
 import ru.plumsoftware.avocado.ui.elements.IOSTopBar
 import ru.plumsoftware.avocado.ui.screen.main.elements.BottomNavBar
+import ru.plumsoftware.avocado.ui.screen.main.list.MainListScreen
 import ru.plumsoftware.avocado.ui.screen.main.settings.SettingsScreen
 import ru.plumsoftware.avocado.ui.screen.main.settings.SettingsViewModel
 import ru.plumsoftware.avocado.ui.theme.Dimen
@@ -57,13 +58,14 @@ fun MainScreen(
                     .fillMaxWidth()
             ) {
                 Spacer(modifier = Modifier.height(46.dp))
-                IOSTopBar(
-                    searchQuery = "",
-                    onSearchQueryChange = { it -> },
-                    isSearchFocused = false,
-                    onFocusChange = { it -> },
-                    onFilterClick = {},
-                )
+                if (currentRoute is MainScreenStates.List)
+                    IOSTopBar(
+                        searchQuery = "",
+                        onSearchQueryChange = { it -> },
+                        isSearchFocused = false,
+                        onFocusChange = { it -> },
+                        onFilterClick = {},
+                    )
             }
         }
     ) { padding ->
@@ -73,7 +75,10 @@ fun MainScreen(
                 .padding(padding)
         ) {
             when (currentRoute) {
-                is MainScreenStates.List -> {}
+                is MainScreenStates.List -> {
+                    MainListScreen()
+                }
+
                 MainScreenStates.Fav -> {}
                 MainScreenStates.Rec -> {}
                 MainScreenStates.Settings -> {
