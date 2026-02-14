@@ -8,10 +8,13 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
@@ -20,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -37,10 +41,13 @@ fun FoodCard(item: Food, onGetColor: (Int, Context) -> Int, modifier: Modifier) 
     val backgroundColor = remember(item.imageRes) {
         onGetColor(item.imageRes, context)
     }
+    val imageContainerHeight = 110.dp
+    val containerHeight = imageContainerHeight.value.plus(40).dp
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
+            .height(containerHeight)
             .clip(MaterialTheme.shapes.medium)
             .background(
                 color = MaterialTheme.colorScheme.surface,
@@ -54,36 +61,35 @@ fun FoodCard(item: Food, onGetColor: (Int, Context) -> Int, modifier: Modifier) 
                     bounded = false,
                     radius = 260.dp
                 ),
-                onClick = {
-
-                }
+                onClick = { }
             )
-            .then(modifier)
-
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(all = Dimen.mediumHalf),
-            verticalArrangement = Arrangement.spacedBy(
-                space = Dimen.mediumHalf,
-                alignment = Alignment.Top
-            ),
-            horizontalAlignment = Alignment.Start
         ) {
+            // Контейнер с изображением и градиентным фоном
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(120.dp)
-                    .padding(all = Dimen.medium)
+                    .weight(1f)
                     .clip(MaterialTheme.shapes.medium)
                     .background(
-                        color = Color(backgroundColor),
+                        brush = Brush.radialGradient(
+                            colors = listOf(
+                                Color(backgroundColor).copy(alpha = 0.3f),
+                                Color(backgroundColor).copy(alpha = 0.7f),
+                                Color(backgroundColor)
+                            ),
+                            radius = 220f
+                        ),
                         shape = MaterialTheme.shapes.medium
                     )
             ) {
                 Image(
                     modifier = Modifier
+                        .size(imageContainerHeight)
+                        .align(Alignment.Center)
                         .fillMaxSize(),
                     painter = painterResource(item.imageRes),
                     contentDescription = stringResource(item.titleRes),
@@ -91,7 +97,11 @@ fun FoodCard(item: Food, onGetColor: (Int, Context) -> Int, modifier: Modifier) 
                 )
             }
 
+            // Текст снизу
             Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Dimen.mediumHalf, vertical = Dimen.mediumHalf),
                 text = stringResource(item.titleRes),
                 style = MaterialTheme.typography.bodyMedium
             )

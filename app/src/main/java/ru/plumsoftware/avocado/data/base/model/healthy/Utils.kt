@@ -35,3 +35,7 @@ val fatKisloty = listOf(
     FatKisloty("omega3", R.string.omega3),
     FatKisloty("coenzyme_q10", R.string.coenzyme_q10),
 )
+
+val vitaminsMap = popularVitamins.associateBy { it.id }
+val mineralsMap = popularMinerals.associateBy { it.id }
+val fatsMap = fatKisloty.associateBy { it.id }

@@ -51,4 +51,15 @@
 
     <!--    Фрукты-->
     <string name="banana">Банан</string>
+    <string name="apple">Яблоко</string>
+    <string name="orange">Апельсин</string>
+    <string name="kiwi">Киви</string>
+    <string name="grape">Виноград</string>
+    <string name="pear">Груша</string>
+    <string name="strawberry">Клубника</string>
+    <string name="lemon">Лимон</string>
+    <string name="watermelon">Арбуз</string>
+    <string name="peach">Персик</string>
+    <string name="apricot">Абрикос</string>
+    <string name="mandarin">Мандарин</string>
 </resources>

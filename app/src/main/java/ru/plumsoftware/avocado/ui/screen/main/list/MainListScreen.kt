@@ -105,8 +105,8 @@ fun MainListScreen() {
                 FoodCard(
                     item = item,
                     modifier = Modifier.padding(
-                        start = if (index % 2 == 0) 0.dp else Dimen.mediumHalf,
-                        end = if (index % 2 == 0) Dimen.mediumHalf else 0.dp,
+                        start = if (index % 2 == 0) Dimen.medium else 0.dp,
+                        end = if (index % 2 == 1) Dimen.medium else 0.dp,
                     ),
                     onGetColor = { imageRes, context ->
                         viewModel.getBackgroundColorForFood(imageRes, context)

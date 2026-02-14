@@ -2,7 +2,9 @@ package ru.plumsoftware.avocado.data.base.model.food
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import ru.plumsoftware.avocado.data.base.model.healthy.FatKisloty
 import ru.plumsoftware.avocado.data.base.model.healthy.Kpfc
+import ru.plumsoftware.avocado.data.base.model.healthy.Mineral
 import ru.plumsoftware.avocado.data.base.model.healthy.Vitamin
 
 interface Food {
@@ -14,6 +16,8 @@ interface Food {
     val foodType: FoodType
     val relatedReceipts: List<String>
 
+    val minerals: List<Mineral>
+    val fatKisloty: List<FatKisloty>
     val vitamins: List<Vitamin>
     val kpfc_100g: Kpfc
 
