@@ -55,7 +55,7 @@ fun IOSTopBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = Dimen.medium, vertical = Dimen.medium),
+            .padding(horizontal = Dimen.medium),
         verticalAlignment = Alignment.CenterVertically
     ) {
         AnimatedVisibility(

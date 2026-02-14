@@ -7,5 +7,5 @@ import ru.plumsoftware.avocado.data.base.model.food.allNuts
 
 val recomendedOnBreakfast =
     allFruits.filter { it.timeForFood == TimeForFood.BREAKFAST }.take(3) +
-            allBerries.filter { it.timeForFood == TimeForFood.BREAKFAST }.take(3) +
-            allNuts.filter { it.timeForFood == TimeForFood.BREAKFAST }
+            allBerries.filter { it.timeForFood == TimeForFood.BREAKFAST }.take(2) +
+            allNuts.filter { it.timeForFood == TimeForFood.BREAKFAST }.take(2)

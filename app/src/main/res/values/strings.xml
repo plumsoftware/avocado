@@ -47,7 +47,7 @@
     <string name="seafood">Морепродукты</string>
 
     <!--    Для чего-->
-    <string name="for_breakfast">Полезный завтрак</string>
+    <string name="for_breakfast">Полезно на завтрак</string>
 
     <!--    Фрукты-->
     <string name="banana">Банан</string>
@@ -56,10 +56,37 @@
     <string name="kiwi">Киви</string>
     <string name="grape">Виноград</string>
     <string name="pear">Груша</string>
-    <string name="strawberry">Клубника</string>
     <string name="lemon">Лимон</string>
-    <string name="watermelon">Арбуз</string>
     <string name="peach">Персик</string>
     <string name="apricot">Абрикос</string>
     <string name="mandarin">Мандарин</string>
+
+    <string name="pineapple">Ананас</string>
+    <string name="pomegranate">Гранат</string>
+    <string name="mango">Манго</string>
+    <string name="persimmon">Хурма</string>
+
+    <!--    Ягоды-->
+    <string name="watermelon">Арбуз</string>
+    <string name="strawberry">Клубника</string>
+    <string name="avocado">Авокадо</string>
+    <string name="blueberry">Голубика</string>
+    <string name="raspberry">Малина</string>
+    <string name="blackberry">Ежевика</string>
+    <string name="currant">Смородина</string>
+    <string name="cranberry">Клюква</string>
+    <string name="cherry">Вишня</string>
+
+    <!--    Орехи-->
+    <string name="walnut">Грецкий орех</string>
+    <string name="almond">Миндаль</string>
+    <string name="hazelnut">Фундук</string>
+    <string name="cashew">Кешью</string>
+    <string name="peanut">Арахис</string>
+    <string name="pistachio">Фисташки</string>
+    <string name="pine_nut">Кедровый орех</string>
+    <string name="brazil_nut">Бразильский орех</string>
+    <string name="pecan">Пекан</string>
+    <string name="macadamia">Макадамия</string>
+    <string name="chestnut">Каштан</string>
 </resources>

@@ -32,6 +32,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import ru.plumsoftware.avocado.data.base.model.food.Food
+import ru.plumsoftware.avocado.ui.screen.main.list.getLightenedColor
 import ru.plumsoftware.avocado.ui.theme.Dimen
 
 @Composable
@@ -39,7 +40,13 @@ fun FoodCard(item: Food, onGetColor: (Int, Context) -> Int, modifier: Modifier) 
 
     val context = LocalContext.current
     val backgroundColor = remember(item.imageRes) {
-        onGetColor(item.imageRes, context)
+        getLightenedColor(onGetColor(item.imageRes, context), factor = 0.2f)
+    }
+    val lighterColor03 = remember(item.imageRes) {
+        getLightenedColor(onGetColor(item.imageRes, context), factor = 0.35f)
+    }
+    val lighterColor07 = remember(item.imageRes) {
+        getLightenedColor(onGetColor(item.imageRes, context), factor = 0.7f)
     }
     val imageContainerHeight = 110.dp
     val containerHeight = imageContainerHeight.value.plus(40).dp
@@ -77,8 +84,8 @@ fun FoodCard(item: Food, onGetColor: (Int, Context) -> Int, modifier: Modifier) 
                     .background(
                         brush = Brush.radialGradient(
                             colors = listOf(
-                                Color(backgroundColor).copy(alpha = 0.3f),
-                                Color(backgroundColor).copy(alpha = 0.7f),
+                                Color(lighterColor07),
+                                Color(lighterColor03),
                                 Color(backgroundColor)
                             ),
                             radius = 220f

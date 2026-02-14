@@ -28,6 +28,10 @@ class ListViewModel : ViewModel() {
         return colorCache.getBackgroundColor(imageRes, context)
     }
 
+    fun getLighterColorForFood(imageRes: Int, context: Context): Int {
+        return getLightenedColor(getBackgroundColorForFood(imageRes = imageRes, context = context))
+    }
+
     fun updateSelectedFilter(newFilter: Filter) {
         filters_.update { oldList ->
             val newList = oldList.toMutableList()

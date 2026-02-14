@@ -66,7 +66,7 @@ fun MainScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
-                .height(0.dp)
+                .height(80.dp)
                 .background(
                     brush = Brush.verticalGradient(
                         colors = listOf(

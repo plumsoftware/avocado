@@ -1,6 +1,7 @@
 package ru.plumsoftware.avocado.ui.screen.main.list
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
@@ -41,12 +42,78 @@ fun MainListScreen() {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
-        topBar = {
+        topBar = {}
+    ) { padding ->
+        Box(modifier = Modifier.fillMaxSize()) {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 98.dp),
+                horizontalArrangement = Arrangement.spacedBy(Dimen.medium),
+                verticalArrangement = Arrangement.spacedBy(Dimen.medium)
+            ) {
+                // Фильтры как первый элемент сетки на всю ширину
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    FlowRow(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = Dimen.medium),
+                        horizontalArrangement = Arrangement.spacedBy(
+                            Dimen.medium,
+                            alignment = Alignment.CenterHorizontally
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(
+                            Dimen.medium,
+                            alignment = Alignment.CenterVertically
+                        )
+                    ) {
+                        filters.forEach { item ->
+                            FilterItem(
+                                item = item
+                            ) {
+                                viewModel.updateSelectedFilter(newFilter = item)
+                            }
+                        }
+                    }
+                }
+
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    Text(
+                        text = stringResource(R.string.for_breakfast),
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(
+                            start = Dimen.medium,
+                            end = Dimen.medium
+                        )
+                    )
+                }
+                // Элементы еды
+                itemsIndexed(viewModel.recomendedOnBreakfast.value) { index, item ->
+                    FoodCard(
+                        item = item,
+                        modifier = Modifier.padding(
+                            start = if (index % 2 == 0) Dimen.medium else 0.dp,
+                            end = if (index % 2 == 1) Dimen.medium else 0.dp,
+                        ),
+                        onGetColor = { imageRes, context ->
+                            viewModel.getBackgroundColorForFood(imageRes, context)
+                        }
+                    )
+                }
+
+                // Нижний отступ
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    Spacer(modifier = Modifier.height(100.dp))
+                }
+            }
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(top = 40.dp)
+                    .align(Alignment.TopCenter)
             ) {
-                Spacer(modifier = Modifier.height(46.dp))
                 IOSTopBar(
                     searchQuery = "",
                     onSearchQueryChange = { it -> },
@@ -54,69 +121,6 @@ fun MainListScreen() {
                     onFocusChange = { it -> },
                     onFilterClick = {},
                 )
-            }
-        }
-    ) { padding ->
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding),
-            horizontalArrangement = Arrangement.spacedBy(Dimen.medium),
-            verticalArrangement = Arrangement.spacedBy(Dimen.medium)
-        ) {
-            // Фильтры как первый элемент сетки на всю ширину
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                FlowRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = Dimen.medium),
-                    horizontalArrangement = Arrangement.spacedBy(
-                        Dimen.medium,
-                        alignment = Alignment.CenterHorizontally
-                    ),
-                    verticalArrangement = Arrangement.spacedBy(
-                        Dimen.medium,
-                        alignment = Alignment.CenterVertically
-                    )
-                ) {
-                    filters.forEach { item ->
-                        FilterItem(
-                            item = item
-                        ) {
-                            viewModel.updateSelectedFilter(newFilter = item)
-                        }
-                    }
-                }
-            }
-
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                Text(
-                    text = stringResource(R.string.for_breakfast),
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(
-                        start = Dimen.medium,
-                        end = Dimen.medium
-                    )
-                )
-            }
-            // Элементы еды
-            itemsIndexed(viewModel.recomendedOnBreakfast.value) { index, item ->
-                FoodCard(
-                    item = item,
-                    modifier = Modifier.padding(
-                        start = if (index % 2 == 0) Dimen.medium else 0.dp,
-                        end = if (index % 2 == 1) Dimen.medium else 0.dp,
-                    ),
-                    onGetColor = { imageRes, context ->
-                        viewModel.getBackgroundColorForFood(imageRes, context)
-                    }
-                )
-            }
-
-            // Нижний отступ
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                Spacer(modifier = Modifier.height(100.dp))
             }
         }
     }
