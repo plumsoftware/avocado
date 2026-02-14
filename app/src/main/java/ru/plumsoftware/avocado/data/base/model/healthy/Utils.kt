@@ -31,7 +31,7 @@ val popularMinerals = listOf(
     Mineral("manganese", R.string.manganese)
 )
 
-val fatKitloty = listOf(
+val fatKisloty = listOf(
     FatKisloty("omega3", R.string.omega3),
     FatKisloty("coenzyme_q10", R.string.coenzyme_q10),
 )

@@ -45,4 +45,10 @@
     <string name="nut">Орехи</string>
     <string name="mushrooms">Грибы</string>
     <string name="seafood">Морепродукты</string>
+
+    <!--    Для чего-->
+    <string name="for_breakfast">Полезный завтрак</string>
+
+    <!--    Фрукты-->
+    <string name="banana">Банан</string>
 </resources>

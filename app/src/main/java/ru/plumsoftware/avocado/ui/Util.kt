@@ -1,11 +1,14 @@
 package ru.plumsoftware.avocado.ui
 
 import android.app.Activity
+import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import ru.plumsoftware.avocado.BuildConfig
 
 fun Activity.getBottomInset(): Int {
     val rootView = window.decorView
@@ -30,5 +33,11 @@ fun Activity.getBottomInsetInDp(): Dp {
 fun Activity.getTopInsetInDp(): Dp {
     return with(LocalDensity.current) {
         getTopInset().toDp()
+    }
+}
+
+inline fun Any.log(message: String) {
+    if (BuildConfig.DEBUG) {
+        Log.d(this::class.java.name, message)
     }
 }

@@ -42,6 +42,7 @@ android {
 //    }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     kotlinOptions {
         jvmTarget = "11"
@@ -100,4 +101,7 @@ dependencies {
     // Proto data store
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.datastore)
+
+    // AndroidX Palette
+    implementation(libs.androidx.palette.ktx)
 }

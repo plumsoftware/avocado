@@ -16,4 +16,6 @@ interface Food {
 
     val vitamins: List<Vitamin>
     val kpfc_100g: Kpfc
+
+    val timeForFood: TimeForFood
 }

@@ -1,4 +1,4 @@
-package ru.plumsoftware.avocado.ui.screen.main.elements.filter
+package ru.plumsoftware.avocado.ui.screen.main.list.elements.filter
 
 import ru.plumsoftware.avocado.R
 

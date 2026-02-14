@@ -3,7 +3,7 @@ package ru.plumsoftware.avocado.data.base.model.food
 import ru.plumsoftware.avocado.data.base.model.healthy.Kpfc
 import ru.plumsoftware.avocado.data.base.model.healthy.Vitamin
 
-data class Mushroom(
+data class Berry(
     override val id: String,
     override val titleRes: Int,
     override val imageRes: Int,

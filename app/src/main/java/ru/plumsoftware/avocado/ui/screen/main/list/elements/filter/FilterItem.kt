@@ -1,6 +1,6 @@
 @file:Suppress("CAST_NEVER_SUCCEEDS")
 
-package ru.plumsoftware.avocado.ui.screen.main.elements.filter
+package ru.plumsoftware.avocado.ui.screen.main.list.elements.filter
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -10,8 +10,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -69,14 +67,14 @@ fun FilterItem(item: Filter, onFilterClick: () -> Unit) {
             )
         ) {
             Image(
-                modifier = Modifier.size(16.dp),
+                modifier = Modifier.size(18.dp),
                 painter = painterResource(item.icon),
                 contentDescription = stringResource(item.title)
             )
 
             Text(
                 text = stringResource(item.title),
-                style = MaterialTheme.typography.labelLarge
+                style = MaterialTheme.typography.bodyMedium
             )
         }
     }

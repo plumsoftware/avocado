@@ -7,9 +7,10 @@ data class Fruit(
     override val id: String,
     override val titleRes: Int,
     override val imageRes: Int,
-    override val foodType: FoodType,
+    override val foodType: FoodType = FoodType.FRUIT,
     override val relatedReceipts: List<String>,
     override val vitamins: List<Vitamin>,
-    override val kpfc_100g: Kpfc
+    override val kpfc_100g: Kpfc,
+    override val timeForFood: TimeForFood
 ) : Food {
 }
