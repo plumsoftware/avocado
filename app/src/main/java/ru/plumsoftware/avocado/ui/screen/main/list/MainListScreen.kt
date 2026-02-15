@@ -1,5 +1,6 @@
 package ru.plumsoftware.avocado.ui.screen.main.list
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -22,6 +22,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -49,10 +51,16 @@ fun MainListScreen() {
                 columns = GridCells.Fixed(2),
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 98.dp),
+                    .padding(top = 0.dp),
                 horizontalArrangement = Arrangement.spacedBy(Dimen.medium),
                 verticalArrangement = Arrangement.spacedBy(Dimen.medium)
             ) {
+
+                // Верхний отступ
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    Spacer(modifier = Modifier.height(84.dp))
+                }
+
                 // Фильтры как первый элемент сетки на всю ширину
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     FlowRow(
@@ -88,6 +96,7 @@ fun MainListScreen() {
                         )
                     )
                 }
+
                 // Элементы еды
                 itemsIndexed(viewModel.recomendedOnBreakfast.value) { index, item ->
                     FoodCard(
@@ -108,12 +117,32 @@ fun MainListScreen() {
                 }
             }
 
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.TopCenter)
+                    .height(48.dp)
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(
+                                MaterialTheme.colorScheme.background,
+                                MaterialTheme.colorScheme.background,
+                                Color.Transparent
+                            ),
+                            startY = 0f,
+                            endY = Float.POSITIVE_INFINITY
+                        )
+                    )
+            )
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 40.dp)
+                    .padding(top = 0.dp)
                     .align(Alignment.TopCenter)
             ) {
+                Spacer(modifier = Modifier.height(40.dp))
+
                 IOSTopBar(
                     searchQuery = "",
                     onSearchQueryChange = { it -> },

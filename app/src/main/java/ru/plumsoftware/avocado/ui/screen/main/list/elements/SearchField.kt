@@ -48,7 +48,7 @@ fun IOSTopBar(
     onFilterClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val searchBarColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
+    val searchBarColor = MaterialTheme.colorScheme.surfaceVariant
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
@@ -58,14 +58,6 @@ fun IOSTopBar(
             .padding(horizontal = Dimen.medium),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        AnimatedVisibility(
-            visible = !isSearchFocused,
-            enter = expandHorizontally(expandFrom = Alignment.Start) + fadeIn(),
-            exit = shrinkHorizontally(shrinkTowards = Alignment.Start) + fadeOut()
-        ) {
-            Spacer(modifier = Modifier.width(0.dp))
-        }
-
         Box(
             modifier = Modifier
                 .weight(1f)
@@ -124,35 +116,6 @@ fun IOSTopBar(
                     }
                 }
             )
-        }
-
-        // 3. ПРАВЫЕ КНОПКИ (Фильтр и Вид)
-        // Используем shrinkHorizontally, чтобы они "схлопывались", освобождая место для поиска
-        AnimatedVisibility(
-            visible = !isSearchFocused,
-            enter = expandHorizontally(expandFrom = Alignment.Start) + fadeIn(),
-            exit = shrinkHorizontally(shrinkTowards = Alignment.Start) + fadeOut()
-        ) {
-//            Row(
-//                verticalAlignment = Alignment.CenterVertically,
-//                modifier = Modifier.padding(start = 12.dp) // Отступ от поиска
-//            ) {
-//                // Фильтр
-//                Box(
-//                    modifier = Modifier
-//                        .size(36.dp) // Увеличиваем область клика
-//                        .clip(CircleShape)
-//                        .clickable(onClick = onFilterClick),
-//                    contentAlignment = Alignment.Center
-//                ) {
-//                    Icon(
-//                        imageVector = Icons.Filled.FilterAlt,
-//                        contentDescription = "Фильтр",
-//                        tint = MaterialTheme.colorScheme.primary,
-//                        modifier = Modifier.size(24.dp)
-//                    )
-//                }
-//            }
         }
 
         // 4. КНОПКА "ОТМЕНА"
