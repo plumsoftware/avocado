@@ -69,3 +69,5 @@ val FoodNutDark = Color(0xFF2D2624)
 
 val FoodWaterLight = Color(0xFFE3F2FD) // Напитки (Светло-голубой)
 val FoodWaterDark = Color(0xFF182836)
+
+val vitaminColor = Color(0xFF178EC6)

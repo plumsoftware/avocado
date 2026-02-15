@@ -8,19 +8,19 @@
     <string name="settings">Настройки</string>
 
     <!--    Vitamins-->
-    <string name="vitamin_a">Витамин A</string>
-    <string name="vitamin_b1">Витамин B1 (Тиамин)</string>
-    <string name="vitamin_b2">Витамин B2 (Рибофлавин)</string>
-    <string name="vitamin_b3">Витамин B3 (Ниацин)</string>
-    <string name="vitamin_b5">Витамин B5 (Пантотеновая кислота)</string>
-    <string name="vitamin_b6">Витамин B6 (Пиридоксин)</string>
-    <string name="vitamin_b7">Витамин B7 (Биотин)</string>
-    <string name="vitamin_b9">Витамин B9 (Фолиевая кислота)</string>
-    <string name="vitamin_b12">Витамин B12 (Кобаламин)</string>
-    <string name="vitamin_c">Витамин C</string>
-    <string name="vitamin_d">Витамин D</string>
-    <string name="vitamin_e">Витамин E</string>
-    <string name="vitamin_k">Витамин K</string>
+    <string name="vitamin_a">A</string>
+    <string name="vitamin_b1">B1</string>
+    <string name="vitamin_b2">B2</string>
+    <string name="vitamin_b3">B3</string>
+    <string name="vitamin_b5">B5</string>
+    <string name="vitamin_b6">B6</string>
+    <string name="vitamin_b7">B7</string>
+    <string name="vitamin_b9">B9</string>
+    <string name="vitamin_b12">B12</string>
+    <string name="vitamin_c">C</string>
+    <string name="vitamin_d">D</string>
+    <string name="vitamin_e">E</string>
+    <string name="vitamin_k">K</string>
 
     <!--        Дополнительно: минералы и вещества -->
     <string name="calcium">Кальций</string>

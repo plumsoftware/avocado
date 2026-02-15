@@ -4,6 +4,7 @@ import androidx.compose.ui.unit.dp
 
 object Dimen {
     val extraSmall = 4.dp
+    val smallAbove = 6.dp
     val mediumHalf = 8.dp
     val mediumAboveHalf = 12.dp
     val medium = 16.dp

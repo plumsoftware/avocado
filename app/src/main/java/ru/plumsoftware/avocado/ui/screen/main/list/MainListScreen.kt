@@ -107,6 +107,9 @@ fun MainListScreen() {
                         ),
                         onGetColor = { imageRes, context ->
                             viewModel.getBackgroundColorForFood(imageRes, context)
+                        },
+                        onGetTextColor = {imageRes, context ->
+                            viewModel.getTextForColorForFood(imageRes, context)
                         }
                     )
                 }

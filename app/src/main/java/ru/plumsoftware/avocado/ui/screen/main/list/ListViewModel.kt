@@ -28,6 +28,10 @@ class ListViewModel : ViewModel() {
         return colorCache.getBackgroundColor(imageRes, context)
     }
 
+    fun getTextForColorForFood(imageRes: Int, context: Context): HarmoniousColors {
+        return colorCache.getHarmoniousColors(imageRes, context)
+    }
+
     fun getLighterColorForFood(imageRes: Int, context: Context): Int {
         return getLightenedColor(getBackgroundColorForFood(imageRes = imageRes, context = context))
     }
