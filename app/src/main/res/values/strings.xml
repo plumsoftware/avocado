@@ -89,4 +89,21 @@
     <string name="pecan">Пекан</string>
     <string name="macadamia">Макадамия</string>
     <string name="chestnut">Каштан</string>
+
+    <!-- Овощи -->
+    <string name="potato">Картофель</string>
+    <string name="carrot">Морковь</string>
+    <string name="onion">Лук репчатый</string>
+    <string name="garlic">Чеснок</string>
+    <string name="tomato">Помидор</string>
+    <string name="cucumber">Огурец</string>
+    <string name="cabbage">Капуста белокочанная</string>
+    <string name="broccoli">Брокколи</string>
+    <string name="bell_pepper">Перец болгарский</string>
+    <string name="beet">Свёкла</string>
+    <string name="pumpkin">Тыква</string>
+    <string name="zucchini">Кабачок</string>
+    <string name="eggplant">Баклажан</string>
+    <string name="radish">Редис</string>
+    <string name="spinach">Шпинат</string>
 </resources>

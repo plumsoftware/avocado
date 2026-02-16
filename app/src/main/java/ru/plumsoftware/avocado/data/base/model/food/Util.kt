@@ -744,3 +744,355 @@ val allNuts = listOf<Nut>(
         timeForFood = TimeForFood.BREAKFAST
     )
 )
+
+val allVegetables = listOf<Vegetable>(
+    // Картофель
+    Vegetable(
+        id = "potato",
+        titleRes = R.string.potato,
+        imageRes = R.drawable.potato,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_c"]!!,
+            vitaminsMap["vitamin_b6"]!!,
+            vitaminsMap["vitamin_b3"]!!,
+            vitaminsMap["vitamin_b9"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["potassium"]!!,
+            mineralsMap["magnesium"]!!,
+            mineralsMap["iron"]!!,
+            mineralsMap["copper"]!!
+        ),
+        fatKisloty = emptyList(),
+        kpfc_100g = Kpfc(77, 0.1, 2.0, 17.0),
+        timeForFood = TimeForFood.DINNER
+    ),
+
+    // Морковь
+    Vegetable(
+        id = "carrot",
+        titleRes = R.string.carrot,
+        imageRes = R.drawable.carrot,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_a"]!!,
+            vitaminsMap["vitamin_k"]!!,
+            vitaminsMap["vitamin_c"]!!,
+            vitaminsMap["vitamin_b6"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["potassium"]!!,
+            mineralsMap["manganese"]!!,
+            mineralsMap["copper"]!!,
+            mineralsMap["iron"]!!
+        ),
+        fatKisloty = emptyList(),
+        kpfc_100g = Kpfc(41, 0.2, 0.9, 9.6),
+        timeForFood = TimeForFood.BREAKFAST
+    ),
+
+    // Лук репчатый
+    Vegetable(
+        id = "onion",
+        titleRes = R.string.onion,
+        imageRes = R.drawable.onion,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_c"]!!,
+            vitaminsMap["vitamin_b6"]!!,
+            vitaminsMap["vitamin_b9"]!!,
+            vitaminsMap["vitamin_b1"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["potassium"]!!,
+            mineralsMap["manganese"]!!,
+            mineralsMap["copper"]!!,
+            mineralsMap["iron"]!!
+        ),
+        fatKisloty = emptyList(),
+        kpfc_100g = Kpfc(40, 0.1, 1.1, 9.3),
+        timeForFood = TimeForFood.DINNER
+    ),
+
+    // Чеснок
+    Vegetable(
+        id = "garlic",
+        titleRes = R.string.garlic,
+        imageRes = R.drawable.garlic,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_c"]!!,
+            vitaminsMap["vitamin_b6"]!!,
+            vitaminsMap["vitamin_b1"]!!,
+            vitaminsMap["vitamin_b9"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["manganese"]!!,
+            mineralsMap["calcium"]!!,
+            mineralsMap["iron"]!!,
+            mineralsMap["copper"]!!,
+            mineralsMap["zinc"]!!
+        ),
+        fatKisloty = emptyList(),
+        kpfc_100g = Kpfc(149, 0.5, 6.4, 33.1),
+        timeForFood = TimeForFood.DINNER
+    ),
+
+    // Томат (помидор)
+    Vegetable(
+        id = "tomato",
+        titleRes = R.string.tomato,
+        imageRes = R.drawable.tomato,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_c"]!!,
+            vitaminsMap["vitamin_a"]!!,
+            vitaminsMap["vitamin_k"]!!,
+            vitaminsMap["vitamin_b6"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["potassium"]!!,
+            mineralsMap["copper"]!!,
+            mineralsMap["manganese"]!!,
+            mineralsMap["iron"]!!
+        ),
+        fatKisloty = emptyList(),
+        kpfc_100g = Kpfc(18, 0.2, 0.9, 3.9),
+        timeForFood = TimeForFood.BREAKFAST
+    ),
+
+    // Огурец
+    Vegetable(
+        id = "cucumber",
+        titleRes = R.string.cucumber,
+        imageRes = R.drawable.cucumber,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_k"]!!,
+            vitaminsMap["vitamin_c"]!!,
+            vitaminsMap["vitamin_b5"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["potassium"]!!,
+            mineralsMap["manganese"]!!,
+            mineralsMap["magnesium"]!!,
+            mineralsMap["copper"]!!
+        ),
+        fatKisloty = emptyList(),
+        kpfc_100g = Kpfc(15, 0.1, 0.7, 3.6),
+        timeForFood = TimeForFood.BREAKFAST
+    ),
+
+    // Капуста белокочанная
+    Vegetable(
+        id = "cabbage",
+        titleRes = R.string.cabbage,
+        imageRes = R.drawable.cabbage,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_c"]!!,
+            vitaminsMap["vitamin_k"]!!,
+            vitaminsMap["vitamin_b6"]!!,
+            vitaminsMap["vitamin_b9"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["potassium"]!!,
+            mineralsMap["manganese"]!!,
+            mineralsMap["calcium"]!!,
+            mineralsMap["magnesium"]!!
+        ),
+        fatKisloty = emptyList(),
+        kpfc_100g = Kpfc(25, 0.1, 1.3, 5.8),
+        timeForFood = TimeForFood.DINNER
+    ),
+
+    // Брокколи
+    Vegetable(
+        id = "broccoli",
+        titleRes = R.string.broccoli,
+        imageRes = R.drawable.broccoli,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_c"]!!,
+            vitaminsMap["vitamin_k"]!!,
+            vitaminsMap["vitamin_a"]!!,
+            vitaminsMap["vitamin_b9"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["potassium"]!!,
+            mineralsMap["manganese"]!!,
+            mineralsMap["iron"]!!,
+            mineralsMap["calcium"]!!
+        ),
+        fatKisloty = listOf(
+            fatsMap["omega3"]!!
+        ),
+        kpfc_100g = Kpfc(34, 0.4, 2.8, 6.6),
+        timeForFood = TimeForFood.DINNER
+    ),
+
+    // Перец болгарский
+    Vegetable(
+        id = "bell_pepper",
+        titleRes = R.string.bell_pepper,
+        imageRes = R.drawable.bell_pepper,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_c"]!!,
+            vitaminsMap["vitamin_a"]!!,
+            vitaminsMap["vitamin_b6"]!!,
+            vitaminsMap["vitamin_b9"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["potassium"]!!,
+            mineralsMap["manganese"]!!,
+            mineralsMap["copper"]!!,
+            mineralsMap["iron"]!!
+        ),
+        fatKisloty = emptyList(),
+        kpfc_100g = Kpfc(20, 0.2, 0.9, 4.6),
+        timeForFood = TimeForFood.BREAKFAST
+    ),
+
+    // Свекла
+    Vegetable(
+        id = "beet",
+        titleRes = R.string.beet,
+        imageRes = R.drawable.beet,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_b9"]!!,
+            vitaminsMap["vitamin_c"]!!,
+            vitaminsMap["vitamin_b6"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["manganese"]!!,
+            mineralsMap["potassium"]!!,
+            mineralsMap["iron"]!!,
+            mineralsMap["copper"]!!
+        ),
+        fatKisloty = emptyList(),
+        kpfc_100g = Kpfc(43, 0.2, 1.6, 9.6),
+        timeForFood = TimeForFood.DINNER
+    ),
+
+    // Тыква
+    Vegetable(
+        id = "pumpkin",
+        titleRes = R.string.pumpkin,
+        imageRes = R.drawable.pumpkin,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_a"]!!,
+            vitaminsMap["vitamin_c"]!!,
+            vitaminsMap["vitamin_b6"]!!,
+            vitaminsMap["vitamin_b2"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["potassium"]!!,
+            mineralsMap["copper"]!!,
+            mineralsMap["manganese"]!!,
+            mineralsMap["iron"]!!
+        ),
+        fatKisloty = emptyList(),
+        kpfc_100g = Kpfc(26, 0.1, 1.0, 6.5),
+        timeForFood = TimeForFood.BREAKFAST
+    ),
+
+    // Кабачок
+    Vegetable(
+        id = "zucchini",
+        titleRes = R.string.zucchini,
+        imageRes = R.drawable.zucchini,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_c"]!!,
+            vitaminsMap["vitamin_b6"]!!,
+            vitaminsMap["vitamin_b2"]!!,
+            vitaminsMap["vitamin_b9"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["manganese"]!!,
+            mineralsMap["potassium"]!!,
+            mineralsMap["copper"]!!,
+            mineralsMap["magnesium"]!!
+        ),
+        fatKisloty = emptyList(),
+        kpfc_100g = Kpfc(17, 0.3, 1.2, 3.1),
+        timeForFood = TimeForFood.BREAKFAST
+    ),
+
+    // Баклажан
+    Vegetable(
+        id = "eggplant",
+        titleRes = R.string.eggplant,
+        imageRes = R.drawable.eggplant,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_b6"]!!,
+            vitaminsMap["vitamin_c"]!!,
+            vitaminsMap["vitamin_k"]!!,
+            vitaminsMap["vitamin_b9"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["manganese"]!!,
+            mineralsMap["potassium"]!!,
+            mineralsMap["copper"]!!,
+            mineralsMap["magnesium"]!!
+        ),
+        fatKisloty = emptyList(),
+        kpfc_100g = Kpfc(25, 0.2, 1.0, 5.9),
+        timeForFood = TimeForFood.DINNER
+    ),
+
+    // Редис
+    Vegetable(
+        id = "radish",
+        titleRes = R.string.radish,
+        imageRes = R.drawable.radish,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_c"]!!,
+            vitaminsMap["vitamin_b6"]!!,
+            vitaminsMap["vitamin_b9"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["potassium"]!!,
+            mineralsMap["copper"]!!,
+            mineralsMap["manganese"]!!,
+            mineralsMap["calcium"]!!
+        ),
+        fatKisloty = emptyList(),
+        kpfc_100g = Kpfc(16, 0.1, 0.7, 3.4),
+        timeForFood = TimeForFood.BREAKFAST
+    ),
+
+    // Шпинат
+    Vegetable(
+        id = "spinach",
+        titleRes = R.string.spinach,
+        imageRes = R.drawable.spinach,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_k"]!!,
+            vitaminsMap["vitamin_a"]!!,
+            vitaminsMap["vitamin_c"]!!,
+            vitaminsMap["vitamin_b9"]!!,
+            vitaminsMap["vitamin_b2"]!!,
+            vitaminsMap["vitamin_b6"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["manganese"]!!,
+            mineralsMap["magnesium"]!!,
+            mineralsMap["iron"]!!,
+            mineralsMap["calcium"]!!,
+            mineralsMap["potassium"]!!
+        ),
+        fatKisloty = listOf(
+            fatsMap["omega3"]!!
+        ),
+        kpfc_100g = Kpfc(23, 0.4, 2.9, 3.6),
+        timeForFood = TimeForFood.BREAKFAST
+    )
+)
