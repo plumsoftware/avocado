@@ -5,4 +5,5 @@ data class Kpfc(
     val fats: Double,
     val proteins: Double,
     val carbohydrates: Double,
+    val fiber: Double = 0.0
 )

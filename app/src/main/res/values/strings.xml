@@ -106,4 +106,9 @@
     <string name="eggplant">Баклажан</string>
     <string name="radish">Редис</string>
     <string name="spinach">Шпинат</string>
+
+    <!-- Клетчатка -->
+    <string name="fiber">Клетчатка</string>
+    <string name="fiber_high">Богат клетчаткой</string>
+    <string name="fiber_content">Клетчатка: %1$s г</string>
 </resources>

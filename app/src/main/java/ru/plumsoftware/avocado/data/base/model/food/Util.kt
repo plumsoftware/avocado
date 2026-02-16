@@ -765,7 +765,7 @@ val allVegetables = listOf<Vegetable>(
             mineralsMap["copper"]!!
         ),
         fatKisloty = emptyList(),
-        kpfc_100g = Kpfc(77, 0.1, 2.0, 17.0),
+        kpfc_100g = Kpfc(77, 0.1, 2.0, 17.0, fiber = 2.2),
         timeForFood = TimeForFood.DINNER
     ),
 
@@ -788,7 +788,7 @@ val allVegetables = listOf<Vegetable>(
             mineralsMap["iron"]!!
         ),
         fatKisloty = emptyList(),
-        kpfc_100g = Kpfc(41, 0.2, 0.9, 9.6),
+        kpfc_100g = Kpfc(41, 0.2, 0.9, 9.6, fiber = 2.8),
         timeForFood = TimeForFood.BREAKFAST
     ),
 
@@ -811,7 +811,7 @@ val allVegetables = listOf<Vegetable>(
             mineralsMap["iron"]!!
         ),
         fatKisloty = emptyList(),
-        kpfc_100g = Kpfc(40, 0.1, 1.1, 9.3),
+        kpfc_100g = Kpfc(40, 0.1, 1.1, 9.3, fiber = 1.7),
         timeForFood = TimeForFood.DINNER
     ),
 
@@ -835,7 +835,7 @@ val allVegetables = listOf<Vegetable>(
             mineralsMap["zinc"]!!
         ),
         fatKisloty = emptyList(),
-        kpfc_100g = Kpfc(149, 0.5, 6.4, 33.1),
+        kpfc_100g = Kpfc(149, 0.5, 6.4, 33.1, fiber = 4.5),
         timeForFood = TimeForFood.DINNER
     ),
 
@@ -858,7 +858,7 @@ val allVegetables = listOf<Vegetable>(
             mineralsMap["iron"]!!
         ),
         fatKisloty = emptyList(),
-        kpfc_100g = Kpfc(18, 0.2, 0.9, 3.9),
+        kpfc_100g = Kpfc(18, 0.2, 0.9, 3.9, fiber = 1.2),
         timeForFood = TimeForFood.BREAKFAST
     ),
 
@@ -880,7 +880,7 @@ val allVegetables = listOf<Vegetable>(
             mineralsMap["copper"]!!
         ),
         fatKisloty = emptyList(),
-        kpfc_100g = Kpfc(15, 0.1, 0.7, 3.6),
+        kpfc_100g = Kpfc(15, 0.1, 0.7, 3.6, fiber = 0.5),
         timeForFood = TimeForFood.BREAKFAST
     ),
 
@@ -903,7 +903,7 @@ val allVegetables = listOf<Vegetable>(
             mineralsMap["magnesium"]!!
         ),
         fatKisloty = emptyList(),
-        kpfc_100g = Kpfc(25, 0.1, 1.3, 5.8),
+        kpfc_100g = Kpfc(25, 0.1, 1.3, 5.8, fiber = 2.5),
         timeForFood = TimeForFood.DINNER
     ),
 
@@ -928,7 +928,7 @@ val allVegetables = listOf<Vegetable>(
         fatKisloty = listOf(
             fatsMap["omega3"]!!
         ),
-        kpfc_100g = Kpfc(34, 0.4, 2.8, 6.6),
+        kpfc_100g = Kpfc(34, 0.4, 2.8, 6.6, fiber = 2.6),
         timeForFood = TimeForFood.DINNER
     ),
 
@@ -951,7 +951,7 @@ val allVegetables = listOf<Vegetable>(
             mineralsMap["iron"]!!
         ),
         fatKisloty = emptyList(),
-        kpfc_100g = Kpfc(20, 0.2, 0.9, 4.6),
+        kpfc_100g = Kpfc(20, 0.2, 0.9, 4.6, fiber = 1.7),
         timeForFood = TimeForFood.BREAKFAST
     ),
 
@@ -973,7 +973,7 @@ val allVegetables = listOf<Vegetable>(
             mineralsMap["copper"]!!
         ),
         fatKisloty = emptyList(),
-        kpfc_100g = Kpfc(43, 0.2, 1.6, 9.6),
+        kpfc_100g = Kpfc(43, 0.2, 1.6, 9.6, fiber = 2.8),
         timeForFood = TimeForFood.DINNER
     ),
 
@@ -996,7 +996,7 @@ val allVegetables = listOf<Vegetable>(
             mineralsMap["iron"]!!
         ),
         fatKisloty = emptyList(),
-        kpfc_100g = Kpfc(26, 0.1, 1.0, 6.5),
+        kpfc_100g = Kpfc(26, 0.1, 1.0, 6.5, fiber = 1.5),
         timeForFood = TimeForFood.BREAKFAST
     ),
 
@@ -1019,7 +1019,7 @@ val allVegetables = listOf<Vegetable>(
             mineralsMap["magnesium"]!!
         ),
         fatKisloty = emptyList(),
-        kpfc_100g = Kpfc(17, 0.3, 1.2, 3.1),
+        kpfc_100g = Kpfc(17, 0.3, 1.2, 3.1, fiber = 1.1),
         timeForFood = TimeForFood.BREAKFAST
     ),
 
@@ -1042,7 +1042,7 @@ val allVegetables = listOf<Vegetable>(
             mineralsMap["magnesium"]!!
         ),
         fatKisloty = emptyList(),
-        kpfc_100g = Kpfc(25, 0.2, 1.0, 5.9),
+        kpfc_100g = Kpfc(25, 0.2, 1.0, 5.9, fiber = 3.0),
         timeForFood = TimeForFood.DINNER
     ),
 
@@ -1064,7 +1064,7 @@ val allVegetables = listOf<Vegetable>(
             mineralsMap["calcium"]!!
         ),
         fatKisloty = emptyList(),
-        kpfc_100g = Kpfc(16, 0.1, 0.7, 3.4),
+        kpfc_100g = Kpfc(16, 0.1, 0.7, 3.4, fiber = 1.6),
         timeForFood = TimeForFood.BREAKFAST
     ),
 
@@ -1092,7 +1092,7 @@ val allVegetables = listOf<Vegetable>(
         fatKisloty = listOf(
             fatsMap["omega3"]!!
         ),
-        kpfc_100g = Kpfc(23, 0.4, 2.9, 3.6),
+        kpfc_100g = Kpfc(23, 0.4, 2.9, 3.6, fiber = 2.2),
         timeForFood = TimeForFood.BREAKFAST
     )
 )
