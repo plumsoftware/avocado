@@ -35,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.plumsoftware.avocado.R
+import ru.plumsoftware.avocado.data.base.model.food.allFood
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.IOSTopBar
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.filter.FilterItem
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.food.FoodCard
@@ -47,6 +48,7 @@ fun MainListScreen() {
     )
 
     val filters by viewModel.filters.collectAsState()
+    val selectedFilter by viewModel.selectedFilter.collectAsState()
     val breakfastItems = viewModel.recomendedOnBreakfast.collectAsState().value
     val fiberItems = viewModel.withFiber.collectAsState().value
     val heavyProtein = viewModel.heavyProtein.collectAsState().value
@@ -99,51 +101,75 @@ fun MainListScreen() {
                     }
                 }
 
-                // Полезно утром
-                item(span = StaggeredGridItemSpan.FullLine) {
-                    Text(
-                        text = stringResource(R.string.for_breakfast),
-                        style = MaterialTheme.typography.titleMedium,
-                    )
+                if (selectedFilter.isSelected) {
+                    item(span = StaggeredGridItemSpan.FullLine) {
+                        Text(
+                            text = stringResource(selectedFilter.title),
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                    }
+
+                    // Выбранный фильтр
+                    itemsIndexed(viewModel.allFood.value.filter { it.foodType == selectedFilter.foodType }) { index, item ->
+                        FoodCard(
+                            item = item,
+                            modifier = Modifier.fillMaxWidth(),
+                            onGetColor = { imageRes, context ->
+                                viewModel.getBackgroundColorForFood(imageRes, context)
+                            },
+                            onGetTextColor = { imageRes, context ->
+                                viewModel.getTextForColorForFood(imageRes, context)
+                            }
+                        )
+                    }
                 }
 
-                // Элементы еды (завтрак)
-                itemsIndexed(breakfastItems) { index, item ->
-                    FoodCard(
-                        item = item,
-                        modifier = Modifier.fillMaxWidth(),
-                        onGetColor = { imageRes, context ->
-                            viewModel.getBackgroundColorForFood(imageRes, context)
-                        },
-                        onGetTextColor = { imageRes, context ->
-                            viewModel.getTextForColorForFood(imageRes, context)
-                        }
-                    )
-                }
+                if (!selectedFilter.isSelected) {
+                    // Полезно утром
+                    item(span = StaggeredGridItemSpan.FullLine) {
+                        Text(
+                            text = stringResource(R.string.for_breakfast),
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                    }
 
-                // С клетчаткой
-                item(span = StaggeredGridItemSpan.FullLine) {
-                    Text(
-                        text = stringResource(R.string.with_fiber),
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                }
+                    // Элементы еды (завтрак)
+                    itemsIndexed(breakfastItems) { index, item ->
+                        FoodCard(
+                            item = item,
+                            modifier = Modifier.fillMaxWidth(),
+                            onGetColor = { imageRes, context ->
+                                viewModel.getBackgroundColorForFood(imageRes, context)
+                            },
+                            onGetTextColor = { imageRes, context ->
+                                viewModel.getTextForColorForFood(imageRes, context)
+                            }
+                        )
+                    }
 
-                itemsIndexed(fiberItems) { index, item ->
-                    Log.d("TAG", index.toString())
-                    FoodCard(
-                        item = item,
-                        modifier = Modifier.fillMaxWidth(),
-                        onGetColor = { imageRes, context ->
-                            viewModel.getBackgroundColorForFood(imageRes, context)
-                        },
-                        onGetTextColor = { imageRes, context ->
-                            viewModel.getTextForColorForFood(imageRes, context)
-                        }
-                    )
-                }
+                    // С клетчаткой
+                    item(span = StaggeredGridItemSpan.FullLine) {
+                        Text(
+                            text = stringResource(R.string.with_fiber),
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                    }
 
-                // Суперфуды
+                    itemsIndexed(fiberItems) { index, item ->
+                        Log.d("TAG", index.toString())
+                        FoodCard(
+                            item = item,
+                            modifier = Modifier.fillMaxWidth(),
+                            onGetColor = { imageRes, context ->
+                                viewModel.getBackgroundColorForFood(imageRes, context)
+                            },
+                            onGetTextColor = { imageRes, context ->
+                                viewModel.getTextForColorForFood(imageRes, context)
+                            }
+                        )
+                    }
+
+                    // Суперфуды
 //                item(span = StaggeredGridItemSpan.FullLine) {
 //                    Text(
 //                        text = stringResource(R.string.superfoods),
@@ -168,28 +194,28 @@ fun MainListScreen() {
 //                    )
 //                }
 
-                // Источники белка (proteins > 15г)
-                item(span = StaggeredGridItemSpan.FullLine) {
-                    Text(
-                        text = stringResource(R.string.protein_sources),
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                }
+                    // Источники белка (proteins > 15г)
+                    item(span = StaggeredGridItemSpan.FullLine) {
+                        Text(
+                            text = stringResource(R.string.protein_sources),
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                    }
 
-                itemsIndexed(heavyProtein) { _, item ->
-                    FoodCard(
-                        item = item,
-                        modifier = Modifier.fillMaxWidth(),
-                        onGetColor = { imageRes, context ->
-                            viewModel.getBackgroundColorForFood(imageRes, context)
-                        },
-                        onGetTextColor = { imageRes, context ->
-                            viewModel.getTextForColorForFood(imageRes, context)
-                        }
-                    )
-                }
+                    itemsIndexed(heavyProtein) { _, item ->
+                        FoodCard(
+                            item = item,
+                            modifier = Modifier.fillMaxWidth(),
+                            onGetColor = { imageRes, context ->
+                                viewModel.getBackgroundColorForFood(imageRes, context)
+                            },
+                            onGetTextColor = { imageRes, context ->
+                                viewModel.getTextForColorForFood(imageRes, context)
+                            }
+                        )
+                    }
 
-                // Полезные жиры (омега-3 + орехи + авокадо + рыба)
+                    // Полезные жиры (омега-3 + орехи + авокадо + рыба)
 //                item(span = StaggeredGridItemSpan.FullLine) {
 //                    Text(
 //                        text = stringResource(R.string.healthy_fats),
@@ -213,6 +239,7 @@ fun MainListScreen() {
 //                        }
 //                    )
 //                }
+                }
 
                 // Нижний отступ
                 item(span = StaggeredGridItemSpan.FullLine) {

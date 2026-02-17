@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import ru.plumsoftware.avocado.data.base.model.food.allFood
 import ru.plumsoftware.avocado.ui.log
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.filter.Filter
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.food.FoodColorCache
@@ -29,6 +30,9 @@ class ListViewModel : ViewModel() {
         MutableStateFlow(ru.plumsoftware.avocado.ui.screen.main.list.elements.food.top7HighProteinFoods.toMutableList())
     val heavyProtein = heavyProtein_.asStateFlow()
 
+    val allFood_ = MutableStateFlow(ru.plumsoftware.avocado.data.base.model.food.allFood)
+    val allFood = allFood_.asStateFlow()
+
     private val colorCache = FoodColorCache()
 
     fun getBackgroundColorForFood(imageRes: Int, context: Context): Int {
@@ -44,29 +48,30 @@ class ListViewModel : ViewModel() {
     }
 
     fun updateSelectedFilter(newFilter: Filter) {
+        // Обновляем список фильтров
         filters_.update { oldList ->
-            val newList = oldList.toMutableList()
-            val index = newList.indexOfFirst { it.id == newFilter.id }
-            log("index = $index")
-
-            newList.forEachIndexed { i, filter ->
-                if (i == index) {
-                    if (newList[i].isSelected) {
-                        newList[i] = filter.copy(isSelected = false)
-                    } else {
-                        newList[i] = filter.copy(isSelected = true)
-                    }
+            oldList.map { filter ->
+                if (filter.id == newFilter.id) {
+                    // Инвертируем состояние выбранного фильтра
+                    filter.copy(isSelected = !filter.isSelected)
                 } else {
-                    newList[i] = filter.copy(isSelected = false)
+                    // Все остальные сбрасываем
+                    filter.copy(isSelected = false)
                 }
-            }
-
-            log("new list = $newList")
-            newList
+            } as MutableList<Filter>
         }
 
+        // Обновляем selectedFilter_
+        val isNowSelected = !newFilter.isSelected // Инвертируем текущее состояние
+
         selectedFilter_.update {
-            newFilter.copy(isSelected = true)
+            if (isNowSelected) {
+                // Фильтр стал выбранным
+                newFilter.copy(isSelected = true)
+            } else {
+                // Фильтр стал невыбранным - возвращаем пустой фильтр
+                Filter.empty()
+            }
         }
     }
 

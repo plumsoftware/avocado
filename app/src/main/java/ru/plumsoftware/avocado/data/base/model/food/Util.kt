@@ -1363,3 +1363,5 @@ val allMeat = listOf<Meat>(
         timeForFood = TimeForFood.DINNER
     )
 )
+
+val allFood = allFruits + allBerries + allNuts + allVegetables + allMeat
