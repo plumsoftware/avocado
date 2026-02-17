@@ -4,8 +4,12 @@ import ru.plumsoftware.avocado.data.base.model.food.TimeForFood
 import ru.plumsoftware.avocado.data.base.model.food.allBerries
 import ru.plumsoftware.avocado.data.base.model.food.allFruits
 import ru.plumsoftware.avocado.data.base.model.food.allNuts
+import ru.plumsoftware.avocado.data.base.model.food.allVegetables
 
 val recomendedOnBreakfast =
     allFruits.filter { it.timeForFood == TimeForFood.BREAKFAST }.take(3) +
             allBerries.filter { it.timeForFood == TimeForFood.BREAKFAST }.take(2) +
             allNuts.filter { it.timeForFood == TimeForFood.BREAKFAST }.take(2)
+
+val withFiber =
+    allVegetables.filter { it.kpfc_100g.fiber >= 2.5 }.take(6)

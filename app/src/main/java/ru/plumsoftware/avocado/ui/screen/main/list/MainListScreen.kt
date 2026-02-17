@@ -1,10 +1,13 @@
 package ru.plumsoftware.avocado.ui.screen.main.list
 
+import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,6 +17,10 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -40,6 +47,8 @@ fun MainListScreen() {
     )
 
     val filters by viewModel.filters.collectAsState()
+    val breakfastItems = viewModel.recomendedOnBreakfast.collectAsState().value
+    val fiberItems = viewModel.withFiber.collectAsState().value
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -47,26 +56,29 @@ fun MainListScreen() {
         topBar = {}
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize()) {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
+            LazyVerticalStaggeredGrid(
+                columns = StaggeredGridCells.Fixed(2),
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 0.dp),
+                    .padding(
+                        top = 0.dp,
+                        start = Dimen.medium,
+                        end = Dimen.medium
+                    ),
                 horizontalArrangement = Arrangement.spacedBy(Dimen.medium),
-                verticalArrangement = Arrangement.spacedBy(Dimen.medium)
+                verticalItemSpacing = Dimen.medium
             ) {
 
                 // Верхний отступ
-                item(span = { GridItemSpan(maxLineSpan) }) {
+                item(span = StaggeredGridItemSpan.FullLine) {
                     Spacer(modifier = Modifier.height(84.dp))
                 }
 
-                // Фильтры как первый элемент сетки на всю ширину
-                item(span = { GridItemSpan(maxLineSpan) }) {
+                // Фильтры на всю ширину
+                item(span = StaggeredGridItemSpan.FullLine) {
                     FlowRow(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = Dimen.medium),
+                            .fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(
                             Dimen.medium,
                             alignment = Alignment.CenterHorizontally
@@ -86,7 +98,8 @@ fun MainListScreen() {
                     }
                 }
 
-                item(span = { GridItemSpan(maxLineSpan) }) {
+                // Полезно утром
+                item(span = StaggeredGridItemSpan.FullLine) {
                     Text(
                         text = stringResource(R.string.for_breakfast),
                         style = MaterialTheme.typography.titleMedium,
@@ -97,29 +110,53 @@ fun MainListScreen() {
                     )
                 }
 
-                // Элементы еды
-                itemsIndexed(viewModel.recomendedOnBreakfast.value) { index, item ->
+                // Элементы еды (завтрак)
+                itemsIndexed(breakfastItems) { index, item ->
                     FoodCard(
                         item = item,
-                        modifier = Modifier.padding(
-                            start = if (index % 2 == 0) Dimen.medium else 0.dp,
-                            end = if (index % 2 == 1) Dimen.medium else 0.dp,
-                        ),
+                        modifier = Modifier.fillMaxWidth(),
                         onGetColor = { imageRes, context ->
                             viewModel.getBackgroundColorForFood(imageRes, context)
                         },
-                        onGetTextColor = {imageRes, context ->
+                        onGetTextColor = { imageRes, context ->
+                            viewModel.getTextForColorForFood(imageRes, context)
+                        }
+                    )
+                }
+
+                // С клетчаткой
+                item(span = StaggeredGridItemSpan.FullLine) {
+                    Text(
+                        text = stringResource(R.string.with_fiber),
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(
+                            start = Dimen.medium,
+                            end = Dimen.medium
+                        )
+                    )
+                }
+
+                itemsIndexed(fiberItems) { index, item ->
+                    Log.d("TAG", index.toString())
+                    FoodCard(
+                        item = item,
+                        modifier = Modifier.fillMaxWidth(),
+                        onGetColor = { imageRes, context ->
+                            viewModel.getBackgroundColorForFood(imageRes, context)
+                        },
+                        onGetTextColor = { imageRes, context ->
                             viewModel.getTextForColorForFood(imageRes, context)
                         }
                     )
                 }
 
                 // Нижний отступ
-                item(span = { GridItemSpan(maxLineSpan) }) {
+                item(span = StaggeredGridItemSpan.FullLine) {
                     Spacer(modifier = Modifier.height(100.dp))
                 }
             }
 
+            // Градиент и TopBar остаются без изменений
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -148,9 +185,9 @@ fun MainListScreen() {
 
                 IOSTopBar(
                     searchQuery = "",
-                    onSearchQueryChange = { it -> },
+                    onSearchQueryChange = { },
                     isSearchFocused = false,
-                    onFocusChange = { it -> },
+                    onFocusChange = { },
                     onFilterClick = {},
                 )
             }

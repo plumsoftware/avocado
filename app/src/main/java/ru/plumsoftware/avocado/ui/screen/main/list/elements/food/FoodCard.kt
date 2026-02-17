@@ -67,7 +67,6 @@ fun FoodCard(
         onGetTextColor(item.imageRes, context)
     }
     val imageContainerHeight = 110.dp
-    val containerHeight = imageContainerHeight.value.plus(60).dp
 
     val stringBuilder = remember(key1 = item.vitamins) {
         item.vitamins.map { context.getString(it.title) }
@@ -79,7 +78,6 @@ fun FoodCard(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(containerHeight)
             .clip(MaterialTheme.shapes.medium)
             .background(
                 color = MaterialTheme.colorScheme.surface,
@@ -98,13 +96,13 @@ fun FoodCard(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
         ) {
-            // Контейнер с изображением и градиентным фоном
+            // Контейнер с изображением — строго 110.dp
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f)
+                    .height(imageContainerHeight) // ← фиксированная высота
                     .clip(MaterialTheme.shapes.medium)
                     .background(
                         brush = Brush.radialGradient(
@@ -129,7 +127,7 @@ fun FoodCard(
                 )
             }
 
-            // Текст снизу
+            // Текст снизу — занимает столько, сколько надо
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -143,8 +141,7 @@ fun FoodCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-
-                //Витамины
+                // Витамины
                 Box(
                     modifier = Modifier
                         .wrapContentSize()

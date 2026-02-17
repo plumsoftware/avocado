@@ -20,7 +20,10 @@ class ListViewModel : ViewModel() {
 
     private val recomendedOnBreakfast_ =
         MutableStateFlow(ru.plumsoftware.avocado.ui.screen.main.list.elements.food.recomendedOnBreakfast.toMutableList())
+    private val withFiber_ =
+        MutableStateFlow(ru.plumsoftware.avocado.ui.screen.main.list.elements.food.withFiber.toMutableList())
     val recomendedOnBreakfast = recomendedOnBreakfast_.asStateFlow()
+    val withFiber = withFiber_.asStateFlow()
 
     private val colorCache = FoodColorCache()
 
