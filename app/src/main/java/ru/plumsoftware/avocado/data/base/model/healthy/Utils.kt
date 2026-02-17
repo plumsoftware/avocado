@@ -28,7 +28,8 @@ val popularMinerals = listOf(
     Mineral("iodine", R.string.iodine),
     Mineral("chromium", R.string.chromium),
     Mineral("copper", R.string.copper),
-    Mineral("manganese", R.string.manganese)
+    Mineral("manganese", R.string.manganese),
+    Mineral("phosphorus", R.string.phosphorus)
 )
 
 val fatKisloty = listOf(

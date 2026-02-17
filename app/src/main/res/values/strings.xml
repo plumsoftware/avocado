@@ -1,13 +1,13 @@
 <resources>
     <string name="app_name">Авокадо</string>
 
-    <!--    Main-->
+    <!-- Main-->
     <string name="main">Главная</string>
     <string name="rec">Рецепты</string>
     <string name="fav">Избранное</string>
     <string name="settings">Настройки</string>
 
-    <!--    Vitamins-->
+    <!-- Vitamins-->
     <string name="vitamin_a">A</string>
     <string name="vitamin_b1">B1</string>
     <string name="vitamin_b2">B2</string>
@@ -22,7 +22,7 @@
     <string name="vitamin_e">E</string>
     <string name="vitamin_k">K</string>
 
-    <!--        Дополнительно: минералы и вещества -->
+    <!-- Дополнительно: минералы и вещества -->
     <string name="calcium">Кальций</string>
     <string name="magnesium">Магний</string>
     <string name="zinc">Цинк</string>
@@ -35,8 +35,9 @@
     <string name="chromium">Хром</string>
     <string name="copper">Медь</string>
     <string name="manganese">Марганец</string>
+    <string name="phosphorus">Фосфор</string>
 
-    <!--    Фильтры-->
+    <!-- Фильтры-->
     <string name="fruits">Фрукты</string>
     <string name="vegetables">Овощи</string>
     <string name="meat">Мясо</string>
@@ -46,11 +47,14 @@
     <string name="mushrooms">Грибы</string>
     <string name="seafood">Морепродукты</string>
 
-    <!--    Для чего-->
+    <!-- Для чего-->
     <string name="for_breakfast">Полезно на завтрак</string>
     <string name="with_fiber">С клетчаткой</string>
+    <string name="superfoods">Суперфуды</string>
+    <string name="protein_sources">Источники белка</string>
+    <string name="healthy_fats">Полезные жиры</string>
 
-    <!--    Фрукты-->
+    <!-- Фрукты-->
     <string name="banana">Банан</string>
     <string name="apple">Яблоко</string>
     <string name="orange">Апельсин</string>
@@ -67,7 +71,7 @@
     <string name="mango">Манго</string>
     <string name="persimmon">Хурма</string>
 
-    <!--    Ягоды-->
+    <!-- Ягоды-->
     <string name="watermelon">Арбуз</string>
     <string name="strawberry">Клубника</string>
     <string name="avocado">Авокадо</string>
@@ -78,7 +82,7 @@
     <string name="cranberry">Клюква</string>
     <string name="cherry">Вишня</string>
 
-    <!--    Орехи-->
+    <!-- Орехи-->
     <string name="walnut">Грецкий орех</string>
     <string name="almond">Миндаль</string>
     <string name="hazelnut">Фундук</string>
@@ -107,6 +111,20 @@
     <string name="eggplant">Баклажан</string>
     <string name="radish">Редис</string>
     <string name="spinach">Шпинат</string>
+
+    <!-- Мясо -->
+    <string name="chicken_breast">Куриная грудка</string>
+    <string name="chicken_thigh">Куриное бедро</string>
+    <string name="turkey_breast">Индейка (грудка)</string>
+    <string name="beef_lean">Говядина постная</string>
+    <string name="beef_ribeye">Говяжий стейк (рибай)</string>
+    <string name="pork_tenderloin">Свиная вырезка</string>
+    <string name="pork_neck">Свиная шея</string>
+    <string name="lamb">Баранина</string>
+    <string name="veal">Телятина</string>
+    <string name="rabbit">Кролик</string>
+    <string name="duck">Утка</string>
+    <string name="goose">Гусь</string>
 
     <!-- Клетчатка -->
     <string name="fiber">Клетчатка</string>

@@ -25,6 +25,10 @@ class ListViewModel : ViewModel() {
     val recomendedOnBreakfast = recomendedOnBreakfast_.asStateFlow()
     val withFiber = withFiber_.asStateFlow()
 
+    val heavyProtein_ =
+        MutableStateFlow(ru.plumsoftware.avocado.ui.screen.main.list.elements.food.top7HighProteinFoods.toMutableList())
+    val heavyProtein = heavyProtein_.asStateFlow()
+
     private val colorCache = FoodColorCache()
 
     fun getBackgroundColorForFood(imageRes: Int, context: Context): Int {

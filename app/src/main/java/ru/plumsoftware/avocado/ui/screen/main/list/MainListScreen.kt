@@ -49,6 +49,7 @@ fun MainListScreen() {
     val filters by viewModel.filters.collectAsState()
     val breakfastItems = viewModel.recomendedOnBreakfast.collectAsState().value
     val fiberItems = viewModel.withFiber.collectAsState().value
+    val heavyProtein = viewModel.heavyProtein.collectAsState().value
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -103,10 +104,6 @@ fun MainListScreen() {
                     Text(
                         text = stringResource(R.string.for_breakfast),
                         style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(
-                            start = Dimen.medium,
-                            end = Dimen.medium
-                        )
                     )
                 }
 
@@ -129,10 +126,6 @@ fun MainListScreen() {
                     Text(
                         text = stringResource(R.string.with_fiber),
                         style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(
-                            start = Dimen.medium,
-                            end = Dimen.medium
-                        )
                     )
                 }
 
@@ -149,6 +142,77 @@ fun MainListScreen() {
                         }
                     )
                 }
+
+                // Суперфуды
+//                item(span = StaggeredGridItemSpan.FullLine) {
+//                    Text(
+//                        text = stringResource(R.string.superfoods),
+//                        style = MaterialTheme.typography.titleMedium,
+//                        modifier = Modifier.padding(
+//                            start = Dimen.medium,
+//                            end = Dimen.medium
+//                        )
+//                    )
+//                }
+//
+//                itemsIndexed(superfoodsItems) { _, item ->
+//                    FoodCard(
+//                        item = item,
+//                        modifier = Modifier.fillMaxWidth(),
+//                        onGetColor = { imageRes, context ->
+//                            viewModel.getBackgroundColorForFood(imageRes, context)
+//                        },
+//                        onGetTextColor = { imageRes, context ->
+//                            viewModel.getTextForColorForFood(imageRes, context)
+//                        }
+//                    )
+//                }
+
+                // Источники белка (proteins > 15г)
+                item(span = StaggeredGridItemSpan.FullLine) {
+                    Text(
+                        text = stringResource(R.string.protein_sources),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                }
+
+                itemsIndexed(heavyProtein) { _, item ->
+                    FoodCard(
+                        item = item,
+                        modifier = Modifier.fillMaxWidth(),
+                        onGetColor = { imageRes, context ->
+                            viewModel.getBackgroundColorForFood(imageRes, context)
+                        },
+                        onGetTextColor = { imageRes, context ->
+                            viewModel.getTextForColorForFood(imageRes, context)
+                        }
+                    )
+                }
+
+                // Полезные жиры (омега-3 + орехи + авокадо + рыба)
+//                item(span = StaggeredGridItemSpan.FullLine) {
+//                    Text(
+//                        text = stringResource(R.string.healthy_fats),
+//                        style = MaterialTheme.typography.titleMedium,
+//                        modifier = Modifier.padding(
+//                            start = Dimen.medium,
+//                            end = Dimen.medium
+//                        )
+//                    )
+//                }
+//
+//                itemsIndexed(healthyFatsItems) { _, item ->
+//                    FoodCard(
+//                        item = item,
+//                        modifier = Modifier.fillMaxWidth(),
+//                        onGetColor = { imageRes, context ->
+//                            viewModel.getBackgroundColorForFood(imageRes, context)
+//                        },
+//                        onGetTextColor = { imageRes, context ->
+//                            viewModel.getTextForColorForFood(imageRes, context)
+//                        }
+//                    )
+//                }
 
                 // Нижний отступ
                 item(span = StaggeredGridItemSpan.FullLine) {

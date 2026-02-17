@@ -1096,3 +1096,270 @@ val allVegetables = listOf<Vegetable>(
         timeForFood = TimeForFood.BREAKFAST
     )
 )
+
+val allMeat = listOf<Meat>(
+    // Куриная грудка
+    Meat(
+        id = "chicken_breast",
+        titleRes = R.string.chicken_breast,
+        imageRes = R.drawable.chicken,
+        foodType = FoodType.MEAT,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_b3"]!!,
+            vitaminsMap["vitamin_b6"]!!,
+            vitaminsMap["vitamin_b12"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["selenium"]!!,
+            mineralsMap["phosphorus"]!!,
+            mineralsMap["zinc"]!!
+        ),
+        fatKisloty = emptyList(),
+        kpfc_100g = Kpfc(165, 3.6, 31.0, 0.0),
+        timeForFood = TimeForFood.DINNER
+    ),
+
+    // Куриное бедро
+    Meat(
+        id = "chicken_thigh",
+        titleRes = R.string.chicken_thigh,
+        imageRes = R.drawable.chicken,
+        foodType = FoodType.MEAT,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_b3"]!!,
+            vitaminsMap["vitamin_b6"]!!,
+            vitaminsMap["vitamin_b12"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["selenium"]!!,
+            mineralsMap["zinc"]!!,
+            mineralsMap["iron"]!!
+        ),
+        fatKisloty = emptyList(),
+        kpfc_100g = Kpfc(209, 11.0, 26.0, 0.0),
+        timeForFood = TimeForFood.DINNER
+    ),
+
+    // Индейка (грудка)
+    Meat(
+        id = "turkey_breast",
+        titleRes = R.string.turkey_breast,
+        imageRes = R.drawable.meat_1,
+        foodType = FoodType.MEAT,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_b3"]!!,
+            vitaminsMap["vitamin_b6"]!!,
+            vitaminsMap["vitamin_b12"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["selenium"]!!,
+            mineralsMap["zinc"]!!,
+            mineralsMap["phosphorus"]!!
+        ),
+        fatKisloty = emptyList(),
+        kpfc_100g = Kpfc(135, 1.0, 30.0, 0.0),
+        timeForFood = TimeForFood.DINNER
+    ),
+
+    // Говядина (постная)
+    Meat(
+        id = "beef_lean",
+        titleRes = R.string.beef_lean,
+        imageRes = R.drawable.steak,
+        foodType = FoodType.MEAT,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_b12"]!!,
+            vitaminsMap["vitamin_b3"]!!,
+            vitaminsMap["vitamin_b6"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["iron"]!!,
+            mineralsMap["zinc"]!!,
+            mineralsMap["selenium"]!!,
+            mineralsMap["phosphorus"]!!
+        ),
+        fatKisloty = emptyList(),
+        kpfc_100g = Kpfc(250, 15.0, 26.0, 0.0),
+        timeForFood = TimeForFood.DINNER
+    ),
+
+    // Говяжий стейк (рибай)
+    Meat(
+        id = "beef_ribeye",
+        titleRes = R.string.beef_ribeye,
+        imageRes = R.drawable.steak,
+        foodType = FoodType.MEAT,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_b12"]!!,
+            vitaminsMap["vitamin_b3"]!!,
+            vitaminsMap["vitamin_b6"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["iron"]!!,
+            mineralsMap["zinc"]!!,
+            mineralsMap["selenium"]!!
+        ),
+        fatKisloty = emptyList(),
+        kpfc_100g = Kpfc(291, 22.0, 24.0, 0.0),
+        timeForFood = TimeForFood.DINNER
+    ),
+
+    // Свинина (постная, вырезка)
+    Meat(
+        id = "pork_tenderloin",
+        titleRes = R.string.pork_tenderloin,
+        imageRes = R.drawable.steak,
+        foodType = FoodType.MEAT,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_b1"]!!,
+            vitaminsMap["vitamin_b6"]!!,
+            vitaminsMap["vitamin_b12"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["selenium"]!!,
+            mineralsMap["zinc"]!!,
+            mineralsMap["phosphorus"]!!
+        ),
+        fatKisloty = emptyList(),
+        kpfc_100g = Kpfc(143, 3.5, 26.0, 0.0),
+        timeForFood = TimeForFood.DINNER
+    ),
+
+    // Свинина (шея)
+    Meat(
+        id = "pork_neck",
+        titleRes = R.string.pork_neck,
+        imageRes = R.drawable.steak,
+        foodType = FoodType.MEAT,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_b1"]!!,
+            vitaminsMap["vitamin_b6"]!!,
+            vitaminsMap["vitamin_b12"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["selenium"]!!,
+            mineralsMap["zinc"]!!,
+            mineralsMap["iron"]!!
+        ),
+        fatKisloty = emptyList(),
+        kpfc_100g = Kpfc(242, 18.0, 20.0, 0.0),
+        timeForFood = TimeForFood.DINNER
+    ),
+
+    // Баранина
+    Meat(
+        id = "lamb",
+        titleRes = R.string.lamb,
+        imageRes = R.drawable.steak,
+        foodType = FoodType.MEAT,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_b12"]!!,
+            vitaminsMap["vitamin_b3"]!!,
+            vitaminsMap["vitamin_b6"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["iron"]!!,
+            mineralsMap["zinc"]!!,
+            mineralsMap["selenium"]!!
+        ),
+        fatKisloty = emptyList(),
+        kpfc_100g = Kpfc(258, 18.0, 23.0, 0.0),
+        timeForFood = TimeForFood.DINNER
+    ),
+
+    // Телятина
+    Meat(
+        id = "veal",
+        titleRes = R.string.veal,
+        imageRes = R.drawable.steak,
+        foodType = FoodType.MEAT,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_b12"]!!,
+            vitaminsMap["vitamin_b3"]!!,
+            vitaminsMap["vitamin_b6"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["iron"]!!,
+            mineralsMap["zinc"]!!,
+            mineralsMap["phosphorus"]!!
+        ),
+        fatKisloty = emptyList(),
+        kpfc_100g = Kpfc(172, 7.0, 25.0, 0.0),
+        timeForFood = TimeForFood.DINNER
+    ),
+
+    // Кролик
+    Meat(
+        id = "rabbit",
+        titleRes = R.string.rabbit,
+        imageRes = R.drawable.rabbit,
+        foodType = FoodType.MEAT,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_b12"]!!,
+            vitaminsMap["vitamin_b3"]!!,
+            vitaminsMap["vitamin_b6"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["selenium"]!!,
+            mineralsMap["phosphorus"]!!,
+            mineralsMap["iron"]!!
+        ),
+        fatKisloty = emptyList(),
+        kpfc_100g = Kpfc(173, 7.0, 26.0, 0.0),
+        timeForFood = TimeForFood.DINNER
+    ),
+
+    // Утка
+    Meat(
+        id = "duck",
+        titleRes = R.string.duck,
+        imageRes = R.drawable.duck,
+        foodType = FoodType.MEAT,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_b3"]!!,
+            vitaminsMap["vitamin_b6"]!!,
+            vitaminsMap["vitamin_b12"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["selenium"]!!,
+            mineralsMap["zinc"]!!,
+            mineralsMap["iron"]!!
+        ),
+        fatKisloty = emptyList(),
+        kpfc_100g = Kpfc(337, 28.0, 19.0, 0.0),
+        timeForFood = TimeForFood.DINNER
+    ),
+
+    // Гусь
+    Meat(
+        id = "goose",
+        titleRes = R.string.goose,
+        imageRes = R.drawable.chicken,
+        foodType = FoodType.MEAT,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_b3"]!!,
+            vitaminsMap["vitamin_b6"]!!,
+            vitaminsMap["vitamin_b12"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["selenium"]!!,
+            mineralsMap["zinc"]!!,
+            mineralsMap["iron"]!!
+        ),
+        fatKisloty = emptyList(),
+        kpfc_100g = Kpfc(371, 33.0, 18.0, 0.0),
+        timeForFood = TimeForFood.DINNER
+    )
+)
