@@ -3,6 +3,7 @@ package ru.plumsoftware.avocado.ui.screen.main.list.elements.food
 import ru.plumsoftware.avocado.data.base.model.food.Food
 import ru.plumsoftware.avocado.data.base.model.food.TimeForFood
 import ru.plumsoftware.avocado.data.base.model.food.allBerries
+import ru.plumsoftware.avocado.data.base.model.food.allFish
 import ru.plumsoftware.avocado.data.base.model.food.allFruits
 import ru.plumsoftware.avocado.data.base.model.food.allMeat
 import ru.plumsoftware.avocado.data.base.model.food.allNuts
@@ -26,3 +27,5 @@ val top7HighProteinFoods = listOf(
     allMeat.first { it.id == "pork_tenderloin" },     // 26г
     allMeat.first { it.id == "veal" }                 // 25г
 )
+
+val topOmega3 = allFish.filter { it.kpfc_100g.omega3 >= 1.5 }

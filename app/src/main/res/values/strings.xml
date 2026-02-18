@@ -71,6 +71,16 @@
     <string name="mango">Манго</string>
     <string name="persimmon">Хурма</string>
 
+    <!-- Fish-->
+    <string name="salmon">Лосось</string>
+    <string name="mackerel">Скумбрия</string>
+    <string name="herring">Сельдь</string>
+    <string name="tuna">Тунец</string>
+    <string name="trout">Форель</string>
+    <string name="sardine">Сардина</string>
+    <string name="cod">Треска</string>
+    <string name="pollock">Минтай</string>
+
     <!-- Ягоды-->
     <string name="watermelon">Арбуз</string>
     <string name="strawberry">Клубника</string>

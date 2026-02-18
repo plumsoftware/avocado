@@ -30,6 +30,9 @@ class ListViewModel : ViewModel() {
         MutableStateFlow(ru.plumsoftware.avocado.ui.screen.main.list.elements.food.top7HighProteinFoods.toMutableList())
     val heavyProtein = heavyProtein_.asStateFlow()
 
+    val healthyFatsItems_ = MutableStateFlow(ru.plumsoftware.avocado.ui.screen.main.list.elements.food.topOmega3.toMutableList())
+    val healthyFatsItems = healthyFatsItems_.asStateFlow()
+
     val allFood_ = MutableStateFlow(ru.plumsoftware.avocado.data.base.model.food.allFood)
     val allFood = allFood_.asStateFlow()
 

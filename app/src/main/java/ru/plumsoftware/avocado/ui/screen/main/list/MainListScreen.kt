@@ -35,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.plumsoftware.avocado.R
+import ru.plumsoftware.avocado.data.base.model.food.Food
 import ru.plumsoftware.avocado.data.base.model.food.allFood
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.IOSTopBar
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.filter.FilterItem
@@ -52,6 +53,7 @@ fun MainListScreen() {
     val breakfastItems = viewModel.recomendedOnBreakfast.collectAsState().value
     val fiberItems = viewModel.withFiber.collectAsState().value
     val heavyProtein = viewModel.heavyProtein.collectAsState().value
+    val healthyFatsItems = viewModel.healthyFatsItems.collectAsState().value
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -215,30 +217,30 @@ fun MainListScreen() {
                         )
                     }
 
-                    // Полезные жиры (омега-3 + орехи + авокадо + рыба)
-//                item(span = StaggeredGridItemSpan.FullLine) {
-//                    Text(
-//                        text = stringResource(R.string.healthy_fats),
-//                        style = MaterialTheme.typography.titleMedium,
-//                        modifier = Modifier.padding(
-//                            start = Dimen.medium,
-//                            end = Dimen.medium
-//                        )
-//                    )
-//                }
-//
-//                itemsIndexed(healthyFatsItems) { _, item ->
-//                    FoodCard(
-//                        item = item,
-//                        modifier = Modifier.fillMaxWidth(),
-//                        onGetColor = { imageRes, context ->
-//                            viewModel.getBackgroundColorForFood(imageRes, context)
-//                        },
-//                        onGetTextColor = { imageRes, context ->
-//                            viewModel.getTextForColorForFood(imageRes, context)
-//                        }
-//                    )
-//                }
+                // Полезные жиры (омега-3 + орехи + авокадо + рыба)
+                item(span = StaggeredGridItemSpan.FullLine) {
+                    Text(
+                        text = stringResource(R.string.healthy_fats),
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(
+                            start = Dimen.medium,
+                            end = Dimen.medium
+                        )
+                    )
+                }
+
+                itemsIndexed(healthyFatsItems) { _, item ->
+                    FoodCard(
+                        item = item,
+                        modifier = Modifier.fillMaxWidth(),
+                        onGetColor = { imageRes, context ->
+                            viewModel.getBackgroundColorForFood(imageRes, context)
+                        },
+                        onGetTextColor = { imageRes, context ->
+                            viewModel.getTextForColorForFood(imageRes, context)
+                        }
+                    )
+                }
                 }
 
                 // Нижний отступ

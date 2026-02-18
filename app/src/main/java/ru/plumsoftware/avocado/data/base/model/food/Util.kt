@@ -1364,4 +1364,221 @@ val allMeat = listOf<Meat>(
     )
 )
 
-val allFood = allFruits + allBerries + allNuts + allVegetables + allMeat
+val allFish = listOf<Fish>(
+
+    // Лосось
+    Fish(
+        id = "salmon",
+        titleRes = R.string.salmon,
+        imageRes = R.drawable.salmon,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_d"]!!,
+            vitaminsMap["vitamin_b12"]!!,
+            vitaminsMap["vitamin_b6"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["selenium"]!!,
+            mineralsMap["phosphorus"]!!,
+            mineralsMap["potassium"]!!
+        ),
+        fatKisloty = listOf(
+            fatsMap["omega3"]!!
+        ),
+        kpfc_100g = Kpfc(
+            208,
+            13.0,
+            20.0,
+            0.0,
+            omega3 = 2.3
+        ),
+        timeForFood = TimeForFood.DINNER
+    ),
+
+    // Скумбрия
+    Fish(
+        id = "mackerel",
+        titleRes = R.string.mackerel,
+        imageRes = R.drawable.mackerel,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_d"]!!,
+            vitaminsMap["vitamin_b12"]!!,
+            vitaminsMap["vitamin_b3"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["selenium"]!!,
+            mineralsMap["phosphorus"]!!
+        ),
+        fatKisloty = listOf(
+            fatsMap["omega3"]!!
+        ),
+        kpfc_100g = Kpfc(
+            305,
+            25.0,
+            19.0,
+            0.0,
+            omega3 = 4.1
+        ),
+        timeForFood = TimeForFood.DINNER
+    ),
+
+    // Сельдь
+    Fish(
+        id = "herring",
+        titleRes = R.string.herring,
+        imageRes = R.drawable.herring,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_d"]!!,
+            vitaminsMap["vitamin_b12"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["selenium"]!!,
+            mineralsMap["phosphorus"]!!
+        ),
+        fatKisloty = listOf(
+            fatsMap["omega3"]!!
+        ),
+        kpfc_100g = Kpfc(
+            158,
+            9.0,
+            18.0,
+            0.0,
+            omega3 = 1.7
+        ),
+        timeForFood = TimeForFood.DINNER
+    ),
+
+    // Тунец
+    Fish(
+        id = "tuna",
+        titleRes = R.string.tuna,
+        imageRes = R.drawable.tuna,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_b12"]!!,
+            vitaminsMap["vitamin_b3"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["selenium"]!!,
+            mineralsMap["phosphorus"]!!
+        ),
+        fatKisloty = listOf(
+            fatsMap["omega3"]!!
+        ),
+        kpfc_100g = Kpfc(
+            132,
+            1.0,
+            29.0,
+            0.0,
+            omega3 = 0.3
+        ),
+        timeForFood = TimeForFood.DINNER
+    ),
+
+    // Форель
+    Fish(
+        id = "trout",
+        titleRes = R.string.trout,
+        imageRes = R.drawable.trout,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_d"]!!,
+            vitaminsMap["vitamin_b12"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["selenium"]!!
+        ),
+        fatKisloty = listOf(
+            fatsMap["omega3"]!!
+        ),
+        kpfc_100g = Kpfc(
+            190,
+            12.0,
+            20.0,
+            0.0,
+            omega3 = 1.0
+        ),
+        timeForFood = TimeForFood.DINNER
+    ),
+
+    // Сардина
+    Fish(
+        id = "sardine",
+        titleRes = R.string.sardine,
+        imageRes = R.drawable.sardine,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_d"]!!,
+            vitaminsMap["vitamin_b12"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["calcium"]!!,
+            mineralsMap["selenium"]!!
+        ),
+        fatKisloty = listOf(
+            fatsMap["omega3"]!!
+        ),
+        kpfc_100g = Kpfc(
+            208,
+            11.0,
+            25.0,
+            0.0,
+            omega3 = 1.5
+        ),
+        timeForFood = TimeForFood.DINNER
+    ),
+
+    // Треска
+    Fish(
+        id = "cod",
+        titleRes = R.string.cod,
+        imageRes = R.drawable.cod,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_b6"]!!,
+            vitaminsMap["vitamin_b12"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["phosphorus"]!!,
+            mineralsMap["selenium"]!!
+        ),
+        fatKisloty = emptyList(),
+        kpfc_100g = Kpfc(
+            82,
+            0.7,
+            18.0,
+            0.0,
+            omega3 = 0.2
+        ),
+        timeForFood = TimeForFood.DINNER
+    ),
+
+    // Минтай
+    Fish(
+        id = "pollock",
+        titleRes = R.string.pollock,
+        imageRes = R.drawable.pollock,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_b12"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["selenium"]!!
+        ),
+        fatKisloty = emptyList(),
+        kpfc_100g = Kpfc(
+            92,
+            1.0,
+            19.0,
+            0.0,
+            omega3 = 0.5
+        ),
+        timeForFood = TimeForFood.DINNER
+    )
+
+)
+
+
+val allFood = allFruits + allBerries + allNuts + allVegetables + allMeat + allFish
