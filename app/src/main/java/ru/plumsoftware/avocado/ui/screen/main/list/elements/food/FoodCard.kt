@@ -75,6 +75,10 @@ fun FoodCard(
         stringBuilder.joinToString(", ")
     }
 
+    val isManyOmega = remember (item.kpfc_100g.omega3 >= 1.5) {
+        item.kpfc_100g.omega3 >= 1.5
+    }
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -91,7 +95,7 @@ fun FoodCard(
                     bounded = false,
                     radius = 260.dp
                 ),
-                onClick = { }
+                onClick = {}
             )
     ) {
         Column(
@@ -125,6 +129,15 @@ fun FoodCard(
                     contentDescription = stringResource(item.titleRes),
                     contentScale = ContentScale.FillBounds
                 )
+
+                if (isManyOmega) {
+                    Omega3Badge(
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(Dimen.mediumHalf)
+                    )
+                }
+
             }
 
             // Текст снизу — занимает столько, сколько надо
