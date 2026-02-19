@@ -1102,7 +1102,7 @@ val allMeat = listOf<Meat>(
     Meat(
         id = "chicken_breast",
         titleRes = R.string.chicken_breast,
-        imageRes = R.drawable.chicken,
+        imageRes = R.drawable.chicken_2,
         foodType = FoodType.MEAT,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -1146,7 +1146,7 @@ val allMeat = listOf<Meat>(
     Meat(
         id = "turkey_breast",
         titleRes = R.string.turkey_breast,
-        imageRes = R.drawable.meat_1,
+        imageRes = R.drawable.turkey_breast,
         foodType = FoodType.MEAT,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -1213,7 +1213,7 @@ val allMeat = listOf<Meat>(
     Meat(
         id = "pork_tenderloin",
         titleRes = R.string.pork_tenderloin,
-        imageRes = R.drawable.steak,
+        imageRes = R.drawable.pork_tenderloin,
         foodType = FoodType.MEAT,
         relatedReceipts = emptyList(),
         vitamins = listOf(

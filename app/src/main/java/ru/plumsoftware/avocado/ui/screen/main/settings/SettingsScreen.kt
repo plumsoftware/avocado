@@ -49,11 +49,12 @@ fun SettingsScreen(
     }
 
     Scaffold(
-        modifier = Modifier.padding(top = 14.dp),
+        modifier = Modifier,
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
                     Text(
+                        modifier = Modifier.padding(top = 14.dp),
                         text = stringResource(R.string.settings),
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                     )
