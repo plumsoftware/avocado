@@ -18,6 +18,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -29,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -36,9 +42,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.google.protobuf.copy
 import ru.plumsoftware.avocado.R
 import ru.plumsoftware.avocado.data.base.model.food.Food
+import ru.plumsoftware.avocado.data.base.model.food.FoodType
+import ru.plumsoftware.avocado.ui.modifier.iosClickable
 import ru.plumsoftware.avocado.ui.screen.main.list.HarmoniousColors
 import ru.plumsoftware.avocado.ui.screen.main.list.getLightenedColor
 import ru.plumsoftware.avocado.ui.theme.Dimen
@@ -48,12 +60,13 @@ import ru.plumsoftware.avocado.ui.theme.vitaminColor
 @Composable
 fun FoodCard(
     item: Food,
+    isFavorite: Boolean = false, // Приходит из ViewModel
+    onLikeClick: () -> Unit = {},
     onGetColor: (Int, Context) -> Int,
-    onGetTextColor: (Int, Context) -> HarmoniousColors,
     modifier: Modifier
 ) {
-
     val context = LocalContext.current
+
     val backgroundColor = remember(item.imageRes) {
         getLightenedColor(onGetColor(item.imageRes, context), factor = 0.2f)
     }
@@ -63,50 +76,41 @@ fun FoodCard(
     val lighterColor07 = remember(item.imageRes) {
         getLightenedColor(onGetColor(item.imageRes, context), factor = 0.7f)
     }
-    val harmoniousTextColors = remember(item.imageRes) {
-        onGetTextColor(item.imageRes, context)
-    }
-    val imageContainerHeight = 110.dp
 
-    val stringBuilder = remember(key1 = item.vitamins) {
-        item.vitamins.map { context.getString(it.title) }
-    }
-    val displayText = remember(stringBuilder) {
-        stringBuilder.joinToString(", ")
-    }
+    // Генерируем цвета (твоя логика + оптимизация)
+    val dominantColorInt = remember(item.imageRes) { onGetColor(item.imageRes, context) }
+    val imageBackgroundInt =
+        remember(dominantColorInt) { getLightenedColor(dominantColorInt, factor = 0.85f) }
+    // Цвет текста "Ккал" (чуть темнее фона)
+    val badgeColor =
+        remember(dominantColorInt) { getLightenedColor(dominantColorInt, factor = 0.4f) }
 
-    val isManyOmega = remember (item.kpfc_100g.omega3 >= 1.5) {
-        item.kpfc_100g.omega3 >= 1.5
-    }
+    val dominantColor = Color(dominantColorInt)
+    val imageBackground = Color(imageBackgroundInt)
+
+    // Константы размеров
+    val cardShape = RoundedCornerShape(20.dp) // iOS любит 20-22dp
+    val imageSize = 100.dp
 
     Box(
         modifier = modifier
-            .fillMaxWidth()
-            .clip(MaterialTheme.shapes.medium)
-            .background(
-                color = MaterialTheme.colorScheme.surface,
-                shape = MaterialTheme.shapes.medium
+            .shadow(
+                elevation = 8.dp,
+                shape = cardShape,
+                spotColor = Color.Black.copy(alpha = 0.05f),
+                ambientColor = Color.Black.copy(alpha = 0.05f)
             )
-            .clickable(
-                enabled = true,
-                interactionSource = remember { MutableInteractionSource() },
-                role = Role.Button,
-                indication = ripple(
-                    bounded = false,
-                    radius = 260.dp
-                ),
-                onClick = {}
-            )
+            .clip(cardShape)
+            .background(Color.White)
+            .iosClickable {
+
+            }
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            // Контейнер с изображением — строго 110.dp
+        Column {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(imageContainerHeight) // ← фиксированная высота
+                    .height(130.dp)
                     .clip(MaterialTheme.shapes.medium)
                     .background(
                         brush = Brush.radialGradient(
@@ -122,7 +126,7 @@ fun FoodCard(
             ) {
                 Image(
                     modifier = Modifier
-                        .size(imageContainerHeight)
+                        .size(imageSize)
                         .align(Alignment.Center)
                         .fillMaxSize(),
                     painter = painterResource(item.imageRes),
@@ -130,54 +134,108 @@ fun FoodCard(
                     contentScale = ContentScale.FillBounds
                 )
 
-                if (isManyOmega) {
-                    Omega3Badge(
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .padding(Dimen.mediumHalf)
-                    )
-                }
-
-            }
-
-            // Текст снизу — занимает столько, сколько надо
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = Dimen.mediumHalf, vertical = Dimen.mediumHalf),
-                text = stringResource(item.titleRes),
-                style = MaterialTheme.typography.bodyMedium
-            )
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                // Витамины
+                // Кнопка Лайка (Справа сверху)
                 Box(
                     modifier = Modifier
-                        .wrapContentSize()
-                        .clip(MaterialTheme.shapes.medium)
+                        .align(Alignment.TopEnd)
+                        .padding(8.dp)
+                        .size(32.dp)
+                        .clip(CircleShape)
+                        .background(Color.White.copy(alpha = 0.7f))
+                        .iosClickable { onLikeClick() },
+                    contentAlignment = Alignment.Center
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .wrapContentSize()
-                            .padding(horizontal = Dimen.mediumHalf)
-                            .padding(bottom = Dimen.mediumHalf)
-                            .align(Alignment.Center),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(width = 16.dp, height = 14.dp),
-                            painter = painterResource(R.drawable.vitamin),
-                            contentDescription = null,
-                            tint = Color(harmoniousTextColors.borderColor)
+                    Icon(
+                        imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        contentDescription = "Like",
+                        tint = if (isFavorite) Color(0xFFFF3B30) else Color.Gray.copy(0.6f),
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+            }
+
+            // 2. НИЖНЯЯ ЧАСТЬ: ИНФОРМАЦИЯ
+            Column(
+                modifier = Modifier
+                    .padding(Dimen.mediumAboveHalf) // Внутренний отступ
+            ) {
+                // Название
+                Text(
+                    text = stringResource(item.titleRes),
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 17.sp,
+                        color = Color.Black
+                    ),
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                Spacer(modifier = Modifier.height(Dimen.extraSmall))
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Калории
+                    Text(
+                        text = "${item.kpfc_100g.kals} ккал",
+                        style = MaterialTheme.typography.labelMedium.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.Gray
                         )
+                    )
+
+                    // Точка разделитель
+                    Text(
+                        text = " • ",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = Color.LightGray
+                    )
+
+                    // Белки
+                    if (item.foodType == FoodType.MUSHROOM || item.foodType == FoodType.NUT || item.foodType == FoodType.MEAT) {
+                        if (item.kpfc_100g.proteins > 10) {
+                            Text(
+                                text = "${item.kpfc_100g.proteins.toInt()}г белка",
+                                maxLines = 1,
+                                style = MaterialTheme.typography.labelMedium.copy(
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Color(0xFF5E8C31)
+                                )
+                            )
+                        }
+                        // Омега
+                    } else if (item.foodType == FoodType.FISH || item.foodType == FoodType.STRAWBERRY) {
+                        if (item.kpfc_100g.omega3 >= 1.5) {
+                            Text(
+                                text = "${item.kpfc_100g.omega3.toInt()}г омега3",
+                                maxLines = 1,
+                                style = MaterialTheme.typography.labelMedium.copy(
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Color(0xFFD59B02)
+                                )
+                            )
+                        }
+                        // Клтчатка
+                    } else if (item.foodType == FoodType.VEGETABLE)  {
                         Text(
-                            text = displayText,
-                            style = MaterialTheme.typography.labelSmall.copy(color = Color(harmoniousTextColors.borderColor)),
+                            text = "${item.kpfc_100g.fiber.toInt()}г клетчатки",
+                            maxLines = 1,
+                            style = MaterialTheme.typography.labelMedium.copy(
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color(0xFF5E8C31)
+                            ),
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    } else {
+                        // Улеводы
+                        Text(
+                            text = "${item.kpfc_100g.carbohydrates.toInt()}г углеводов",
+                            maxLines = 1,
+                            style = MaterialTheme.typography.labelMedium.copy(
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color(0xFF5E8C31)
+                            ),
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
                 }

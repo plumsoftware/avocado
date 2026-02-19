@@ -26,6 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import ru.plumsoftware.avocado.ui.modifier.iosClickable
 import ru.plumsoftware.avocado.ui.theme.Dimen
 
 @Composable
@@ -43,14 +44,8 @@ fun FilterItem(item: Filter, onFilterClick: () -> Unit) {
                 shape = MaterialTheme.shapes.medium
             )
             .clip(MaterialTheme.shapes.medium)
-            .clickable(
+            .iosClickable(
                 enabled = true,
-                interactionSource = remember { MutableInteractionSource() },
-                role = Role.Button,
-                indication = ripple(
-                    bounded = false,
-                    radius = 160.dp
-                ),
                 onClick = {
                     onFilterClick()
                 }

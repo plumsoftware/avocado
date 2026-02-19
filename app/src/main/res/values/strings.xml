@@ -40,6 +40,7 @@
     <!-- Фильтры-->
     <string name="fruits">Фрукты</string>
     <string name="vegetables">Овощи</string>
+    <string name="berries">Ягоды</string>
     <string name="meat">Мясо</string>
     <string name="fish">Рыба</string>
     <string name="green">Зелень</string>

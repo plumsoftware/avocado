@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ru.plumsoftware.avocado.ui.modifier.iosClickable
 import ru.plumsoftware.avocado.ui.theme.Dimen
 
 @Composable
@@ -110,7 +111,7 @@ fun IOSTopBar(
                                 tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
                                 modifier = Modifier
                                     .size(16.dp)
-                                    .clickable { onSearchQueryChange("") }
+                                    .iosClickable { onSearchQueryChange("") }
                             )
                         }
                     }

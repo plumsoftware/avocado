@@ -13,10 +13,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
@@ -32,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.plumsoftware.avocado.R
@@ -50,6 +53,8 @@ fun MainListScreen() {
 
     val filters by viewModel.filters.collectAsState()
     val selectedFilter by viewModel.selectedFilter.collectAsState()
+
+    // Списки продуктов
     val breakfastItems = viewModel.recomendedOnBreakfast.collectAsState().value
     val fiberItems = viewModel.withFiber.collectAsState().value
     val heavyProtein = viewModel.heavyProtein.collectAsState().value
@@ -61,39 +66,35 @@ fun MainListScreen() {
         topBar = {}
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize()) {
-            LazyVerticalStaggeredGrid(
-                columns = StaggeredGridCells.Fixed(2),
+
+            // --- ИЗМЕНЕНИЕ: ИСПОЛЬЗУЕМ ОБЫЧНУЮ СЕТКУ ---
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2), // Строгая сетка в 2 колонки
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(
-                        top = 0.dp,
-                        start = Dimen.medium,
-                        end = Dimen.medium
-                    ),
+                    .padding(horizontal = Dimen.medium), // Отступы сразу в Grid
+                // В обычной сетке verticalArrangement управляет отступами между строками
+                verticalArrangement = Arrangement.spacedBy(Dimen.medium),
                 horizontalArrangement = Arrangement.spacedBy(Dimen.medium),
-                verticalItemSpacing = Dimen.medium
+                contentPadding = PaddingValues(bottom = 100.dp) // Нижний отступ для контента
             ) {
 
-                // Верхний отступ
-                item(span = StaggeredGridItemSpan.FullLine) {
+                // 1. ВЕРХНИЙ ОТСТУП (под TopBar)
+                item(span = { GridItemSpan(maxLineSpan) }) {
                     Spacer(modifier = Modifier.height(84.dp))
                 }
 
-                // Фильтры на всю ширину
-                item(span = StaggeredGridItemSpan.FullLine) {
-                    FlowRow(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(
-                            Dimen.medium,
-                            alignment = Alignment.CenterHorizontally
-                        ),
-                        verticalArrangement = Arrangement.spacedBy(
-                            Dimen.medium,
-                            alignment = Alignment.CenterVertically
-                        )
+                // 2. ФИЛЬТРЫ (Горизонтальный скролл)
+                // span = { GridItemSpan(maxLineSpan) } означает "занять всю ширину"
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    // Лучше использовать LazyRow для скролла фильтров
+                    LazyRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(Dimen.medium),
+                        // contentPadding добавляет отступы, чтобы элементы не прилипали к краям при скролле
+                        contentPadding = PaddingValues(horizontal = 4.dp)
                     ) {
-                        filters.forEach { item ->
+                        items(filters) { item ->
                             FilterItem(
                                 item = item
                             ) {
@@ -103,167 +104,74 @@ fun MainListScreen() {
                     }
                 }
 
+                // ЛОГИКА ОТОБРАЖЕНИЯ (Выбран фильтр или Главная)
+
                 if (selectedFilter.isSelected) {
-                    item(span = StaggeredGridItemSpan.FullLine) {
-                        Text(
-                            text = stringResource(selectedFilter.title),
-                            style = MaterialTheme.typography.titleMedium,
-                        )
+                    // Заголовок фильтра
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        SectionTitle(title = stringResource(selectedFilter.title))
                     }
 
-                    // Выбранный фильтр
-                    itemsIndexed(viewModel.allFood.value.filter { it.foodType == selectedFilter.foodType }) { index, item ->
-                        FoodCard(
-                            item = item,
-                            modifier = Modifier.fillMaxWidth(),
-                            onGetColor = { imageRes, context ->
-                                viewModel.getBackgroundColorForFood(imageRes, context)
-                            },
-                            onGetTextColor = { imageRes, context ->
-                                viewModel.getTextForColorForFood(imageRes, context)
-                            }
-                        )
+                    // Элементы фильтра
+                    itemsIndexed(
+                        items = viewModel.allFood.value.filter { it.foodType == selectedFilter.foodType }
+                    ) { _, item ->
+                        FoodCardItem(item, viewModel)
                     }
-                }
+                } else {
+                    // --- ГЛАВНАЯ СТРАНИЦА ---
 
-                if (!selectedFilter.isSelected) {
-                    // Полезно утром
-                    item(span = StaggeredGridItemSpan.FullLine) {
-                        Text(
-                            text = stringResource(R.string.for_breakfast),
-                            style = MaterialTheme.typography.titleMedium,
-                        )
+                    // Секция: Завтрак
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        SectionTitle(title = stringResource(R.string.for_breakfast))
+                    }
+                    itemsIndexed(breakfastItems) { _, item ->
+                        FoodCardItem(item, viewModel)
                     }
 
-                    // Элементы еды (завтрак)
-                    itemsIndexed(breakfastItems) { index, item ->
-                        FoodCard(
-                            item = item,
-                            modifier = Modifier.fillMaxWidth(),
-                            onGetColor = { imageRes, context ->
-                                viewModel.getBackgroundColorForFood(imageRes, context)
-                            },
-                            onGetTextColor = { imageRes, context ->
-                                viewModel.getTextForColorForFood(imageRes, context)
-                            }
-                        )
+                    // Секция: Клетчатка
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        SectionTitle(title = stringResource(R.string.with_fiber))
+                    }
+                    itemsIndexed(fiberItems) { _, item ->
+                        FoodCardItem(item, viewModel)
                     }
 
-                    // С клетчаткой
-                    item(span = StaggeredGridItemSpan.FullLine) {
-                        Text(
-                            text = stringResource(R.string.with_fiber),
-                            style = MaterialTheme.typography.titleMedium,
-                        )
+                    // Секция: Белок
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        SectionTitle(title = stringResource(R.string.protein_sources))
                     }
-
-                    itemsIndexed(fiberItems) { index, item ->
-                        Log.d("TAG", index.toString())
-                        FoodCard(
-                            item = item,
-                            modifier = Modifier.fillMaxWidth(),
-                            onGetColor = { imageRes, context ->
-                                viewModel.getBackgroundColorForFood(imageRes, context)
-                            },
-                            onGetTextColor = { imageRes, context ->
-                                viewModel.getTextForColorForFood(imageRes, context)
-                            }
-                        )
-                    }
-
-                    // Суперфуды
-//                item(span = StaggeredGridItemSpan.FullLine) {
-//                    Text(
-//                        text = stringResource(R.string.superfoods),
-//                        style = MaterialTheme.typography.titleMedium,
-//                        modifier = Modifier.padding(
-//                            start = Dimen.medium,
-//                            end = Dimen.medium
-//                        )
-//                    )
-//                }
-//
-//                itemsIndexed(superfoodsItems) { _, item ->
-//                    FoodCard(
-//                        item = item,
-//                        modifier = Modifier.fillMaxWidth(),
-//                        onGetColor = { imageRes, context ->
-//                            viewModel.getBackgroundColorForFood(imageRes, context)
-//                        },
-//                        onGetTextColor = { imageRes, context ->
-//                            viewModel.getTextForColorForFood(imageRes, context)
-//                        }
-//                    )
-//                }
-
-                    // Источники белка (proteins > 15г)
-                    item(span = StaggeredGridItemSpan.FullLine) {
-                        Text(
-                            text = stringResource(R.string.protein_sources),
-                            style = MaterialTheme.typography.titleMedium,
-                        )
-                    }
-
                     itemsIndexed(heavyProtein) { _, item ->
-                        FoodCard(
-                            item = item,
-                            modifier = Modifier.fillMaxWidth(),
-                            onGetColor = { imageRes, context ->
-                                viewModel.getBackgroundColorForFood(imageRes, context)
-                            },
-                            onGetTextColor = { imageRes, context ->
-                                viewModel.getTextForColorForFood(imageRes, context)
-                            }
-                        )
+                        FoodCardItem(item, viewModel)
                     }
 
-                // Полезные жиры (омега-3 + орехи + авокадо + рыба)
-                item(span = StaggeredGridItemSpan.FullLine) {
-                    Text(
-                        text = stringResource(R.string.healthy_fats),
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(
-                            start = Dimen.medium,
-                            end = Dimen.medium
-                        )
-                    )
-                }
-
-                itemsIndexed(healthyFatsItems) { _, item ->
-                    FoodCard(
-                        item = item,
-                        modifier = Modifier.fillMaxWidth(),
-                        onGetColor = { imageRes, context ->
-                            viewModel.getBackgroundColorForFood(imageRes, context)
-                        },
-                        onGetTextColor = { imageRes, context ->
-                            viewModel.getTextForColorForFood(imageRes, context)
-                        }
-                    )
-                }
-                }
-
-                // Нижний отступ
-                item(span = StaggeredGridItemSpan.FullLine) {
-                    Spacer(modifier = Modifier.height(100.dp))
+                    // Секция: Жиры
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        SectionTitle(title = stringResource(R.string.healthy_fats))
+                    }
+                    itemsIndexed(healthyFatsItems) { _, item ->
+                        FoodCardItem(item, viewModel)
+                    }
                 }
             }
 
-            // Градиент и TopBar остаются без изменений
+            // --- ВЕРХНЯЯ ПАНЕЛЬ (Top Bar) ---
+            // Остается без изменений, так как лежит поверх списка в Box
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.TopCenter)
-                    .height(48.dp)
+                    .height(90.dp) // Чуть увеличим зону фона
+                    // Добавляем blur (размытие фона списка под хедером) - iOS Style
+                    // Работает на Android 12+, на старых просто будет прозрачным
+                    // .blur(20.dp) // Раскомментируй, если minSdk >= 31
                     .background(
                         brush = Brush.verticalGradient(
                             colors = listOf(
-                                MaterialTheme.colorScheme.background,
-                                MaterialTheme.colorScheme.background,
+                                MaterialTheme.colorScheme.background.copy(alpha = 0.95f),
+                                MaterialTheme.colorScheme.background.copy(alpha = 0.8f),
                                 Color.Transparent
-                            ),
-                            startY = 0f,
-                            endY = Float.POSITIVE_INFINITY
+                            )
                         )
                     )
             )
@@ -271,7 +179,6 @@ fun MainListScreen() {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 0.dp)
                     .align(Alignment.TopCenter)
             ) {
                 Spacer(modifier = Modifier.height(40.dp))
@@ -286,4 +193,28 @@ fun MainListScreen() {
             }
         }
     }
+}
+
+@Composable
+fun SectionTitle(title: String) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.titleLarge.copy(
+            fontWeight = FontWeight.Bold
+        ),
+        modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
+    )
+}
+
+@Composable
+fun FoodCardItem(item: Food, viewModel: ListViewModel) {
+    FoodCard(
+        item = item,
+        modifier = Modifier.fillMaxWidth(),
+        onGetColor = { imageRes, context ->
+            viewModel.getBackgroundColorForFood(imageRes, context)
+        },
+        onLikeClick = {
+        }
+    )
 }
