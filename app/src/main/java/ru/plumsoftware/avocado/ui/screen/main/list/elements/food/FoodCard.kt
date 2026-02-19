@@ -214,6 +214,17 @@ fun FoodCard(
                                     color = Color(0xFFD59B02)
                                 )
                             )
+                        } else {
+                            // Улеводы
+                            Text(
+                                text = "${item.kpfc_100g.carbohydrates.toInt()}г углеводов",
+                                maxLines = 1,
+                                style = MaterialTheme.typography.labelMedium.copy(
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Color(0xFF5E8C31)
+                                ),
+                                overflow = TextOverflow.Ellipsis
+                            )
                         }
                         // Клтчатка
                     } else if (item.foodType == FoodType.VEGETABLE)  {
