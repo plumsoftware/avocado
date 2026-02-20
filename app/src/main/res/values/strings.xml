@@ -48,6 +48,39 @@
     <string name="mushrooms">Грибы</string>
     <string name="seafood">Морепродукты</string>
 
+    <!-- ОПИСАНИЕ ПОЛЬЗЫ (Healthy For) -->
+    <!-- Витамины -->
+    <string name="desc_vitamin_a">Для острого зрения, здоровья кожи и иммунитета</string>
+    <string name="desc_vitamin_b1">Энергия, работа мозга и нервной системы</string>
+    <string name="desc_vitamin_b2">Обмен веществ, здоровье глаз и кожи</string>
+    <string name="desc_vitamin_b3">Здоровье кожи, пищеварение и нервная система</string>
+    <string name="desc_vitamin_b5">Синтез гормонов, заживление ран и энергия</string>
+    <string name="desc_vitamin_b6">Крепкие нервы, иммунитет и выработка серотонина</string>
+    <string name="desc_vitamin_b7">Красота волос, кожи и прочность ногтей</string>
+    <string name="desc_vitamin_b9">Рост клеток, кроветворение и здоровье будущих мам</string>
+    <string name="desc_vitamin_b12">Здоровая кровь, нервная система и память</string>
+    <string name="desc_vitamin_c">Мощный иммунитет, синтез коллагена и молодость</string>
+    <string name="desc_vitamin_d">Крепкие кости, зубы и защита от депрессии</string>
+    <string name="desc_vitamin_e">Антиоксидант, защита клеток от старения</string>
+    <string name="desc_vitamin_k">Свертываемость крови и прочность костей</string>
+
+    <!-- Минералы -->
+    <string name="desc_calcium">Основа костей и зубов, работа мышц</string>
+    <string name="desc_magnesium">Антистресс, здоровье сердца и крепкий сон</string>
+    <string name="desc_zinc">Чистая кожа, иммунитет и мужское здоровье</string>
+    <string name="desc_iron">Транспорт кислорода, гемоглобин и энергия</string>
+    <string name="desc_potassium">Здоровье сердца, сосудов и баланс жидкости</string>
+    <string name="desc_selenium">Здоровье щитовидной железы и иммунитет</string>
+    <string name="desc_iodine">Энергия, работа мозга и щитовидной железы</string>
+    <string name="desc_chromium">Контроль сахара в крови и уменьшение тяги к сладкому</string>
+    <string name="desc_copper">Эластичность сосудов и усвоение железа</string>
+    <string name="desc_manganese">Обмен веществ, здоровье хрящей и костей</string>
+    <string name="desc_phosphorus">Здоровье костей, зубов и выработка энергии</string>
+
+    <!-- Жирные кислоты и вещества -->
+    <string name="desc_omega3">Здоровье сердца, мозга и эластичность сосудов</string>
+    <string name="desc_coenzyme_q10">Энергия для клеток и замедление старения</string>
+
     <!-- Для чего-->
     <string name="for_breakfast">Полезно на завтрак</string>
     <string name="with_fiber">С клетчаткой</string>

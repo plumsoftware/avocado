@@ -12,8 +12,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Eco
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.NightsStay
+import androidx.compose.material.icons.filled.Restaurant
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.WbSunny
+import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -23,24 +29,26 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import ru.plumsoftware.avocado.data.base.model.food.Food
 import ru.plumsoftware.avocado.data.base.model.healthy.Kpfc
 import ru.plumsoftware.avocado.ui.modifier.iosClickable
 import ru.plumsoftware.avocado.ui.screen.main.list.getLightenedColor
-import ru.plumsoftware.avocado.R
+import ru.plumsoftware.avocado.data.base.model.food.TimeForFood
 import ru.plumsoftware.avocado.ui.screen.details.elements.IOSPopup
 import ru.plumsoftware.avocado.ui.theme.Dimen
 
 // Высота шапки с картинкой
 private val HEADER_HEIGHT = 400.dp
 
-@OptIn(ExperimentalLayoutApi::class) // Для FlowRow
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ProductDetailScreen(
     item: Food,
@@ -52,7 +60,7 @@ fun ProductDetailScreen(
     val context = LocalContext.current
     val scrollState = rememberScrollState()
 
-    // 1. ГЕНЕРАЦИЯ ЦВЕТОВ (Для градиента шапки оставляем логику из картинки, так красиво)
+    // Цвета
     val baseColorInt = remember(item.imageRes) { onGetColor(item.imageRes, context) }
     val colorStart = remember(baseColorInt) { Color(getLightenedColor(baseColorInt, 0.6f)) }
     val colorEnd = remember(baseColorInt) { Color(getLightenedColor(baseColorInt, 0.2f)) }
@@ -61,7 +69,7 @@ fun ProductDetailScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background) // ИЗМЕНЕНО: Фон из темы
+            .background(MaterialTheme.colorScheme.background)
     ) {
         // --- 1. PARALLAX HEADER ---
         Box(
@@ -103,23 +111,22 @@ fun ProductDetailScreen(
         ) {
             Spacer(modifier = Modifier.height(HEADER_HEIGHT - 40.dp))
 
-            // Лист с информацией
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .defaultMinSize(minHeight = 800.dp)
                     .clip(RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp))
-                    .background(MaterialTheme.colorScheme.surface) // ИЗМЕНЕНО: Цвет поверхности (Белый/Темный)
+                    .background(MaterialTheme.colorScheme.surface)
                     .padding(Dimen.large)
             ) {
-                // "Ручка" шторки
+                // "Ручка"
                 Box(
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
                         .width(40.dp)
                         .height(5.dp)
                         .clip(RoundedCornerShape(5.dp))
-                        .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)) // ИЗМЕНЕНО
+                        .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f))
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))
@@ -129,22 +136,32 @@ fun ProductDetailScreen(
                     text = stringResource(item.titleRes),
                     style = MaterialTheme.typography.displaySmall.copy(
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface // ИЗМЕНЕНО: Цвет текста
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 )
 
-                // Калорийность
-                Text(
-                    text = "${item.kpfc_100g.kals} ккал",
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant // ИЗМЕНЕНО: Вторичный текст
-                    ),
-                    modifier = Modifier.padding(bottom = Dimen.large)
-                )
+                // Блок: Калории + Время приема пищи (В одну строку или рядом)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = Dimen.large),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "${item.kpfc_100g.kals} ккал",
+                        style = MaterialTheme.typography.headlineMedium.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    )
 
-                // --- КБЖУ БЛОК ---
-                MacrosBlock(item.kpfc_100g)
+                    // НОВОЕ: Карточка времени
+                    BestTimeCard(item.timeForFood)
+                }
+
+                // --- НОВЫЕ ЯРКИЕ КБЖУ (iOS Style) ---
+                BrightMacrosBlock(item.kpfc_100g)
 
                 Spacer(modifier = Modifier.height(32.dp))
 
@@ -156,14 +173,12 @@ fun ProductDetailScreen(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         if (item.kpfc_100g.omega3 >= 0.1) {
-                            // Для цветных чипсов лучше использовать контейнеры из темы,
-                            // но если нужны специфичные цвета (оранжевый/зеленый), оставим их,
-                            // но убедимся, что текст читается.
                             SpecialChip(
                                 title = "Омега-3",
                                 value = "${item.kpfc_100g.omega3}г",
-                                backgroundColor = Color(0xFFFFF3E0), // Можно заменить на tertiaryContainer
-                                contentColor = Color(0xFFE65100)
+                                // Золотой
+                                backgroundColor = Color(0xFFFFF8E1),
+                                contentColor = Color(0xFFFF8F00)
                             )
                         }
 
@@ -171,7 +186,8 @@ fun ProductDetailScreen(
                             SpecialChip(
                                 title = "Клетчатка",
                                 value = "${item.kpfc_100g.fiber}г",
-                                backgroundColor = Color(0xFFE8F5E9), // Можно заменить на secondaryContainer
+                                // Зеленый
+                                backgroundColor = Color(0xFFE8F5E9),
                                 contentColor = Color(0xFF2E7D32)
                             )
                         }
@@ -183,13 +199,13 @@ fun ProductDetailScreen(
                 if (item.vitamins.isNotEmpty()) {
                     DetailSectionTitle("Витамины")
                     FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         item.vitamins.forEach { vitamin ->
                             VitaminChip(
                                 text = stringResource(vitamin.title),
-                                healthyForRes = vitamin.healthyFor // Передаем ID описания
+                                healthyForRes = vitamin.healthyFor
                             )
                         }
                     }
@@ -200,23 +216,28 @@ fun ProductDetailScreen(
                 if (item.minerals.isNotEmpty()) {
                     DetailSectionTitle("Минералы")
                     FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         item.minerals.forEach { mineral ->
                             MineralChip(
                                 text = stringResource(mineral.title),
-                                healthyForRes = mineral.healthyFor // Передаем ID описания
+                                healthyForRes = mineral.healthyFor
                             )
                         }
                     }
                 }
 
+                Spacer(modifier = Modifier.height(32.dp))
+
+                // --- DISCLAIMER (ПЛАШКА С ПРЕДУПРЕЖДЕНИЕМ) ---
+                DisclaimerCard()
+
                 Spacer(modifier = Modifier.height(100.dp))
             }
         }
 
-        // --- 3. КНОПКИ НАВИГАЦИИ ---
+        // --- НАВИГАЦИЯ ---
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -227,7 +248,7 @@ fun ProductDetailScreen(
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back",
-                    tint = MaterialTheme.colorScheme.onSurface // ИЗМЕНЕНО: Цвет иконки от темы
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
 
@@ -235,55 +256,108 @@ fun ProductDetailScreen(
                 Icon(
                     imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                     contentDescription = "Favorite",
-                    tint = if (isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant // ИЗМЕНЕНО
+                    tint = if (isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
     }
 }
 
-// --- ОБНОВЛЕННЫЕ UI ЭЛЕМЕНТЫ ---
-
 @Composable
-fun MacrosBlock(kpfc: Kpfc) {
+fun BrightMacrosBlock(kpfc: Kpfc) {
+    // Используем Row с весами, чтобы карточки были одинаковой ширины
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(24.dp))
-            // ИЗМЕНЕНО: Используем Surface Variant (светло-серый в лайт, темно-серый в дарк)
-            .background(MaterialTheme.colorScheme.surfaceVariant)
-            .padding(vertical = 20.dp, horizontal = Dimen.medium),
-        horizontalArrangement = Arrangement.SpaceAround
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // Цвета индикаторов (Зеленый/Оранжевый/Синий) лучше оставить хардкодом,
-        // так как это стандартные семантические цвета БЖУ, они видны на обоих темах.
-        MacroItem(value = "${kpfc.proteins}г", label = "Белки", color = Color(0xFF34C759))
-        MacroItem(value = "${kpfc.fats}г", label = "Жиры", color = Color(0xFFFF9500))
-        MacroItem(value = "${kpfc.carbohydrates}г", label = "Углев.", color = Color(0xFF007AFF))
+        // Белки (Зеленый Apple Health)
+        BrightMacroCard(
+            modifier = Modifier.weight(1f),
+            value = "${kpfc.proteins}",
+            label = "Белки",
+            // Фон: яркий, но полупрозрачный
+            backgroundColor = Color(0xFF34C759).copy(alpha = 0.15f),
+            // Текст: насыщенный
+            contentColor = Color(0xFF248A3D)
+        )
+
+        // Жиры (Оранжевый)
+        BrightMacroCard(
+            modifier = Modifier.weight(1f),
+            value = "${kpfc.fats}",
+            label = "Жиры",
+            backgroundColor = Color(0xFFFF9500).copy(alpha = 0.15f),
+            contentColor = Color(0xFFC97600)
+        )
+
+        // Углеводы (Синий)
+        BrightMacroCard(
+            modifier = Modifier.weight(1f),
+            value = "${kpfc.carbohydrates}",
+            label = "Углев.",
+            backgroundColor = Color(0xFF007AFF).copy(alpha = 0.15f),
+            contentColor = Color(0xFF0056B3)
+        )
     }
 }
 
 @Composable
-fun MacroItem(value: String, label: String, color: Color) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(
-            modifier = Modifier
-                .size(width = 40.dp, height = 6.dp)
-                .clip(RoundedCornerShape(3.dp))
-                .background(color)
-        )
-        Spacer(modifier = Modifier.height(Dimen.mediumAboveHalf))
+fun BrightMacroCard(
+    modifier: Modifier = Modifier,
+    value: String,
+    label: String,
+    backgroundColor: Color,
+    contentColor: Color
+) {
+    Column(
+        modifier = modifier
+            .clip(RoundedCornerShape(20.dp))
+            .background(backgroundColor)
+            .padding(vertical = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
         Text(
             text = value,
-            style = MaterialTheme.typography.titleMedium.copy(
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurfaceVariant // ИЗМЕНЕНО
+            style = MaterialTheme.typography.titleLarge.copy( // Крупнее
+                fontWeight = FontWeight.ExtraBold, // Жирнее
+                color = contentColor
             )
         )
         Text(
             text = label,
-            style = MaterialTheme.typography.bodySmall.copy(
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f) // ИЗМЕНЕНО
+            style = MaterialTheme.typography.bodyMedium.copy(
+                fontWeight = FontWeight.Medium,
+                color = contentColor.copy(alpha = 0.8f)
+            )
+        )
+    }
+}
+
+@Composable
+fun BestTimeCard(time: TimeForFood) {
+    val (text, icon) = getTimeForFoodResources(time)
+
+    // Стиль iOS чипса (серый фон, темная иконка)
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .clip(RoundedCornerShape(50)) // Полный овал
+            .background(MaterialTheme.colorScheme.surfaceContainerHigh) // Адаптивный серый
+            .padding(horizontal = 12.dp, vertical = 6.dp)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.size(16.dp),
+            tint = MaterialTheme.colorScheme.onSurface
+        )
+        Spacer(modifier = Modifier.width(6.dp))
+        Text(
+            text = text,
+            style = MaterialTheme.typography.labelMedium.copy(
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurface
             )
         )
     }
@@ -434,6 +508,67 @@ fun SpecialChip(
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.Bold,
                     color = contentColor
+                )
+            )
+        }
+    }
+}
+
+@Composable
+fun getTimeForFoodResources(time: TimeForFood): Pair<String, ImageVector> {
+    return when (time) {
+        TimeForFood.BREAKFAST -> "Лучше на завтрак" to Icons.Default.WbSunny // Или R.drawable.ic_sun
+        TimeForFood.LUNCH -> "Идеально на обед" to Icons.Default.Restaurant
+        TimeForFood.DINNER -> "Легкий ужин" to Icons.Default.NightsStay // Или R.drawable.ic_moon
+        TimeForFood.SNACK -> "Полезный перекус" to Icons.Default.Eco
+        TimeForFood.ANY -> "В любое время" to Icons.Default.Schedule
+    }
+}
+
+@Composable
+fun DisclaimerCard() {
+    // Apple System Orange (Стандартный цвет предупреждений в iOS)
+    // Он хорошо читается и на светлом, и на темном.
+    val warningColor = Color(0xFFFF9F0A)
+
+    // Адаптивный фон: Берем цвет предупреждения и делаем его очень прозрачным.
+    // На белом это будет пастельно-оранжевый.
+    // На черном это будет темно-коричневатый (не слепит).
+    val backgroundColor = warningColor.copy(alpha = 0.12f)
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(Dimen.mediumAboveHalf)) // Скругление как у уведомлений
+            .background(backgroundColor)
+            .padding(Dimen.medium),
+        verticalAlignment = Alignment.Top // Иконка сверху, если текст в 2 строки
+    ) {
+        Icon(
+            imageVector = Icons.Rounded.Warning,
+            contentDescription = "AI Warning",
+            tint = warningColor,
+            modifier = Modifier.size(20.dp) // Аккуратный размер
+        )
+
+        Spacer(modifier = Modifier.width(Dimen.mediumAboveHalf))
+
+        Column {
+            Text(
+                text = "Важно знать",
+                style = MaterialTheme.typography.labelLarge.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    color = warningColor // Заголовок в цвет иконки
+                )
+            )
+            Spacer(modifier = Modifier.height(Dimen.extraSmall))
+            Text(
+                text = "Содержимое сгенерировано нейросетью. Информация носит справочный характер. Пожалуйста, проконсультируйтесь с врачом.",
+                style = MaterialTheme.typography.bodySmall.copy(
+                    // Текст берем от темы (Белый в Dark / Черный в Light)
+                    // Добавляем прозрачность, чтобы он не был слишком контрастным ("вторичный текст")
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+                    lineHeight = 18.sp
                 )
             )
         }
