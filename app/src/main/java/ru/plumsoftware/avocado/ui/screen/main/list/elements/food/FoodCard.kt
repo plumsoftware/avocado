@@ -63,6 +63,7 @@ fun FoodCard(
     isFavorite: Boolean = false, // Приходит из ViewModel
     onLikeClick: () -> Unit = {},
     onGetColor: (Int, Context) -> Int,
+    onFoodClick: (Food) -> Unit,
     modifier: Modifier
 ) {
     val context = LocalContext.current
@@ -101,9 +102,9 @@ fun FoodCard(
                 ambientColor = Color.Black.copy(alpha = 0.05f)
             )
             .clip(cardShape)
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.surface)
             .iosClickable {
-
+                onFoodClick(item)
             }
     ) {
         Column {
@@ -141,7 +142,7 @@ fun FoodCard(
                         .padding(8.dp)
                         .size(32.dp)
                         .clip(CircleShape)
-                        .background(Color.White.copy(alpha = 0.7f))
+                        .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.7f))
                         .iosClickable { onLikeClick() },
                     contentAlignment = Alignment.Center
                 ) {
@@ -165,7 +166,7 @@ fun FoodCard(
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 17.sp,
-                        color = Color.Black
+                        color = MaterialTheme.colorScheme.onSurface
                     ),
                     overflow = TextOverflow.Ellipsis
                 )

@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import ru.plumsoftware.avocado.data.user_preferences.UserPreferencesRepository
 import ru.plumsoftware.avocado.ui.screen.main.elements.BottomNavBar
 import ru.plumsoftware.avocado.ui.screen.main.list.MainListScreen
@@ -29,7 +30,8 @@ import ru.plumsoftware.avocado.ui.screen.main.settings.SettingsViewModel
 @Composable
 fun MainScreen(
     userPreferencesRepository: UserPreferencesRepository,
-    settingsViewModel: SettingsViewModel
+    settingsViewModel: SettingsViewModel,
+    navController: NavHostController
 ) {
     val viewModel: MainViewModel = viewModel(
         factory = MainViewModel.Companion.MainViewModelFactory(userPreferencesRepository = userPreferencesRepository)
@@ -48,7 +50,9 @@ fun MainScreen(
         ) {
             when (currentRoute) {
                 is MainScreenStates.List -> {
-                    MainListScreen()
+                    MainListScreen(
+                        navController = navController
+                    )
                 }
 
                 MainScreenStates.Fav -> {}

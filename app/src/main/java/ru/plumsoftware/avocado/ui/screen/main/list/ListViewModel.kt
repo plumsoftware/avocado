@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import ru.plumsoftware.avocado.data.base.model.food.Food
 import ru.plumsoftware.avocado.data.base.model.food.allFood
 import ru.plumsoftware.avocado.ui.log
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.filter.Filter
@@ -76,6 +77,11 @@ class ListViewModel : ViewModel() {
                 Filter.empty()
             }
         }
+    }
+
+    fun getFoodById(id: String): Food? {
+        // Ищем в полном списке
+        return allFood.value.find { it.id == id }
     }
 
     companion object {

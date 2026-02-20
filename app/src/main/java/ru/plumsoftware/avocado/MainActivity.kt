@@ -7,25 +7,25 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.runtime.SideEffect
+import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalView
+import androidx.compose.runtime.remember
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import ru.plumsoftware.avocado.data.user_preferences.UserPreferencesRepository
 import ru.plumsoftware.avocado.data.user_preferences.util.AppTheme
 import ru.plumsoftware.avocado.data.user_preferences.util.userPreferencesDataStore
 import ru.plumsoftware.avocado.ui.screen.AppDestination
+import ru.plumsoftware.avocado.ui.screen.details.ProductDetailScreen
 import ru.plumsoftware.avocado.ui.screen.main.MainScreen
+import ru.plumsoftware.avocado.ui.screen.main.list.ListViewModel
 import ru.plumsoftware.avocado.ui.screen.main.settings.SettingsViewModel
 import ru.plumsoftware.avocado.ui.theme.AvocadoTheme
 
@@ -82,8 +82,35 @@ class MainActivity : ComponentActivity() {
                     composable<AppDestination.MainScreen> {
                         MainScreen(
                             userPreferencesRepository = userPreferencesRepository,
-                            settingsViewModel = settingsViewModel
+                            settingsViewModel = settingsViewModel,
+                            navController = navController
                         )
+                    }
+
+                    composable<AppDestination.DetailedScreen> { backStackEntry ->
+                        // 1. Достаем аргументы (Type-Safe!)
+                        val args = backStackEntry.toRoute<AppDestination.DetailedScreen>()
+
+                        // 2. Ищем продукт через ViewModel
+                        // (Предполагаем, что viewModel ты инжектишь или получаешь выше)
+                        val viewModel: ListViewModel = viewModel(factory = ListViewModel.Companion.ListViewModelFactory())
+                        val foodItem = remember { viewModel.getFoodById(args.foodId) }
+
+                        // 3. Отображаем экран (если продукт найден)
+                        if (foodItem != null) {
+                            ProductDetailScreen(
+                                item = foodItem,
+                                isFavorite = false, // Тут подключишь реальное состояние лайка из VM
+                                onBackClick = { navController.navigateUp() },
+                                onLikeClick = {
+//                                    viewModel.onLikeClick(foodItem.id)
+                                },
+                                onGetColor = { res, ctx -> viewModel.getBackgroundColorForFood(res, ctx) }
+                            )
+                        } else {
+                            // Фолбэк, если ID неверный (маловероятно, но для надежности)
+                            Text("Продукт не найден")
+                        }
                     }
                 }
             }

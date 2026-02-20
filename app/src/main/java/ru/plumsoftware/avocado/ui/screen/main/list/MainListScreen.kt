@@ -1,12 +1,9 @@
 package ru.plumsoftware.avocado.ui.screen.main.list
 
-import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,10 +16,6 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
-import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -37,16 +30,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import ru.plumsoftware.avocado.R
 import ru.plumsoftware.avocado.data.base.model.food.Food
-import ru.plumsoftware.avocado.data.base.model.food.allFood
+import ru.plumsoftware.avocado.ui.screen.AppDestination
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.IOSTopBar
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.filter.FilterItem
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.food.FoodCard
 import ru.plumsoftware.avocado.ui.theme.Dimen
 
 @Composable
-fun MainListScreen() {
+fun MainListScreen(navController: NavHostController) {
     val viewModel: ListViewModel = viewModel(
         factory = ListViewModel.Companion.ListViewModelFactory()
     )
@@ -116,7 +110,11 @@ fun MainListScreen() {
                     itemsIndexed(
                         items = viewModel.allFood.value.filter { it.foodType == selectedFilter.foodType }
                     ) { _, item ->
-                        FoodCardItem(item, viewModel)
+                        FoodCardItem(item, viewModel, onFoodClick = { foodId: Food ->
+                            navController.navigate(
+                                AppDestination.DetailedScreen(foodId = foodId.id)
+                            )
+                        })
                     }
                 } else {
                     // --- ГЛАВНАЯ СТРАНИЦА ---
@@ -126,7 +124,11 @@ fun MainListScreen() {
                         SectionTitle(title = stringResource(R.string.for_breakfast))
                     }
                     itemsIndexed(breakfastItems) { _, item ->
-                        FoodCardItem(item, viewModel)
+                        FoodCardItem(item, viewModel, onFoodClick = { foodId: Food ->
+                            navController.navigate(
+                                AppDestination.DetailedScreen(foodId = foodId.id)
+                            )
+                        })
                     }
 
                     // Секция: Клетчатка
@@ -134,7 +136,11 @@ fun MainListScreen() {
                         SectionTitle(title = stringResource(R.string.with_fiber))
                     }
                     itemsIndexed(fiberItems) { _, item ->
-                        FoodCardItem(item, viewModel)
+                        FoodCardItem(item, viewModel, onFoodClick = { foodId: Food ->
+                            navController.navigate(
+                                AppDestination.DetailedScreen(foodId = foodId.id)
+                            )
+                        })
                     }
 
                     // Секция: Белок
@@ -142,7 +148,11 @@ fun MainListScreen() {
                         SectionTitle(title = stringResource(R.string.protein_sources))
                     }
                     itemsIndexed(heavyProtein) { _, item ->
-                        FoodCardItem(item, viewModel)
+                        FoodCardItem(item, viewModel, onFoodClick = { foodId: Food ->
+                            navController.navigate(
+                                AppDestination.DetailedScreen(foodId = foodId.id)
+                            )
+                        })
                     }
 
                     // Секция: Жиры
@@ -150,7 +160,11 @@ fun MainListScreen() {
                         SectionTitle(title = stringResource(R.string.healthy_fats))
                     }
                     itemsIndexed(healthyFatsItems) { _, item ->
-                        FoodCardItem(item, viewModel)
+                        FoodCardItem(item, viewModel, onFoodClick = { foodId: Food ->
+                            navController.navigate(
+                                AppDestination.DetailedScreen(foodId = foodId.id)
+                            )
+                        })
                     }
                 }
             }
@@ -207,7 +221,7 @@ fun SectionTitle(title: String) {
 }
 
 @Composable
-fun FoodCardItem(item: Food, viewModel: ListViewModel) {
+fun FoodCardItem(item: Food, viewModel: ListViewModel, onFoodClick: (Food) -> Unit) {
     FoodCard(
         item = item,
         modifier = Modifier.fillMaxWidth(),
@@ -215,6 +229,9 @@ fun FoodCardItem(item: Food, viewModel: ListViewModel) {
             viewModel.getBackgroundColorForFood(imageRes, context)
         },
         onLikeClick = {
+        },
+        onFoodClick = { item ->
+            onFoodClick(item)
         }
     )
 }

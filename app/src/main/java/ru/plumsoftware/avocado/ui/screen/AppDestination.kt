@@ -6,4 +6,9 @@ object AppDestination {
 
     @Serializable
     data object MainScreen
+
+    @Serializable
+    data class DetailedScreen(
+        val foodId: String
+    )
 }
