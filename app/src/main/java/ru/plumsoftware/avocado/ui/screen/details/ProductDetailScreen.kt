@@ -579,40 +579,43 @@ fun SpecialChip(
 
 @Composable
 fun DisclaimerCard() {
-    val warningColor = Color(0xFFFF9F0A)
-    val backgroundColor = warningColor.copy(alpha = 0.12f)
+    val contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+    val backgroundColor = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.5f)
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(Dimen.mediumAboveHalf))
+            .clip(RoundedCornerShape(Dimen.medium)) // Скругление чуть меньше (более строгое)
             .background(backgroundColor)
             .padding(Dimen.medium),
         verticalAlignment = Alignment.Top
     ) {
+        // Иконка теперь серая и чуть меньше
         Icon(
-            imageVector = Icons.Rounded.Warning,
-            contentDescription = "Warning",
-            tint = warningColor,
-            modifier = Modifier.size(20.dp)
+            imageVector = Icons.Rounded.Warning, // Или Icons.Outlined.Info
+            contentDescription = "Disclaimer",
+            tint = contentColor.copy(alpha = 0.8f), // Чуть приглушаем
+            modifier = Modifier.size(18.dp)
         )
 
-        Spacer(modifier = Modifier.width(Dimen.mediumAboveHalf))
+        Spacer(modifier = Modifier.width(Dimen.medium))
 
         Column {
             Text(
-                text = stringResource(R.string.disclaimer_title), // Из ресурсов
-                style = MaterialTheme.typography.labelLarge.copy(
-                    fontWeight = FontWeight.SemiBold,
-                    color = warningColor
+                text = stringResource(R.string.disclaimer_title),
+                style = MaterialTheme.typography.labelMedium.copy( // Шрифт поменьше и строже
+                    fontWeight = FontWeight.Bold,
+                    color = contentColor
                 )
             )
-            Spacer(modifier = Modifier.height(Dimen.extraSmall))
+            Spacer(modifier = Modifier.height(2.dp)) // Меньше отступ
             Text(
-                text = stringResource(R.string.disclaimer_body), // Из ресурсов
+                text = stringResource(R.string.disclaimer_body),
                 style = MaterialTheme.typography.bodySmall.copy(
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
-                    lineHeight = 18.sp
+                    // Вторичный текст (серый)
+                    color = contentColor.copy(alpha = 0.7f),
+                    lineHeight = 16.sp,
+                    fontSize = 11.sp // Мелкий шрифт, как в юридических сносках
                 )
             )
         }
