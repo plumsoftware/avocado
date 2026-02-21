@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -41,12 +42,15 @@ import ru.plumsoftware.avocado.ui.theme.Dimen
 
 @Composable
 fun MainListScreen(navController: NavHostController) {
+    val context = LocalContext.current
+
     val viewModel: ListViewModel = viewModel(
-        factory = ListViewModel.Companion.ListViewModelFactory()
+        factory = ListViewModel.Companion.ListViewModelFactory(context.applicationContext)
     )
 
     val filters by viewModel.filters.collectAsState()
     val selectedFilter by viewModel.selectedFilter.collectAsState()
+    val favorites by viewModel.favoriteIds.collectAsState()
 
     // Списки продуктов
     val breakfastItems = viewModel.recomendedOnBreakfast.collectAsState().value
@@ -110,11 +114,12 @@ fun MainListScreen(navController: NavHostController) {
                     itemsIndexed(
                         items = viewModel.allFood.value.filter { it.foodType == selectedFilter.foodType }
                     ) { _, item ->
-                        FoodCardItem(item, viewModel, onFoodClick = { foodId: Food ->
-                            navController.navigate(
-                                AppDestination.DetailedScreen(foodId = foodId.id)
-                            )
-                        })
+                        FoodCardItem(
+                            item = item,
+                            isFavorite = favorites.contains(item.id),
+                            viewModel = viewModel,
+                            onFoodClick = { navController.navigate(AppDestination.DetailedScreen(foodId = it.id)) }
+                        )
                     }
                 } else {
                     // --- ГЛАВНАЯ СТРАНИЦА ---
@@ -124,11 +129,12 @@ fun MainListScreen(navController: NavHostController) {
                         SectionTitle(title = stringResource(R.string.for_breakfast))
                     }
                     itemsIndexed(breakfastItems) { _, item ->
-                        FoodCardItem(item, viewModel, onFoodClick = { foodId: Food ->
-                            navController.navigate(
-                                AppDestination.DetailedScreen(foodId = foodId.id)
-                            )
-                        })
+                        FoodCardItem(
+                            item = item,
+                            isFavorite = favorites.contains(item.id),
+                            viewModel = viewModel,
+                            onFoodClick = { navController.navigate(AppDestination.DetailedScreen(foodId = it.id)) }
+                        )
                     }
 
                     // Секция: Клетчатка
@@ -136,11 +142,12 @@ fun MainListScreen(navController: NavHostController) {
                         SectionTitle(title = stringResource(R.string.with_fiber))
                     }
                     itemsIndexed(fiberItems) { _, item ->
-                        FoodCardItem(item, viewModel, onFoodClick = { foodId: Food ->
-                            navController.navigate(
-                                AppDestination.DetailedScreen(foodId = foodId.id)
-                            )
-                        })
+                        FoodCardItem(
+                            item = item,
+                            isFavorite = favorites.contains(item.id),
+                            viewModel = viewModel,
+                            onFoodClick = { navController.navigate(AppDestination.DetailedScreen(foodId = it.id)) }
+                        )
                     }
 
                     // Секция: Белок
@@ -148,11 +155,12 @@ fun MainListScreen(navController: NavHostController) {
                         SectionTitle(title = stringResource(R.string.protein_sources))
                     }
                     itemsIndexed(heavyProtein) { _, item ->
-                        FoodCardItem(item, viewModel, onFoodClick = { foodId: Food ->
-                            navController.navigate(
-                                AppDestination.DetailedScreen(foodId = foodId.id)
-                            )
-                        })
+                        FoodCardItem(
+                            item = item,
+                            isFavorite = favorites.contains(item.id),
+                            viewModel = viewModel,
+                            onFoodClick = { navController.navigate(AppDestination.DetailedScreen(foodId = it.id)) }
+                        )
                     }
 
                     // Секция: Жиры
@@ -160,11 +168,12 @@ fun MainListScreen(navController: NavHostController) {
                         SectionTitle(title = stringResource(R.string.healthy_fats))
                     }
                     itemsIndexed(healthyFatsItems) { _, item ->
-                        FoodCardItem(item, viewModel, onFoodClick = { foodId: Food ->
-                            navController.navigate(
-                                AppDestination.DetailedScreen(foodId = foodId.id)
-                            )
-                        })
+                        FoodCardItem(
+                            item = item,
+                            isFavorite = favorites.contains(item.id),
+                            viewModel = viewModel,
+                            onFoodClick = { navController.navigate(AppDestination.DetailedScreen(foodId = it.id)) }
+                        )
                     }
                 }
             }
@@ -221,14 +230,21 @@ fun SectionTitle(title: String) {
 }
 
 @Composable
-fun FoodCardItem(item: Food, viewModel: ListViewModel, onFoodClick: (Food) -> Unit) {
+fun FoodCardItem(
+    item: Food,
+    isFavorite: Boolean,
+    viewModel: ListViewModel,
+    onFoodClick: (Food) -> Unit
+) {
     FoodCard(
         item = item,
+        isFavorite = isFavorite,
         modifier = Modifier.fillMaxWidth(),
         onGetColor = { imageRes, context ->
             viewModel.getBackgroundColorForFood(imageRes, context)
         },
         onLikeClick = {
+            viewModel.onLikeClick(item.id) // Обработка лайка
         },
         onFoodClick = { item ->
             onFoodClick(item)

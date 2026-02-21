@@ -3,16 +3,25 @@ package ru.plumsoftware.avocado.ui.screen.main.list
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import ru.plumsoftware.avocado.data.base.model.food.Food
 import ru.plumsoftware.avocado.data.base.model.food.allFood
+import ru.plumsoftware.avocado.data.database.AvocadoDatabase
+import ru.plumsoftware.avocado.data.favorite.FavoritesRepository
 import ru.plumsoftware.avocado.ui.log
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.filter.Filter
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.food.FoodColorCache
 
-class ListViewModel : ViewModel() {
+class ListViewModel(
+    private val favoritesRepository: FavoritesRepository
+) : ViewModel() {
     private val filters_ =
         MutableStateFlow(ru.plumsoftware.avocado.ui.screen.main.list.elements.filter.filters.toMutableList())
     val filters = filters_.asStateFlow()
@@ -37,7 +46,25 @@ class ListViewModel : ViewModel() {
     val allFood_ = MutableStateFlow(ru.plumsoftware.avocado.data.base.model.food.allFood)
     val allFood = allFood_.asStateFlow()
 
+    val favoriteIds: StateFlow<Set<String>> = favoritesRepository.favoriteIds
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptySet()
+        )
+
     private val colorCache = FoodColorCache()
+
+    fun onLikeClick(foodId: String) {
+        viewModelScope.launch {
+            favoritesRepository.toggleFavorite(foodId)
+        }
+    }
+
+    // Проверка для UI
+    fun isFavorite(foodId: String): Boolean {
+        return favoriteIds.value.contains(foodId)
+    }
 
     fun getBackgroundColorForFood(imageRes: Int, context: Context): Int {
         return colorCache.getBackgroundColor(imageRes, context)
@@ -85,12 +112,16 @@ class ListViewModel : ViewModel() {
     }
 
     companion object {
-        class ListViewModelFactory() :
-            ViewModelProvider.Factory {
+        class ListViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(ListViewModel::class.java)) {
+                    // 1. Создаем БД
+                    val db = AvocadoDatabase.getDatabase(context)
+                    // 2. Создаем Репозиторий
+                    val repo = FavoritesRepository(db.favoriteDao())
+                    // 3. Создаем VM
                     @Suppress("UNCHECKED_CAST")
-                    return ListViewModel() as T
+                    return ListViewModel(repo) as T
                 }
                 throw IllegalArgumentException("Unknown ViewModel class")
             }

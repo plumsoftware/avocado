@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -90,21 +91,25 @@ class MainActivity : ComponentActivity() {
                     composable<AppDestination.DetailedScreen> { backStackEntry ->
                         // 1. Достаем аргументы (Type-Safe!)
                         val args = backStackEntry.toRoute<AppDestination.DetailedScreen>()
+                        val context = LocalContext.current
 
                         // 2. Ищем продукт через ViewModel
                         // (Предполагаем, что viewModel ты инжектишь или получаешь выше)
-                        val viewModel: ListViewModel = viewModel(factory = ListViewModel.Companion.ListViewModelFactory())
+                        val viewModel: ListViewModel = viewModel(
+                            factory = ListViewModel.Companion.ListViewModelFactory(context.applicationContext)
+                        )
                         val foodItem = remember { viewModel.getFoodById(args.foodId) }
+
+                        // Подписываемся на лайки внутри детального экрана
+                        val favorites by viewModel.favoriteIds.collectAsState()
 
                         // 3. Отображаем экран (если продукт найден)
                         if (foodItem != null) {
                             ProductDetailScreen(
                                 item = foodItem,
-                                isFavorite = false, // Тут подключишь реальное состояние лайка из VM
-                                onBackClick = { navController.navigateUp() },
-                                onLikeClick = {
-//                                    viewModel.onLikeClick(foodItem.id)
-                                },
+                                isFavorite = favorites.contains(foodItem.id),
+                                onBackClick = { navController.popBackStack() },
+                                onLikeClick = { viewModel.onLikeClick(foodItem.id) },
                                 onGetColor = { res, ctx -> viewModel.getBackgroundColorForFood(res, ctx) }
                             )
                         } else {
