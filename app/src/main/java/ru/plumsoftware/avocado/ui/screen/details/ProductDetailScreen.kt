@@ -20,6 +20,8 @@ import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material.icons.rounded.Warning
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.HelpOutline
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -44,6 +46,7 @@ import ru.plumsoftware.avocado.ui.screen.main.list.getLightenedColor
 import ru.plumsoftware.avocado.data.base.model.food.TimeForFood
 import ru.plumsoftware.avocado.ui.screen.details.elements.IOSPopup
 import ru.plumsoftware.avocado.ui.theme.Dimen
+import ru.plumsoftware.avocado.R
 
 // Высота шапки с картинкой
 private val HEADER_HEIGHT = 400.dp
@@ -336,30 +339,66 @@ fun BrightMacroCard(
 
 @Composable
 fun BestTimeCard(time: TimeForFood) {
-    val (text, icon) = getTimeForFoodResources(time)
+    val (textRes, icon, color) = getTimeForFoodResources(time)
 
-    // Стиль iOS чипса (серый фон, темная иконка)
+    // Делаем фон очень прозрачным (пастельным), а контент насыщенным
+    val backgroundColor = color.copy(alpha = 0.15f)
+    val contentColor = color
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            .clip(RoundedCornerShape(50)) // Полный овал
-            .background(MaterialTheme.colorScheme.surfaceContainerHigh) // Адаптивный серый
+            .clip(RoundedCornerShape(50)) // Pill shape
+            .background(backgroundColor)
             .padding(horizontal = 12.dp, vertical = 6.dp)
     ) {
         Icon(
             imageVector = icon,
             contentDescription = null,
             modifier = Modifier.size(16.dp),
-            tint = MaterialTheme.colorScheme.onSurface
+            tint = contentColor
         )
         Spacer(modifier = Modifier.width(6.dp))
         Text(
-            text = text,
+            text = stringResource(textRes),
             style = MaterialTheme.typography.labelMedium.copy(
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface
+                color = contentColor
             )
         )
+    }
+}
+
+// Вспомогательная функция с цветами iOS
+@Composable
+fun getTimeForFoodResources(time: TimeForFood): Triple<Int, ImageVector, Color> {
+    return when (time) {
+        // Утро: Солнечный желто-оранжевый (System Orange)
+        TimeForFood.BREAKFAST -> Triple(
+            R.string.time_breakfast,
+            Icons.Default.WbSunny,
+            Color(0xFFFF9F0A)
+        )
+
+        // Обед: Свежий зеленый или мятный (System Green)
+        TimeForFood.LUNCH -> Triple(
+            R.string.time_lunch,
+            Icons.Default.Restaurant,
+            Color(0xFF34C759)
+        )
+
+        // Ужин: Спокойный Индиго (System Indigo)
+        TimeForFood.DINNER -> Triple(
+            R.string.time_dinner,
+            Icons.Default.NightsStay,
+            Color(0xFF5E5CE6)
+        )
+
+        // Перекус: Бирюзовый (System Teal)
+        TimeForFood.SNACK -> Triple(R.string.time_snack, Icons.Default.Eco, Color(0xFF30B0C7))
+
+        // Любое: Нейтральный серый (System Gray)
+        TimeForFood.ANY -> Triple(R.string.time_any, Icons.Default.Schedule, Color(0xFF8E8E93))
     }
 }
 
@@ -369,14 +408,12 @@ fun VitaminChip(
     @StringRes healthyForRes: Int
 ) {
     var showTooltip by remember { mutableStateOf(false) }
-    val context = LocalContext.current
-
-    // Если ресурса нет (0), то подсказки не будет
-    val hasInfo = true
+    // Если ресурса нет (0), считаем, что инфо нет
+    val hasInfo = healthyForRes != 0
 
     Box {
         // Сам Чип
-        Box(
+        Row(
             modifier = Modifier
                 .border(
                     1.dp,
@@ -384,13 +421,15 @@ fun VitaminChip(
                     RoundedCornerShape(Dimen.mediumAboveHalf)
                 )
                 .clip(RoundedCornerShape(Dimen.mediumAboveHalf))
-                // Добавляем клик только если есть инфо
+                // Если есть инфо - добавляем клик
                 .then(
                     if (hasInfo) {
                         Modifier.iosClickable { showTooltip = true }
                     } else Modifier
                 )
-                .padding(horizontal = Dimen.medium, vertical = Dimen.mediumHalf)
+                .padding(horizontal = Dimen.medium, vertical = Dimen.mediumHalf),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
         ) {
             Text(
                 text = text,
@@ -399,12 +438,24 @@ fun VitaminChip(
                     color = MaterialTheme.colorScheme.onSurface
                 )
             )
+
+            // Иконка-подсказка (Вопросик или Info)
+            if (hasInfo) {
+                Spacer(modifier = Modifier.width(6.dp))
+                Icon(
+                    imageVector = Icons.Outlined.Info, // Или Icons.Outlined.HelpOutline
+                    contentDescription = "Info",
+                    modifier = Modifier.size(16.dp), // Маленькая и аккуратная
+                    // Цвет текста, но полупрозрачный (вторичный)
+                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
+                )
+            }
         }
 
-        // Подсказка (появляется при showTooltip = true)
+        // Подсказка
         if (hasInfo) {
             IOSPopup(
-                text = if (healthyForRes != 0) stringResource(healthyForRes) else "Test",
+                text = stringResource(healthyForRes),
                 isVisible = showTooltip,
                 onDismiss = { showTooltip = false }
             )
@@ -418,13 +469,14 @@ fun MineralChip(
     @StringRes healthyForRes: Int
 ) {
     var showTooltip by remember { mutableStateOf(false) }
-    val hasInfo = true
+    val hasInfo = healthyForRes != 0
 
     Box {
-        Box(
+        Row(
             modifier = Modifier
                 .background(
-                    MaterialTheme.colorScheme.surfaceContainerHigh,
+                    // Чуть голубоватый серый (iOS System Fill) для минералов
+                    MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f),
                     RoundedCornerShape(Dimen.mediumAboveHalf)
                 )
                 .clip(RoundedCornerShape(Dimen.mediumAboveHalf))
@@ -433,19 +485,30 @@ fun MineralChip(
                         Modifier.iosClickable { showTooltip = true }
                     } else Modifier
                 )
-                .padding(horizontal = Dimen.medium, vertical = Dimen.mediumAboveHalf)
+                .padding(horizontal = Dimen.medium, vertical = Dimen.mediumAboveHalf),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = text,
                 style = MaterialTheme.typography.bodyMedium.copy(
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
                 )
             )
+
+            if (hasInfo) {
+                Spacer(modifier = Modifier.width(6.dp))
+                Icon(
+                    imageVector = Icons.Outlined.Info,
+                    contentDescription = "Info",
+                    modifier = Modifier.size(16.dp),
+                    tint = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.5f)
+                )
+            }
         }
 
         if (hasInfo) {
             IOSPopup(
-                text = if (healthyForRes != 0) stringResource(healthyForRes) else "Test",
+                text = stringResource(healthyForRes),
                 isVisible = showTooltip,
                 onDismiss = { showTooltip = false }
             )
@@ -515,58 +578,39 @@ fun SpecialChip(
 }
 
 @Composable
-fun getTimeForFoodResources(time: TimeForFood): Pair<String, ImageVector> {
-    return when (time) {
-        TimeForFood.BREAKFAST -> "Лучше на завтрак" to Icons.Default.WbSunny // Или R.drawable.ic_sun
-        TimeForFood.LUNCH -> "Идеально на обед" to Icons.Default.Restaurant
-        TimeForFood.DINNER -> "Легкий ужин" to Icons.Default.NightsStay // Или R.drawable.ic_moon
-        TimeForFood.SNACK -> "Полезный перекус" to Icons.Default.Eco
-        TimeForFood.ANY -> "В любое время" to Icons.Default.Schedule
-    }
-}
-
-@Composable
 fun DisclaimerCard() {
-    // Apple System Orange (Стандартный цвет предупреждений в iOS)
-    // Он хорошо читается и на светлом, и на темном.
     val warningColor = Color(0xFFFF9F0A)
-
-    // Адаптивный фон: Берем цвет предупреждения и делаем его очень прозрачным.
-    // На белом это будет пастельно-оранжевый.
-    // На черном это будет темно-коричневатый (не слепит).
     val backgroundColor = warningColor.copy(alpha = 0.12f)
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(Dimen.mediumAboveHalf)) // Скругление как у уведомлений
+            .clip(RoundedCornerShape(Dimen.mediumAboveHalf))
             .background(backgroundColor)
             .padding(Dimen.medium),
-        verticalAlignment = Alignment.Top // Иконка сверху, если текст в 2 строки
+        verticalAlignment = Alignment.Top
     ) {
         Icon(
             imageVector = Icons.Rounded.Warning,
-            contentDescription = "AI Warning",
+            contentDescription = "Warning",
             tint = warningColor,
-            modifier = Modifier.size(20.dp) // Аккуратный размер
+            modifier = Modifier.size(20.dp)
         )
 
         Spacer(modifier = Modifier.width(Dimen.mediumAboveHalf))
 
         Column {
             Text(
-                text = "Важно знать",
+                text = stringResource(R.string.disclaimer_title), // Из ресурсов
                 style = MaterialTheme.typography.labelLarge.copy(
                     fontWeight = FontWeight.SemiBold,
-                    color = warningColor // Заголовок в цвет иконки
+                    color = warningColor
                 )
             )
             Spacer(modifier = Modifier.height(Dimen.extraSmall))
             Text(
-                text = "Содержимое сгенерировано нейросетью. Информация носит справочный характер. Пожалуйста, проконсультируйтесь с врачом.",
+                text = stringResource(R.string.disclaimer_body), // Из ресурсов
                 style = MaterialTheme.typography.bodySmall.copy(
-                    // Текст берем от темы (Белый в Dark / Черный в Light)
-                    // Добавляем прозрачность, чтобы он не был слишком контрастным ("вторичный текст")
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
                     lineHeight = 18.sp
                 )

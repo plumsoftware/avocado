@@ -48,6 +48,18 @@
     <string name="mushrooms">Грибы</string>
     <string name="seafood">Морепродукты</string>
 
+
+    <!-- Время приема пищи -->
+    <string name="time_breakfast">Лучше на завтрак</string>
+    <string name="time_lunch">Идеально на обед</string>
+    <string name="time_dinner">Легкий ужин</string>
+    <string name="time_snack">Полезный перекус</string>
+    <string name="time_any">В любое время</string>
+
+    <!-- Disclaimer -->
+    <string name="disclaimer_title">Важно знать</string>
+    <string name="disclaimer_body">Содержимое сгенерировано нейросетью. Информация носит справочный характер. Пожалуйста, проконсультируйтесь с врачом.</string>
+
     <!-- ОПИСАНИЕ ПОЛЬЗЫ (Healthy For) -->
     <!-- Витамины -->
     <string name="desc_vitamin_a">Для острого зрения, здоровья кожи и иммунитета</string>
