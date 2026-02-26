@@ -56,6 +56,39 @@
     <string name="time_snack">Полезный перекус</string>
     <string name="time_any">В любое время</string>
 
+    <!-- Заголовки секций для Главного экрана (Dynamic) -->
+    <string name="section_weight_loss">Стройность и легкость</string>
+    <string name="section_muscle">Сила и рельеф</string>
+    <string name="section_skin">Сияющая кожа</string>
+    <string name="section_heart">Здоровое сердце</string>
+    <string name="section_energy">Энергия и тонус</string>
+    <string name="section_digestion">Комфортное пищеварение</string>
+    <string name="section_immunity">Крепкий иммунитет</string>
+    <string name="section_sleep">Для хорошего сна</string>
+
+    <!-- ЦЕЛИ ПОЛЬЗОВАТЕЛЯ (Onboarding) -->
+    <string name="goal_lose_weight">Сбросить вес</string>
+    <string name="goal_gain_muscle">Набрать массу</string>
+    <string name="goal_skin">Улучшить кожу</string>
+    <string name="goal_energy">Больше энергии</string>
+    <string name="goal_heart">Здоровье сердца</string>
+    <string name="goal_digestion">Улучшить пищеварение</string>
+    <string name="goal_immunity">Крепкий иммунитет</string>
+    <string name="goal_sleep">Здоровый сон</string>
+
+    <!-- ОГРАНИЧЕНИЯ (Onboarding) -->
+    <string name="rest_vegetarian">Я вегетарианец</string>
+    <string name="rest_no_nuts">Аллергия на орехи</string>
+    <string name="rest_no_sugar">Без сахара</string>
+    <string name="rest_vegan">Я веган</string>
+    <string name="rest_gluten_free">Без глютена</string>
+    <string name="rest_lactose_free">Без лактозы</string>
+    <string name="rest_keto">Кето-диета</string>
+    <string name="rest_low_carb">Низкоуглеводная</string>
+    <string name="rest_paleo">Палео</string>
+    <string name="rest_seafood">Аллергия на рыбу</string>
+    <string name="rest_eggs">Без яиц</string>
+
     <!-- Disclaimer -->
     <string name="disclaimer_title">Важно знать</string>
     <string name="disclaimer_body">Содержимое сгенерировано нейросетью. Информация носит справочный характер. Пожалуйста, проконсультируйтесь с врачом.</string>

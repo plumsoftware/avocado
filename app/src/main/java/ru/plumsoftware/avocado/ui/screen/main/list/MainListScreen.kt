@@ -34,6 +34,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import ru.plumsoftware.avocado.R
 import ru.plumsoftware.avocado.data.base.model.food.Food
+import ru.plumsoftware.avocado.data.favorite.FavoritesRepository
+import ru.plumsoftware.avocado.data.user_preferences.UserPreferencesRepository
 import ru.plumsoftware.avocado.ui.screen.AppDestination
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.IOSTopBar
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.filter.FilterItem
@@ -41,11 +43,14 @@ import ru.plumsoftware.avocado.ui.screen.main.list.elements.food.FoodCard
 import ru.plumsoftware.avocado.ui.theme.Dimen
 
 @Composable
-fun MainListScreen(navController: NavHostController) {
+fun MainListScreen(navController: NavHostController, favoritesRepository: FavoritesRepository, userPreferencesRepository: UserPreferencesRepository) {
     val context = LocalContext.current
 
     val viewModel: ListViewModel = viewModel(
-        factory = ListViewModel.Companion.ListViewModelFactory(context.applicationContext)
+        factory = ListViewModel.Companion.ListViewModelFactory(
+            favoritesRepository = favoritesRepository,
+            userPreferencesRepository = userPreferencesRepository
+        )
     )
 
     val filters by viewModel.filters.collectAsState()
@@ -57,6 +62,7 @@ fun MainListScreen(navController: NavHostController) {
     val fiberItems = viewModel.withFiber.collectAsState().value
     val heavyProtein = viewModel.heavyProtein.collectAsState().value
     val healthyFatsItems = viewModel.healthyFatsItems.collectAsState().value
+    val sections by viewModel.homeSections.collectAsState()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -123,57 +129,77 @@ fun MainListScreen(navController: NavHostController) {
                 } else {
                     // --- ГЛАВНАЯ СТРАНИЦА ---
 
-                    // Секция: Завтрак
-                    item(span = { GridItemSpan(maxLineSpan) }) {
-                        SectionTitle(title = stringResource(R.string.for_breakfast))
-                    }
-                    itemsIndexed(breakfastItems) { _, item ->
-                        FoodCardItem(
-                            item = item,
-                            isFavorite = favorites.contains(item.id),
-                            viewModel = viewModel,
-                            onFoodClick = { navController.navigate(AppDestination.DetailedScreen(foodId = it.id)) }
-                        )
+                    sections.forEach { section ->
+                        // Рендерим секцию только если в ней есть продукты
+                        if (section.items.isNotEmpty()) {
+                            item(span = { GridItemSpan(maxLineSpan) }) {
+                                SectionTitle(title = stringResource(section.titleRes))
+                            }
+
+                            itemsIndexed(section.items) { _, item ->
+                                FoodCardItem(
+                                    item = item,
+                                    isFavorite = favorites.contains(item.id),
+                                    viewModel = viewModel,
+                                    onFoodClick = {
+                                        navController.navigate(AppDestination.DetailedScreen(foodId = it.id))
+                                    }
+                                )
+                            }
+                        }
                     }
 
-                    // Секция: Клетчатка
-                    item(span = { GridItemSpan(maxLineSpan) }) {
-                        SectionTitle(title = stringResource(R.string.with_fiber))
-                    }
-                    itemsIndexed(fiberItems) { _, item ->
-                        FoodCardItem(
-                            item = item,
-                            isFavorite = favorites.contains(item.id),
-                            viewModel = viewModel,
-                            onFoodClick = { navController.navigate(AppDestination.DetailedScreen(foodId = it.id)) }
-                        )
-                    }
-
-                    // Секция: Белок
-                    item(span = { GridItemSpan(maxLineSpan) }) {
-                        SectionTitle(title = stringResource(R.string.protein_sources))
-                    }
-                    itemsIndexed(heavyProtein) { _, item ->
-                        FoodCardItem(
-                            item = item,
-                            isFavorite = favorites.contains(item.id),
-                            viewModel = viewModel,
-                            onFoodClick = { navController.navigate(AppDestination.DetailedScreen(foodId = it.id)) }
-                        )
-                    }
-
-                    // Секция: Жиры
-                    item(span = { GridItemSpan(maxLineSpan) }) {
-                        SectionTitle(title = stringResource(R.string.healthy_fats))
-                    }
-                    itemsIndexed(healthyFatsItems) { _, item ->
-                        FoodCardItem(
-                            item = item,
-                            isFavorite = favorites.contains(item.id),
-                            viewModel = viewModel,
-                            onFoodClick = { navController.navigate(AppDestination.DetailedScreen(foodId = it.id)) }
-                        )
-                    }
+//                    // Секция: Завтрак
+//                    item(span = { GridItemSpan(maxLineSpan) }) {
+//                        SectionTitle(title = stringResource(R.string.for_breakfast))
+//                    }
+//                    itemsIndexed(breakfastItems) { _, item ->
+//                        FoodCardItem(
+//                            item = item,
+//                            isFavorite = favorites.contains(item.id),
+//                            viewModel = viewModel,
+//                            onFoodClick = { navController.navigate(AppDestination.DetailedScreen(foodId = it.id)) }
+//                        )
+//                    }
+//
+//                    // Секция: Клетчатка
+//                    item(span = { GridItemSpan(maxLineSpan) }) {
+//                        SectionTitle(title = stringResource(R.string.with_fiber))
+//                    }
+//                    itemsIndexed(fiberItems) { _, item ->
+//                        FoodCardItem(
+//                            item = item,
+//                            isFavorite = favorites.contains(item.id),
+//                            viewModel = viewModel,
+//                            onFoodClick = { navController.navigate(AppDestination.DetailedScreen(foodId = it.id)) }
+//                        )
+//                    }
+//
+//                    // Секция: Белок
+//                    item(span = { GridItemSpan(maxLineSpan) }) {
+//                        SectionTitle(title = stringResource(R.string.protein_sources))
+//                    }
+//                    itemsIndexed(heavyProtein) { _, item ->
+//                        FoodCardItem(
+//                            item = item,
+//                            isFavorite = favorites.contains(item.id),
+//                            viewModel = viewModel,
+//                            onFoodClick = { navController.navigate(AppDestination.DetailedScreen(foodId = it.id)) }
+//                        )
+//                    }
+//
+//                    // Секция: Жиры
+//                    item(span = { GridItemSpan(maxLineSpan) }) {
+//                        SectionTitle(title = stringResource(R.string.healthy_fats))
+//                    }
+//                    itemsIndexed(healthyFatsItems) { _, item ->
+//                        FoodCardItem(
+//                            item = item,
+//                            isFavorite = favorites.contains(item.id),
+//                            viewModel = viewModel,
+//                            onFoodClick = { navController.navigate(AppDestination.DetailedScreen(foodId = it.id)) }
+//                        )
+//                    }
                 }
             }
 
