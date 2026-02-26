@@ -6,8 +6,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -35,11 +33,12 @@ import ru.plumsoftware.avocado.data.onboarding.UserGoal
 import ru.plumsoftware.avocado.data.onboarding.UserRestriction
 import ru.plumsoftware.avocado.R
 import ru.plumsoftware.avocado.ui.modifier.iosClickable
+import ru.plumsoftware.avocado.ui.theme.Dimen
 
-// Цвета для Онбординга (можно вынести в Theme)
+// Цвета (лучше тоже вынести в Color.kt, но пока здесь)
 val IOSGreen = Color(0xFF5E8C31)
-val IOSGrayBg = Color(0xFFF2F2F7) // System Gray 6
-val IOSLightGray = Color(0xFFE5E5EA) // System Gray 5 (для неактивных чипсов)
+val IOSGrayBg = Color(0xFFF2F2F7)
+val IOSLightGray = Color(0xFFE5E5EA)
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -51,39 +50,26 @@ fun OnboardingScreen(
     val pagerState = rememberPagerState(pageCount = { 3 })
     val scope = rememberCoroutineScope()
 
-    // Фон с затемнением
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black.copy(alpha = 0.5f))
     ) {
-        // "Лист" (Sheet)
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
-                .fillMaxHeight(0.92f) // Занимает 92% высоты (как открытый sheet)
-                .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
-                .background(Color.White) // Всегда белый фон для iOS стиля
+                .fillMaxHeight(0.92f)
+                .clip(RoundedCornerShape(topStart = Dimen.large, topEnd = Dimen.large))
+                .background(Color.White)
         ) {
-            // 1. Grabber (Ручка)
-            Box(
-                modifier = Modifier
-                    .padding(top = 12.dp)
-                    .width(40.dp)
-                    .height(5.dp)
-                    .clip(RoundedCornerShape(50))
-                    .background(Color(0xFFC7C7CC)) // System Gray 4
-                    .align(Alignment.CenterHorizontally)
-            )
-
-            // 2. Контент (Pager)
+            // 2. Pager (Скролл ВКЛЮЧЕН)
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth(),
-                userScrollEnabled = false
+                userScrollEnabled = true
             ) { page ->
                 when (page) {
                     0 -> WelcomePage()
@@ -92,37 +78,33 @@ fun OnboardingScreen(
                 }
             }
 
-            // 3. Нижняя панель (Индикаторы + Кнопка)
+            // 3. Нижняя панель
             Column(
                 modifier = Modifier
-                    .padding(horizontal = 24.dp)
-                    .padding(bottom = 48.dp, top = 16.dp), // Большой отступ снизу (как на iPhone)
+                    .padding(horizontal = Dimen.large)
+                    .padding(bottom = 48.dp, top = Dimen.medium),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(24.dp)
+                verticalArrangement = Arrangement.spacedBy(Dimen.large)
             ) {
-                // Индикатор страниц (Dots)
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
+                // Точки
+                Row(horizontalArrangement = Arrangement.spacedBy(Dimen.mediumHalf)) {
                     repeat(3) { index ->
                         val isSelected = pagerState.currentPage == index
-                        // Анимация цвета точек
                         val color by animateColorAsState(
                             if (isSelected) IOSGreen else Color(0xFFC7C7CC),
-                            label = "dot_color"
+                            label = "dot"
                         )
                         Box(
                             modifier = Modifier
-                                .size(8.dp)
+                                .size(Dimen.mediumHalf)
                                 .clip(CircleShape)
                                 .background(color)
                         )
                     }
                 }
 
-                // Большая кнопка "Continue"
+                // Кнопка
                 val isLastPage = pagerState.currentPage == 2
-
                 Button(
                     onClick = {
                         scope.launch {
@@ -135,13 +117,13 @@ fun OnboardingScreen(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(54.dp), // Высокая кнопка (iOS standard)
-                    shape = RoundedCornerShape(14.dp), // Squircle shape
+                        .height(Dimen.buttonHeight),
+                    shape = RoundedCornerShape(Dimen.buttonCornerRadius),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = IOSGreen,
                         contentColor = Color.White
                     ),
-                    elevation = ButtonDefaults.buttonElevation(0.dp, 0.dp, 0.dp) // Без тени (Flat)
+                    elevation = ButtonDefaults.buttonElevation(0.dp)
                 ) {
                     Text(
                         text = if (isLastPage) "Начать" else "Продолжить",
@@ -154,33 +136,22 @@ fun OnboardingScreen(
     }
 }
 
-// --- ЭКРАН 1: ПРИВЕТСТВИЕ ---
 @Composable
 fun WelcomePage() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 32.dp),
+            .padding(horizontal = Dimen.extraLarge),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Авокадо (Заглушка)
-        Box(
+        Image(
+            painter = painterResource(R.drawable.avo_welcome),
+            contentDescription = null,
             modifier = Modifier
-                .size(180.dp)
-                .shadow(elevation = 20.dp, spotColor = IOSGreen.copy(0.3f), shape = CircleShape)
-                .background(Color.White, CircleShape)
-                .border(6.dp, Color(0xFFF2F2F7), CircleShape), // Рамка
-            contentAlignment = Alignment.Center
-        ) {
-            // Тут должна быть твоя картинка
-            Image(
-                painter = painterResource(R.drawable.apple), // Убедись, что картинка есть!
-                contentDescription = null,
-                modifier = Modifier.size(120.dp),
-                contentScale = ContentScale.Fit
-            )
-        }
+                .size(200.dp),
+            contentScale = ContentScale.Fit
+        )
 
         Spacer(modifier = Modifier.height(40.dp))
 
@@ -194,7 +165,7 @@ fun WelcomePage() {
             textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(Dimen.mediumAboveHalf))
 
         Text(
             text = "Твой личный помощник по здоровому питанию. Я подберу идеальный рацион для твоих целей.",
@@ -208,7 +179,6 @@ fun WelcomePage() {
     }
 }
 
-// --- ЭКРАН 2: ЦЕЛИ ---
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun GoalsPage(selectedGoals: MutableList<UserGoal>) {
@@ -216,7 +186,7 @@ fun GoalsPage(selectedGoals: MutableList<UserGoal>) {
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 24.dp, vertical = 32.dp)
+            .padding(horizontal = Dimen.large, vertical = Dimen.extraLarge)
     ) {
         Text(
             text = "Твоя цель?",
@@ -229,31 +199,31 @@ fun GoalsPage(selectedGoals: MutableList<UserGoal>) {
         Text(
             text = "Выбери одну или несколько",
             style = MaterialTheme.typography.bodyLarge.copy(color = Color.Gray),
-            modifier = Modifier.padding(top = 8.dp, bottom = 32.dp)
+            modifier = Modifier.padding(top = Dimen.mediumHalf, bottom = Dimen.extraLarge)
         )
 
         FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            horizontalArrangement = Arrangement.spacedBy(Dimen.mediumHalf), // Чуть плотнее (10-12dp -> 8dp из Dimen)
+            verticalArrangement = Arrangement.spacedBy(Dimen.mediumHalf)
         ) {
             UserGoal.values().forEach { goal ->
-                val isSelected = selectedGoals.contains(goal)
-
                 IOSSelectionChip(
                     text = stringResource(goal.titleRes),
-                    iconRes = goal.iconRes, // Передаем иконку из Enum
-                    isSelected = isSelected,
+                    iconRes = goal.iconRes,
+                    isSelected = selectedGoals.contains(goal),
                     onClick = {
-                        if (isSelected) selectedGoals.remove(goal)
+                        if (selectedGoals.contains(goal)) selectedGoals.remove(goal)
                         else selectedGoals.add(goal)
                     }
                 )
             }
         }
+
+        // Отступ снизу для скролла
+        Spacer(modifier = Modifier.height(Dimen.extraLarge))
     }
 }
 
-// --- ЭКРАН 3: ИСКЛЮЧЕНИЯ ---
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun RestrictionsPage(selectedRestrictions: MutableList<UserRestriction>) {
@@ -261,7 +231,7 @@ fun RestrictionsPage(selectedRestrictions: MutableList<UserRestriction>) {
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 24.dp, vertical = 32.dp)
+            .padding(horizontal = Dimen.large, vertical = Dimen.extraLarge)
     ) {
         Text(
             text = "Есть ограничения?",
@@ -274,73 +244,64 @@ fun RestrictionsPage(selectedRestrictions: MutableList<UserRestriction>) {
         Text(
             text = "Мы скроем неподходящие продукты",
             style = MaterialTheme.typography.bodyLarge.copy(color = Color.Gray),
-            modifier = Modifier.padding(top = 8.dp, bottom = 32.dp)
+            modifier = Modifier.padding(top = Dimen.mediumHalf, bottom = Dimen.extraLarge)
         )
 
         FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            horizontalArrangement = Arrangement.spacedBy(Dimen.mediumHalf),
+            verticalArrangement = Arrangement.spacedBy(Dimen.mediumHalf)
         ) {
             UserRestriction.values().forEach { restriction ->
-                val isSelected = selectedRestrictions.contains(restriction)
-
                 IOSSelectionChip(
                     text = stringResource(restriction.titleRes),
-                    iconRes = null, // Иконки нет, будет просто текст
-                    isSelected = isSelected,
+                    iconRes = null,
+                    isSelected = selectedRestrictions.contains(restriction),
                     onClick = {
-                        if (isSelected) selectedRestrictions.remove(restriction)
+                        if (selectedRestrictions.contains(restriction)) selectedRestrictions.remove(
+                            restriction
+                        )
                         else selectedRestrictions.add(restriction)
                     }
                 )
             }
         }
+
+        Spacer(modifier = Modifier.height(Dimen.extraLarge))
     }
 }
 
-// --- IOS STYLE CHIP ---
 @Composable
 fun IOSSelectionChip(
     text: String,
-    iconRes: Int? = null, // Иконка опциональна
+    iconRes: Int? = null,
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
-    // Анимация фона (Зеленый <-> Серый)
     val backgroundColor by animateColorAsState(
         targetValue = if (isSelected) IOSGreen else IOSLightGray,
-        animationSpec = tween(300),
-        label = "bg"
+        animationSpec = tween(300), label = "bg"
     )
-
-    // Анимация контента (Белый <-> Черный)
     val contentColor by animateColorAsState(
         targetValue = if (isSelected) Color.White else Color.Black,
-        animationSpec = tween(300),
-        label = "content"
+        animationSpec = tween(300), label = "content"
     )
 
     Row(
         modifier = Modifier
-            .clip(RoundedCornerShape(12.dp)) // Мягкий квадрат
+            .clip(RoundedCornerShape(Dimen.chipCornerRadius))
             .background(backgroundColor)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null // Без ripple (iOS style)
-            ) { onClick() }
-            .padding(horizontal = 16.dp, vertical = 14.dp), // Оптимальные отступы
+            .iosClickable { onClick() }
+            .padding(horizontal = Dimen.medium, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-        // Если иконка передана, рисуем её
         if (iconRes != null) {
-            Icon(
+            Image(
                 painter = painterResource(id = iconRes),
                 contentDescription = null,
-                tint = contentColor, // Красится вместе с текстом
-                modifier = Modifier.size(20.dp) // Аккуратный размер иконки
+                modifier = Modifier.size(Dimen.iconSizeSmall),
             )
-            Spacer(modifier = Modifier.width(8.dp)) // Отступ между иконкой и текстом
+            Spacer(modifier = Modifier.width(Dimen.mediumHalf))
         }
 
         Text(
