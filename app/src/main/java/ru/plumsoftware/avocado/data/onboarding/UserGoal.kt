@@ -5,7 +5,7 @@ import ru.plumsoftware.avocado.R
 enum class UserGoal(
     val id: String,
     val titleRes: Int,
-    val iconRes: Int // Можно добавить иконки
+    val iconRes: Int
 ) {
     LOSE_WEIGHT("lose_weight", R.string.goal_lose_weight, R.drawable.fruit_icon), // Низк. калории
     GAIN_MUSCLE("gain_muscle", R.string.goal_gain_muscle, R.drawable.muscle_icon), // Белок

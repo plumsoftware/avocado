@@ -215,7 +215,7 @@ fun GoalsPage(selectedGoals: MutableList<UserGoal>) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState()) // Скролл, если целей много
+            .verticalScroll(rememberScrollState())
             .padding(horizontal = 24.dp, vertical = 32.dp)
     ) {
         Text(
@@ -237,10 +237,16 @@ fun GoalsPage(selectedGoals: MutableList<UserGoal>) {
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             UserGoal.values().forEach { goal ->
+                val isSelected = selectedGoals.contains(goal)
+
                 IOSSelectionChip(
                     text = stringResource(goal.titleRes),
-                    isSelected = selectedGoals.contains(goal),
-                    onClick = { if (selectedGoals.contains(goal)) selectedGoals.remove(goal) else selectedGoals.add(goal) }
+                    iconRes = goal.iconRes, // Передаем иконку из Enum
+                    isSelected = isSelected,
+                    onClick = {
+                        if (isSelected) selectedGoals.remove(goal)
+                        else selectedGoals.add(goal)
+                    }
                 )
             }
         }
@@ -276,14 +282,15 @@ fun RestrictionsPage(selectedRestrictions: MutableList<UserRestriction>) {
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             UserRestriction.values().forEach { restriction ->
+                val isSelected = selectedRestrictions.contains(restriction)
+
                 IOSSelectionChip(
                     text = stringResource(restriction.titleRes),
-                    isSelected = selectedRestrictions.contains(restriction),
+                    iconRes = null, // Иконки нет, будет просто текст
+                    isSelected = isSelected,
                     onClick = {
-                        if (selectedRestrictions.contains(restriction))
-                            selectedRestrictions.remove(restriction)
-                        else
-                            selectedRestrictions.add(restriction)
+                        if (isSelected) selectedRestrictions.remove(restriction)
+                        else selectedRestrictions.add(restriction)
                     }
                 )
             }
@@ -295,41 +302,54 @@ fun RestrictionsPage(selectedRestrictions: MutableList<UserRestriction>) {
 @Composable
 fun IOSSelectionChip(
     text: String,
+    iconRes: Int? = null, // Иконка опциональна
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
-    // Анимация цвета фона
+    // Анимация фона (Зеленый <-> Серый)
     val backgroundColor by animateColorAsState(
         targetValue = if (isSelected) IOSGreen else IOSLightGray,
         animationSpec = tween(300),
         label = "bg"
     )
 
-    // Анимация цвета текста
-    val textColor by animateColorAsState(
+    // Анимация контента (Белый <-> Черный)
+    val contentColor by animateColorAsState(
         targetValue = if (isSelected) Color.White else Color.Black,
         animationSpec = tween(300),
-        label = "text"
+        label = "content"
     )
 
-    Box(
+    Row(
         modifier = Modifier
-            .clip(RoundedCornerShape(12.dp)) // Мягкий квадрат (Squircle-like)
+            .clip(RoundedCornerShape(12.dp)) // Мягкий квадрат
             .background(backgroundColor)
-            .iosClickable(
-                onClick = {
-                    onClick()
-                }
-            )
-            .padding(horizontal = 20.dp, vertical = 14.dp) // Больше воздуха внутри
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null // Без ripple (iOS style)
+            ) { onClick() }
+            .padding(horizontal = 16.dp, vertical = 14.dp), // Оптимальные отступы
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
     ) {
+        // Если иконка передана, рисуем её
+        if (iconRes != null) {
+            Icon(
+                painter = painterResource(id = iconRes),
+                contentDescription = null,
+                tint = contentColor, // Красится вместе с текстом
+                modifier = Modifier.size(20.dp) // Аккуратный размер иконки
+            )
+            Spacer(modifier = Modifier.width(8.dp)) // Отступ между иконкой и текстом
+        }
+
         Text(
             text = text,
             style = MaterialTheme.typography.bodyLarge.copy(
-                fontWeight = FontWeight.SemiBold, // Жирный текст
+                fontWeight = FontWeight.SemiBold,
                 fontSize = 15.sp
             ),
-            color = textColor
+            color = contentColor
         )
     }
 }
