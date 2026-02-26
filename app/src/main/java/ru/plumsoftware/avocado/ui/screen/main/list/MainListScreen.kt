@@ -83,14 +83,13 @@ fun MainListScreen(navController: NavHostController) {
                 }
 
                 // 2. ФИЛЬТРЫ (Горизонтальный скролл)
-                // span = { GridItemSpan(maxLineSpan) } означает "занять всю ширину"
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     // Лучше использовать LazyRow для скролла фильтров
                     LazyRow(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(Dimen.medium),
+                        horizontalArrangement = Arrangement.spacedBy(Dimen.mediumHalf),
                         // contentPadding добавляет отступы, чтобы элементы не прилипали к краям при скролле
-                        contentPadding = PaddingValues(horizontal = 4.dp)
+                        contentPadding = PaddingValues(horizontal = Dimen.extraSmall)
                     ) {
                         items(filters) { item ->
                             FilterItem(
