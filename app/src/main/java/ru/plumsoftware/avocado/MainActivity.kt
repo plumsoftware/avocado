@@ -6,17 +6,29 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -40,6 +52,7 @@ import ru.plumsoftware.avocado.ui.screen.main.list.ListViewModel
 import ru.plumsoftware.avocado.ui.screen.main.settings.SettingsViewModel
 import ru.plumsoftware.avocado.ui.screen.onboarding.OnboardingScreen
 import ru.plumsoftware.avocado.ui.theme.AvocadoTheme
+import ru.plumsoftware.avocado.ui.theme.Dimen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -99,13 +112,34 @@ class MainActivity : ComponentActivity() {
 
                 when (startState) {
                     MainViewModel.StartDestination.Loading -> {
-                        Box(modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.White))
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Image(
+                                    painter = painterResource(R.drawable.loading),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(200.dp)
+                                )
+
+                                Spacer(modifier = Modifier.height(Dimen.medium))
+
+                                Text(
+                                    text = stringResource(R.string.loading),
+                                    style = MaterialTheme.typography.titleMedium.copy(
+                                        fontWeight = FontWeight.Bold
+                                    ),
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                        }
                     }
 
                     MainViewModel.StartDestination.Onboarding -> {
-                        // ЭКРАН ОНБОРДИНГА
                         OnboardingScreen(
                             onFinish = { goals, restrictions ->
                                 mainViewModel.finishOnboarding(goals, restrictions)

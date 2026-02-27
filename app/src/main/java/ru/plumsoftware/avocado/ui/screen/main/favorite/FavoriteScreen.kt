@@ -1,5 +1,6 @@
 package ru.plumsoftware.avocado.ui.screen.main.favorite
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,6 +38,7 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -158,14 +160,13 @@ fun EmptyFavoritesState(modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Icon(
-            imageVector = Icons.Default.FavoriteBorder,
+        Image(
+            painter = painterResource(R.drawable.nothing),
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.outlineVariant,
-            modifier = Modifier.size(64.dp)
+            modifier = Modifier.size(200.dp)
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(Dimen.medium))
 
         Text(
             text = stringResource(R.string.favorites_empty_title),
@@ -175,7 +176,7 @@ fun EmptyFavoritesState(modifier: Modifier = Modifier) {
             color = MaterialTheme.colorScheme.onSurface
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(Dimen.mediumHalf))
 
         Text(
             text = stringResource(R.string.favorites_empty_desc),
