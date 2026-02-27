@@ -60,7 +60,8 @@ fun MainScreen(
                 MainScreenStates.Rec -> {}
                 MainScreenStates.Settings -> {
                     SettingsScreen(
-                        viewModel = settingsViewModel
+                        viewModel = settingsViewModel,
+                        navController = navController
                     )
                 }
 

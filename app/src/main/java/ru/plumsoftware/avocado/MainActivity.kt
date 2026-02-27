@@ -149,6 +149,18 @@ class MainActivity : ComponentActivity() {
                                     Text("Продукт не найден")
                                 }
                             }
+
+                            composable<AppDestination.Onboarding> {
+                                OnboardingScreen(
+                                    onFinish = { goals, restrictions ->
+                                        // Сохраняем новые настройки
+                                        mainViewModel.finishOnboarding(goals, restrictions)
+
+                                        // Возвращаемся назад в настройки (закрываем онбординг)
+                                        navController.popBackStack()
+                                    }
+                                )
+                            }
                         }
                     }
                 }

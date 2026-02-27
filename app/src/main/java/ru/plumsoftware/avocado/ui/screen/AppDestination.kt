@@ -11,4 +11,7 @@ object AppDestination {
     data class DetailedScreen(
         val foodId: String
     )
+
+    @Serializable
+    data object Onboarding
 }

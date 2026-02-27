@@ -2,14 +2,26 @@ package ru.plumsoftware.avocado.ui.screen.main.settings
 
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.RestaurantMenu
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -20,21 +32,27 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import ru.plumsoftware.avocado.R
 import ru.plumsoftware.avocado.data.user_preferences.util.AppTheme
 import ru.plumsoftware.avocado.ui.getBottomInsetInDp
 import ru.plumsoftware.avocado.ui.getTopInsetInDp
+import ru.plumsoftware.avocado.ui.modifier.iosClickable
+import ru.plumsoftware.avocado.ui.screen.AppDestination
 import ru.plumsoftware.avocado.ui.screen.main.settings.elements.IOSSettingsItem
 import ru.plumsoftware.avocado.ui.theme.Dimen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    viewModel: SettingsViewModel
+    viewModel: SettingsViewModel,
+    navController: NavHostController
 ) {
     val currentTheme by viewModel.currentTheme.collectAsState()
     val context = LocalContext.current
@@ -71,8 +89,34 @@ fun SettingsScreen(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(all = Dimen.medium)
         ) {
+
+            Text(
+                text = "Персонализация",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(start = 16.dp, bottom = 8.dp)
+            )
+
+            Column(
+                modifier = Modifier
+                    .clip(MaterialTheme.shapes.medium)
+                    .background(MaterialTheme.colorScheme.surface)
+            ) {
+                // Кнопка для повторного открытия Онбординга
+                IOSSettingsNavigationItem(
+                    title = "Мои цели и питание",
+                    icon = Icons.Default.RestaurantMenu, // Или любая иконка
+                    onClick = {
+                        navController.navigate(AppDestination.Onboarding)
+                    },
+                    showDivider = false
+                )
+            }
+
+            Spacer(modifier = Modifier.height(Dimen.large))
 
             // ЗАГОЛОВОК СЕКЦИИ
             Text(
@@ -85,7 +129,7 @@ fun SettingsScreen(
             // БЛОК НАСТРОЕК (Скругленный контейнер)
             Column(
                 modifier = Modifier
-                    .clip(MaterialTheme.shapes.medium) // Скругление группы
+                    .clip(MaterialTheme.shapes.medium)
                     .background(MaterialTheme.colorScheme.surface)
             ) {
                 IOSSettingsItem(
@@ -118,6 +162,63 @@ fun SettingsScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun IOSSettingsNavigationItem(
+    title: String,
+    icon: ImageVector? = null,
+    onClick: () -> Unit,
+    showDivider: Boolean = true
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surface)
+            .iosClickable { onClick() }
+            .padding(start = Dimen.medium)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = Dimen.mediumAboveHalf)
+                .padding(end = Dimen.medium),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (icon != null) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(Dimen.mediumAboveHalf))
+                }
+
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+
+            // Стрелочка "Вправо" (Chevron)
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+            )
+        }
+
+        if (showDivider) {
+            HorizontalDivider(
+                thickness = 0.5.dp,
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+            )
         }
     }
 }
