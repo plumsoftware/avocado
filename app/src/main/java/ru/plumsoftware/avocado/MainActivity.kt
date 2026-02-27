@@ -35,6 +35,7 @@ import ru.plumsoftware.avocado.ui.screen.AppDestination
 import ru.plumsoftware.avocado.ui.screen.details.ProductDetailScreen
 import ru.plumsoftware.avocado.ui.screen.main.MainScreen
 import ru.plumsoftware.avocado.ui.screen.main.MainViewModel
+import ru.plumsoftware.avocado.ui.screen.main.favorite.FavoriteScreen
 import ru.plumsoftware.avocado.ui.screen.main.list.ListViewModel
 import ru.plumsoftware.avocado.ui.screen.main.settings.SettingsViewModel
 import ru.plumsoftware.avocado.ui.screen.onboarding.OnboardingScreen
@@ -98,7 +99,9 @@ class MainActivity : ComponentActivity() {
 
                 when (startState) {
                     MainViewModel.StartDestination.Loading -> {
-                        Box(modifier = Modifier.fillMaxSize().background(Color.White))
+                        Box(modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.White))
                     }
 
                     MainViewModel.StartDestination.Onboarding -> {
@@ -143,7 +146,12 @@ class MainActivity : ComponentActivity() {
                                         isFavorite = favorites.contains(foodItem.id),
                                         onBackClick = { navController.popBackStack() },
                                         onLikeClick = { viewModel.onLikeClick(foodItem.id) },
-                                        onGetColor = { res, ctx -> viewModel.getBackgroundColorForFood(res, ctx) }
+                                        onGetColor = { res, ctx ->
+                                            viewModel.getBackgroundColorForFood(
+                                                res,
+                                                ctx
+                                            )
+                                        }
                                     )
                                 } else {
                                     Text("Продукт не найден")
@@ -159,6 +167,13 @@ class MainActivity : ComponentActivity() {
                                         // Возвращаемся назад в настройки (закрываем онбординг)
                                         navController.popBackStack()
                                     }
+                                )
+                            }
+
+                            composable<AppDestination.Favorite> {
+                                FavoriteScreen(
+                                    favoritesRepository = favRepo,
+                                    navController = navController
                                 )
                             }
                         }

@@ -19,11 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import ru.plumsoftware.avocado.data.favorite.FavoritesRepository
 import ru.plumsoftware.avocado.data.user_preferences.UserPreferencesRepository
 import ru.plumsoftware.avocado.ui.screen.main.elements.BottomNavBar
+import ru.plumsoftware.avocado.ui.screen.main.favorite.FavoriteScreen
 import ru.plumsoftware.avocado.ui.screen.main.list.MainListScreen
 import ru.plumsoftware.avocado.ui.screen.main.settings.SettingsScreen
 import ru.plumsoftware.avocado.ui.screen.main.settings.SettingsViewModel
@@ -56,7 +56,12 @@ fun MainScreen(
                     )
                 }
 
-                MainScreenStates.Fav -> {}
+                MainScreenStates.Fav -> {
+                    FavoriteScreen(
+                        favoritesRepository = favoritesRepository,
+                        navController = navController
+                    )
+                }
                 MainScreenStates.Rec -> {}
                 MainScreenStates.Settings -> {
                     SettingsScreen(

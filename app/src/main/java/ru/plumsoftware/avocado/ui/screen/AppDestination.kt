@@ -14,4 +14,7 @@ object AppDestination {
 
     @Serializable
     data object Onboarding
+
+    @Serializable
+    data object Favorite
 }
