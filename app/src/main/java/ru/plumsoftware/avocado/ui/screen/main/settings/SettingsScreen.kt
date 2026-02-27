@@ -61,9 +61,9 @@ fun SettingsScreen(
     // Получаем версию приложения
     val appVersion = try {
         val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-        "${pInfo.versionName} (${pInfo.versionCode})"
+        context.getString(R.string.settings_version_format, pInfo.versionName, pInfo.versionCode)
     } catch (e: Exception) {
-        "1.0.0"
+        context.getString(R.string.settings_version_fallback)
     }
 
     Scaffold(
@@ -94,10 +94,10 @@ fun SettingsScreen(
         ) {
 
             Text(
-                text = "Персонализация",
+                text = stringResource(R.string.settings_section_personalization),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(start = 16.dp, bottom = 8.dp)
+                modifier = Modifier.padding(start = Dimen.medium, bottom = Dimen.mediumHalf)
             )
 
             Column(
@@ -107,7 +107,7 @@ fun SettingsScreen(
             ) {
                 // Кнопка для повторного открытия Онбординга
                 IOSSettingsNavigationItem(
-                    title = "Мои цели и питание",
+                    title = stringResource(R.string.settings_item_goals),
                     icon = Icons.Default.RestaurantMenu, // Или любая иконка
                     onClick = {
                         navController.navigate(AppDestination.Onboarding)
@@ -120,7 +120,7 @@ fun SettingsScreen(
 
             // ЗАГОЛОВОК СЕКЦИИ
             Text(
-                text = "Внешний вид",
+                text = stringResource(R.string.settings_section_appearance),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(start = Dimen.medium, bottom = Dimen.mediumHalf)
@@ -133,17 +133,17 @@ fun SettingsScreen(
                     .background(MaterialTheme.colorScheme.surface)
             ) {
                 IOSSettingsItem(
-                    title = "Системная",
+                    title = stringResource(R.string.settings_theme_system),
                     isSelected = currentTheme == AppTheme.System,
                     onClick = { viewModel.updateTheme(AppTheme.System) }
                 )
                 IOSSettingsItem(
-                    title = "Светлая",
+                    title = stringResource(R.string.settings_theme_light),
                     isSelected = currentTheme == AppTheme.Light,
                     onClick = { viewModel.updateTheme(AppTheme.Light) }
                 )
                 IOSSettingsItem(
-                    title = "Темная",
+                    title = stringResource(R.string.settings_theme_dark),
                     isSelected = currentTheme == AppTheme.Dark,
                     onClick = { viewModel.updateTheme(AppTheme.Dark) },
                     showDivider = false
@@ -157,8 +157,8 @@ fun SettingsScreen(
                 contentAlignment = Alignment.BottomEnd
             ) {
                 Text(
-                    text = "Avocado $appVersion",
-                    style = MaterialTheme.typography.labelSmall, // Мелкий шрифт
+                    text = appVersion,
+                    style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }

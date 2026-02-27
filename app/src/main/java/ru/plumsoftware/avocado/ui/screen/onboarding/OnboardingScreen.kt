@@ -34,6 +34,8 @@ import ru.plumsoftware.avocado.data.onboarding.UserRestriction
 import ru.plumsoftware.avocado.R
 import ru.plumsoftware.avocado.ui.modifier.iosClickable
 import ru.plumsoftware.avocado.ui.theme.Dimen
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.AutoAwesome
 
 // Цвета (лучше тоже вынести в Color.kt, но пока здесь)
 val IOSGreen = Color(0xFF5E8C31)
@@ -45,6 +47,7 @@ val IOSLightGray = Color(0xFFE5E5EA)
 fun OnboardingScreen(
     onFinish: (List<UserGoal>, List<UserRestriction>) -> Unit
 ) {
+    // ... (код состояния и анимаций остался прежним) ...
     val selectedGoals = remember { mutableStateListOf<UserGoal>() }
     val selectedRestrictions = remember { mutableStateListOf<UserRestriction>() }
     val pagerState = rememberPagerState(pageCount = { 3 })
@@ -63,13 +66,12 @@ fun OnboardingScreen(
                 .clip(RoundedCornerShape(topStart = Dimen.large, topEnd = Dimen.large))
                 .background(Color.White)
         ) {
-            // 2. Pager (Скролл ВКЛЮЧЕН)
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth(),
-                userScrollEnabled = true
+                userScrollEnabled = pagerState.currentPage > 0
             ) { page ->
                 when (page) {
                     0 -> WelcomePage()
@@ -105,6 +107,15 @@ fun OnboardingScreen(
 
                 // Кнопка
                 val isLastPage = pagerState.currentPage == 2
+
+                // Текст кнопки из ресурсов
+                val buttonText = when (pagerState.currentPage) {
+                    0 -> stringResource(R.string.onboarding_btn_read)
+                    1 -> stringResource(R.string.onboarding_btn_continue)
+                    2 -> stringResource(R.string.onboarding_btn_start)
+                    else -> stringResource(R.string.onboarding_btn_continue)
+                }
+
                 Button(
                     onClick = {
                         scope.launch {
@@ -126,7 +137,7 @@ fun OnboardingScreen(
                     elevation = ButtonDefaults.buttonElevation(0.dp)
                 ) {
                     Text(
-                        text = if (isLastPage) "Начать" else "Продолжить",
+                        text = buttonText,
                         fontSize = 17.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -145,18 +156,23 @@ fun WelcomePage() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Image(
-            painter = painterResource(R.drawable.avo_welcome),
-            contentDescription = null,
+        Box(
             modifier = Modifier
                 .size(200.dp),
-            contentScale = ContentScale.Fit
-        )
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(R.drawable.avo_welcome),
+                contentDescription = null,
+                modifier = Modifier.size(200.dp),
+                contentScale = ContentScale.Fit
+            )
+        }
 
         Spacer(modifier = Modifier.height(40.dp))
 
         Text(
-            text = "Привет, я Аво!",
+            text = stringResource(R.string.onboarding_welcome_title),
             style = MaterialTheme.typography.displaySmall.copy(
                 fontWeight = FontWeight.Bold,
                 fontSize = 32.sp
@@ -168,7 +184,7 @@ fun WelcomePage() {
         Spacer(modifier = Modifier.height(Dimen.mediumAboveHalf))
 
         Text(
-            text = "Твой личный помощник по здоровому питанию. Я подберу идеальный рацион для твоих целей.",
+            text = stringResource(R.string.onboarding_welcome_text),
             style = MaterialTheme.typography.bodyLarge.copy(
                 fontSize = 17.sp,
                 lineHeight = 24.sp
@@ -176,6 +192,10 @@ fun WelcomePage() {
             color = Color.Gray,
             textAlign = TextAlign.Center
         )
+
+        // --- ВСТАВЛЯЕМ ПЛАШКУ ЗДЕСЬ ---
+        Spacer(modifier = Modifier.height(32.dp))
+        OnboardingDisclaimer()
     }
 }
 
@@ -189,7 +209,7 @@ fun GoalsPage(selectedGoals: MutableList<UserGoal>) {
             .padding(horizontal = Dimen.large, vertical = Dimen.extraLarge)
     ) {
         Text(
-            text = "Твоя цель?",
+            text = stringResource(R.string.onboarding_goals_title),
             style = MaterialTheme.typography.displaySmall.copy(
                 fontWeight = FontWeight.Bold,
                 fontSize = 28.sp
@@ -197,13 +217,13 @@ fun GoalsPage(selectedGoals: MutableList<UserGoal>) {
             color = Color.Black
         )
         Text(
-            text = "Выбери одну или несколько",
+            text = stringResource(R.string.onboarding_goals_subtitle),
             style = MaterialTheme.typography.bodyLarge.copy(color = Color.Gray),
             modifier = Modifier.padding(top = Dimen.mediumHalf, bottom = Dimen.extraLarge)
         )
 
         FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(Dimen.mediumHalf), // Чуть плотнее (10-12dp -> 8dp из Dimen)
+            horizontalArrangement = Arrangement.spacedBy(Dimen.mediumHalf),
             verticalArrangement = Arrangement.spacedBy(Dimen.mediumHalf)
         ) {
             UserGoal.values().forEach { goal ->
@@ -218,8 +238,6 @@ fun GoalsPage(selectedGoals: MutableList<UserGoal>) {
                 )
             }
         }
-
-        // Отступ снизу для скролла
         Spacer(modifier = Modifier.height(Dimen.extraLarge))
     }
 }
@@ -234,7 +252,7 @@ fun RestrictionsPage(selectedRestrictions: MutableList<UserRestriction>) {
             .padding(horizontal = Dimen.large, vertical = Dimen.extraLarge)
     ) {
         Text(
-            text = "Есть ограничения?",
+            text = stringResource(R.string.onboarding_restrictions_title),
             style = MaterialTheme.typography.displaySmall.copy(
                 fontWeight = FontWeight.Bold,
                 fontSize = 28.sp
@@ -242,7 +260,7 @@ fun RestrictionsPage(selectedRestrictions: MutableList<UserRestriction>) {
             color = Color.Black
         )
         Text(
-            text = "Мы скроем неподходящие продукты",
+            text = stringResource(R.string.onboarding_restrictions_subtitle),
             style = MaterialTheme.typography.bodyLarge.copy(color = Color.Gray),
             modifier = Modifier.padding(top = Dimen.mediumHalf, bottom = Dimen.extraLarge)
         )
@@ -257,15 +275,12 @@ fun RestrictionsPage(selectedRestrictions: MutableList<UserRestriction>) {
                     iconRes = null,
                     isSelected = selectedRestrictions.contains(restriction),
                     onClick = {
-                        if (selectedRestrictions.contains(restriction)) selectedRestrictions.remove(
-                            restriction
-                        )
+                        if (selectedRestrictions.contains(restriction)) selectedRestrictions.remove(restriction)
                         else selectedRestrictions.add(restriction)
                     }
                 )
             }
         }
-
         Spacer(modifier = Modifier.height(Dimen.extraLarge))
     }
 }
@@ -311,6 +326,42 @@ fun IOSSelectionChip(
                 fontSize = 15.sp
             ),
             color = contentColor
+        )
+    }
+}
+
+@Composable
+fun OnboardingDisclaimer() {
+    // Стиль iOS Footnote: очень сдержанный, серый, маленький
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = Dimen.medium)
+            .background(
+                color = Color(0xFFF2F2F7),
+                shape = RoundedCornerShape(Dimen.mediumAboveHalf)
+            )
+            .padding(Dimen.mediumAboveHalf),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        // Иконка AI (звездочки)
+        Icon(
+            imageVector = Icons.Rounded.AutoAwesome,
+            contentDescription = "AI Generated",
+            tint = Color(0xFF8E8E93), // System Gray
+            modifier = Modifier.size(Dimen.medium)
+        )
+
+        Spacer(modifier = Modifier.width(Dimen.mediumHalf))
+
+        Text(
+            text = stringResource(R.string.onboarding_ai_disclaimer),
+            style = MaterialTheme.typography.bodySmall.copy(
+                color = Color(0xFF8E8E93),
+                lineHeight = 14.sp,
+                textAlign = TextAlign.Start
+            )
         )
     }
 }

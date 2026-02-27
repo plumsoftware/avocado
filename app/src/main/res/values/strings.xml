@@ -88,6 +88,35 @@
     <string name="rest_paleo">Палео</string>
     <string name="rest_seafood">Аллергия на рыбу</string>
     <string name="rest_eggs">Без яиц</string>
+    <string name="onboarding_ai_disclaimer">Контент сгенерирован нейросетью и носит справочный характер. Не является медицинской рекомендацией.</string>
+    <string name="onboarding_welcome_title">Привет, я Аво!</string>
+    <string name="onboarding_welcome_text">Твой личный помощник по здоровому питанию. Я подберу идеальный рацион для твоих целей.</string>
+
+    <string name="onboarding_goals_title">Твоя цель?</string>
+    <string name="onboarding_goals_subtitle">Выбери одну или несколько</string>
+
+    <string name="onboarding_restrictions_title">Есть ограничения?</string>
+    <string name="onboarding_restrictions_subtitle">Мы скроем неподходящие продукты</string>
+
+    <!-- Кнопки Онбординга -->
+    <string name="onboarding_btn_read">Прочитал</string>
+    <string name="onboarding_btn_continue">Продолжить</string>
+    <string name="onboarding_btn_start">Начать</string>
+
+    <!-- SETTINGS (Экран настроек) -->
+    <string name="settings_title">Настройки</string>
+
+    <string name="settings_section_personalization">ПЕРСОНАЛИЗАЦИЯ</string>
+    <string name="settings_item_goals">Мои цели и питание</string>
+
+    <string name="settings_section_appearance">ВНЕШНИЙ ВИД</string>
+    <string name="settings_theme_system">Системная</string>
+    <string name="settings_theme_light">Светлая</string>
+    <string name="settings_theme_dark">Темная</string>
+
+    <!-- Версия приложения (Format String) -->
+    <string name="settings_version_format">Avocado %1$s (%2$d)</string>
+    <string name="settings_version_fallback">Avocado v 1.0.0</string>
 
     <!-- Disclaimer -->
     <string name="disclaimer_title">Важно знать</string>
