@@ -115,8 +115,8 @@
     <string name="settings_theme_dark">Темная</string>
 
     <!-- Версия приложения (Format String) -->
-    <string name="settings_version_format">Avocado %1$s (%2$d)</string>
-    <string name="settings_version_fallback">Avocado v 1.0.0</string>
+    <string name="settings_version_format">Авокадо %1$s (%2$d)</string>
+    <string name="settings_version_fallback">Авокадо v 1.0.0</string>
 
     <!-- Disclaimer -->
     <string name="disclaimer_title">Важно знать</string>
