@@ -254,4 +254,11 @@
     <string name="fiber">Клетчатка</string>
     <string name="fiber_high">Богат клетчаткой</string>
     <string name="fiber_content">Клетчатка: %1$s г</string>
+
+    <!-- Грибы -->
+    <string name="champignon">Шампиньоны</string>
+    <string name="white_mushroom">Белый гриб</string>
+    <string name="chanterelle">Лисички</string>
+    <string name="oyster_mushroom">Вешенки</string>
+    <string name="shiitake">Шиитаке</string>
 </resources>

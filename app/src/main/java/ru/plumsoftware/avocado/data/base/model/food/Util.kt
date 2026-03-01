@@ -1580,5 +1580,120 @@ val allFish = listOf<Fish>(
 
 )
 
+// Убедись, что класс Mushroom определен (как ты скинул в вопросе)
 
-val allFood = allFruits + allBerries + allNuts + allVegetables + allMeat + allFish
+val allMushrooms = listOf<Mushroom>(
+    // Шампиньоны
+    Mushroom(
+        id = "champignon",
+        titleRes = R.string.champignon,
+        imageRes = R.drawable.sumpinion, // Закинь картинку
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_b2"]!!,
+            vitaminsMap["vitamin_b3"]!!,
+            vitaminsMap["vitamin_b5"]!!,
+            vitaminsMap["vitamin_d"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["potassium"]!!,
+            mineralsMap["phosphorus"]!!,
+            mineralsMap["selenium"]!!,
+            mineralsMap["copper"]!!
+        ),
+        fatKisloty = emptyList(),
+        kpfc_100g = Kpfc(27, 1.0, 4.3, 0.1, fiber = 2.0),
+        timeForFood = TimeForFood.LUNCH
+    ),
+
+    // Белый гриб (Боровик)
+    Mushroom(
+        id = "white_mushroom",
+        titleRes = R.string.white_mushroom,
+        imageRes = R.drawable.white_mushroom,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_b1"]!!,
+            vitaminsMap["vitamin_b2"]!!,
+            vitaminsMap["vitamin_c"]!!,
+            vitaminsMap["vitamin_d"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["selenium"]!!,
+            mineralsMap["potassium"]!!,
+            mineralsMap["manganese"]!!,
+            mineralsMap["iron"]!! // В белых много железа
+        ),
+        fatKisloty = emptyList(),
+        kpfc_100g = Kpfc(34, 1.7, 3.7, 1.1, fiber = 3.0),
+        timeForFood = TimeForFood.LUNCH
+    ),
+
+    // Лисички
+    Mushroom(
+        id = "chanterelle",
+        titleRes = R.string.chanterelle,
+        imageRes = R.drawable.lisichka,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_a"]!!, // Рекордсмен по витамину А среди грибов
+            vitaminsMap["vitamin_b1"]!!,
+            vitaminsMap["vitamin_d"]!!,
+            vitaminsMap["vitamin_c"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["copper"]!!,
+            mineralsMap["zinc"]!!,
+            mineralsMap["potassium"]!!
+        ),
+        fatKisloty = emptyList(),
+        kpfc_100g = Kpfc(19, 0.5, 1.5, 1.0, fiber = 1.0),
+        timeForFood = TimeForFood.LUNCH
+    ),
+
+    // Вешенки
+    Mushroom(
+        id = "oyster_mushroom",
+        titleRes = R.string.oyster_mushroom,
+        imageRes = R.drawable.oyster_mushroom, // Закинь картинку
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_b3"]!!,
+            vitaminsMap["vitamin_b5"]!!,
+            vitaminsMap["vitamin_d"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["potassium"]!!,
+            mineralsMap["phosphorus"]!!,
+            mineralsMap["iron"]!!
+        ),
+        fatKisloty = emptyList(),
+        kpfc_100g = Kpfc(33, 0.4, 3.3, 6.0, fiber = 2.3),
+        timeForFood = TimeForFood.DINNER // Легче усваиваются
+    ),
+
+    // Шиитаке
+    Mushroom(
+        id = "shiitake",
+        titleRes = R.string.shiitake,
+        imageRes = R.drawable.shiitake,
+        relatedReceipts = emptyList(),
+        vitamins = listOf(
+            vitaminsMap["vitamin_d"]!!,
+            vitaminsMap["vitamin_b5"]!!,
+            vitaminsMap["vitamin_b6"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["selenium"]!!,
+            mineralsMap["copper"]!!,
+            mineralsMap["zinc"]!!,
+            mineralsMap["manganese"]!!
+        ),
+        fatKisloty = emptyList(),
+        kpfc_100g = Kpfc(34, 0.5, 2.2, 6.8, fiber = 2.5),
+        timeForFood = TimeForFood.LUNCH
+    )
+)
+
+
+val allFood = allFruits + allBerries + allNuts + allVegetables + allMeat + allFish + allMushrooms
