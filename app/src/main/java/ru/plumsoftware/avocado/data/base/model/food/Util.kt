@@ -7,10 +7,10 @@ import ru.plumsoftware.avocado.data.base.model.healthy.mineralsMap
 import ru.plumsoftware.avocado.data.base.model.healthy.vitaminsMap
 
 val allFruits = listOf<Fruit>(
-    // Банан
     Fruit(
         id = "banana",
         titleRes = R.string.banana,
+        descRes = R.string.desc_banana,
         imageRes = R.drawable.banana,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -27,11 +27,10 @@ val allFruits = listOf<Fruit>(
         kpfc_100g = Kpfc(96, 0.2, 1.3, 22.0),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Яблоко
     Fruit(
         id = "apple",
         titleRes = R.string.apple,
+        descRes = R.string.desc_apple,
         imageRes = R.drawable.apple,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -48,11 +47,10 @@ val allFruits = listOf<Fruit>(
         kpfc_100g = Kpfc(52, 0.2, 0.3, 14.0),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Апельсин
     Fruit(
         id = "orange",
         titleRes = R.string.orange,
+        descRes = R.string.desc_orange,
         imageRes = R.drawable.orange,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -69,11 +67,10 @@ val allFruits = listOf<Fruit>(
         kpfc_100g = Kpfc(47, 0.1, 0.9, 11.8),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Киви
     Fruit(
         id = "kiwi",
         titleRes = R.string.kiwi,
+        descRes = R.string.desc_kiwi,
         imageRes = R.drawable.kiwi,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -91,11 +88,10 @@ val allFruits = listOf<Fruit>(
         kpfc_100g = Kpfc(61, 0.5, 1.1, 14.7),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Груша
     Fruit(
         id = "pear",
         titleRes = R.string.pear,
+        descRes = R.string.desc_pear,
         imageRes = R.drawable.pear,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -112,11 +108,10 @@ val allFruits = listOf<Fruit>(
         kpfc_100g = Kpfc(57, 0.1, 0.4, 15.0),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Лимон
     Fruit(
         id = "lemon",
         titleRes = R.string.lemon,
+        descRes = R.string.desc_lemon,
         imageRes = R.drawable.lemon,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -133,11 +128,10 @@ val allFruits = listOf<Fruit>(
         kpfc_100g = Kpfc(29, 0.3, 1.1, 9.3),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Персик
     Fruit(
         id = "peach",
         titleRes = R.string.peach,
+        descRes = R.string.desc_peach,
         imageRes = R.drawable.peach,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -155,11 +149,10 @@ val allFruits = listOf<Fruit>(
         kpfc_100g = Kpfc(39, 0.3, 0.9, 9.5),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Абрикос
     Fruit(
         id = "apricot",
         titleRes = R.string.apricot,
+        descRes = R.string.desc_apricot,
         imageRes = R.drawable.apricot,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -176,11 +169,10 @@ val allFruits = listOf<Fruit>(
         kpfc_100g = Kpfc(48, 0.4, 1.4, 11.0),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Мандарин
     Fruit(
         id = "mandarin",
         titleRes = R.string.mandarin,
+        descRes = R.string.desc_mandarin,
         imageRes = R.drawable.mandarin,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -197,11 +189,10 @@ val allFruits = listOf<Fruit>(
         kpfc_100g = Kpfc(53, 0.3, 0.8, 13.3),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Ананас
     Fruit(
         id = "pineapple",
         titleRes = R.string.pineapple,
+        descRes = R.string.desc_pineapple,
         imageRes = R.drawable.pineapple,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -219,11 +210,10 @@ val allFruits = listOf<Fruit>(
         kpfc_100g = Kpfc(50, 0.1, 0.5, 13.1),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Гранат
     Fruit(
         id = "pomegranate",
         titleRes = R.string.pomegranate,
+        descRes = R.string.desc_pomegranate,
         imageRes = R.drawable.pomegranate,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -241,11 +231,10 @@ val allFruits = listOf<Fruit>(
         kpfc_100g = Kpfc(83, 1.2, 1.7, 18.7),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Манго
     Fruit(
         id = "mango",
         titleRes = R.string.mango,
+        descRes = R.string.desc_mango,
         imageRes = R.drawable.mango,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -263,11 +252,10 @@ val allFruits = listOf<Fruit>(
         kpfc_100g = Kpfc(60, 0.4, 0.8, 15.0),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Хурма
     Fruit(
         id = "persimmon",
         titleRes = R.string.persimmon,
+        descRes = R.string.desc_persimmon,
         imageRes = R.drawable.persimmon,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -288,10 +276,10 @@ val allFruits = listOf<Fruit>(
 )
 
 val allBerries = listOf<Berry>(
-    // Клубника
     Berry(
         id = "strawberry",
         titleRes = R.string.strawberry,
+        descRes = R.string.desc_strawberry,
         imageRes = R.drawable.strawberry,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -308,11 +296,10 @@ val allBerries = listOf<Berry>(
         kpfc_100g = Kpfc(32, 0.3, 0.7, 7.7),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Голубика
     Berry(
         id = "blueberry",
         titleRes = R.string.blueberry,
+        descRes = R.string.desc_blueberry,
         imageRes = R.drawable.blueberry,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -329,11 +316,10 @@ val allBerries = listOf<Berry>(
         kpfc_100g = Kpfc(57, 0.3, 0.7, 14.5),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Арбуз
     Berry(
         id = "watermelon",
         titleRes = R.string.watermelon,
+        descRes = R.string.desc_watermelon,
         imageRes = R.drawable.watermelon,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -350,11 +336,10 @@ val allBerries = listOf<Berry>(
         kpfc_100g = Kpfc(30, 0.2, 0.6, 8.0),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Виноград
     Berry(
         id = "grape",
         titleRes = R.string.grape,
+        descRes = R.string.desc_grape,
         imageRes = R.drawable.grape,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -371,11 +356,10 @@ val allBerries = listOf<Berry>(
         kpfc_100g = Kpfc(69, 0.2, 0.7, 18.0),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Авокадо
     Berry(
         id = "avocado",
         titleRes = R.string.avocado,
+        descRes = R.string.desc_avocado,
         imageRes = R.drawable.avocado,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -390,17 +374,14 @@ val allBerries = listOf<Berry>(
             mineralsMap["copper"]!!,
             mineralsMap["magnesium"]!!
         ),
-        fatKisloty = listOf(
-            fatsMap["omega3"]!!
-        ),
+        fatKisloty = listOf(fatsMap["omega3"]!!),
         kpfc_100g = Kpfc(160, 14.7, 2.0, 8.5),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Малина
     Berry(
         id = "raspberry",
         titleRes = R.string.raspberry,
+        descRes = R.string.desc_raspberry,
         imageRes = R.drawable.raspberry,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -417,11 +398,10 @@ val allBerries = listOf<Berry>(
         kpfc_100g = Kpfc(52, 0.7, 1.2, 11.9),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Ежевика
     Berry(
         id = "blackberry",
         titleRes = R.string.blackberry,
+        descRes = R.string.desc_blackberry,
         imageRes = R.drawable.blackberry,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -438,11 +418,10 @@ val allBerries = listOf<Berry>(
         kpfc_100g = Kpfc(43, 0.5, 1.4, 10.2),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Смородина (черная)
     Berry(
         id = "currant",
         titleRes = R.string.currant,
+        descRes = R.string.desc_currant,
         imageRes = R.drawable.currant,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -461,11 +440,10 @@ val allBerries = listOf<Berry>(
         kpfc_100g = Kpfc(44, 0.4, 1.4, 10.0),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Клюква
     Berry(
         id = "cranberry",
         titleRes = R.string.cranberry,
+        descRes = R.string.desc_cranberry,
         imageRes = R.drawable.cranberry,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -482,11 +460,10 @@ val allBerries = listOf<Berry>(
         kpfc_100g = Kpfc(46, 0.1, 0.4, 12.2),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Вишня
     Berry(
         id = "cherry",
         titleRes = R.string.cherry,
+        descRes = R.string.desc_cherry,
         imageRes = R.drawable.cherry,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -506,10 +483,10 @@ val allBerries = listOf<Berry>(
 )
 
 val allNuts = listOf<Nut>(
-    // Грецкий орех
     Nut(
         id = "walnut",
         titleRes = R.string.walnut,
+        descRes = R.string.desc_walnut,
         imageRes = R.drawable.walnut,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -523,17 +500,14 @@ val allNuts = listOf<Nut>(
             mineralsMap["magnesium"]!!,
             mineralsMap["zinc"]!!
         ),
-        fatKisloty = listOf(
-            fatsMap["omega3"]!!
-        ),
+        fatKisloty = listOf(fatsMap["omega3"]!!),
         kpfc_100g = Kpfc(654, 65.2, 15.2, 13.7),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Миндаль
     Nut(
         id = "almond",
         titleRes = R.string.almond,
+        descRes = R.string.desc_almond,
         imageRes = R.drawable.almond,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -551,11 +525,10 @@ val allNuts = listOf<Nut>(
         kpfc_100g = Kpfc(579, 49.9, 21.2, 21.7),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Фундук
     Nut(
         id = "hazelnut",
         titleRes = R.string.hazelnut,
+        descRes = R.string.desc_hazelnut,
         imageRes = R.drawable.hazelnut,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -572,11 +545,10 @@ val allNuts = listOf<Nut>(
         kpfc_100g = Kpfc(628, 60.8, 15.0, 16.7),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Кешью
     Nut(
         id = "cashew",
         titleRes = R.string.cashew,
+        descRes = R.string.desc_cashew,
         imageRes = R.drawable.cashew,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -594,11 +566,10 @@ val allNuts = listOf<Nut>(
         kpfc_100g = Kpfc(553, 43.8, 18.2, 30.2),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Арахис (технически бобовые, но часто относят к орехам)
     Nut(
         id = "peanut",
         titleRes = R.string.peanut,
+        descRes = R.string.desc_peanut,
         imageRes = R.drawable.peanut,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -616,11 +587,10 @@ val allNuts = listOf<Nut>(
         kpfc_100g = Kpfc(567, 49.2, 25.8, 16.1),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Фисташки
     Nut(
         id = "pistachio",
         titleRes = R.string.pistachio,
+        descRes = R.string.desc_pistachio,
         imageRes = R.drawable.pistachio,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -637,11 +607,10 @@ val allNuts = listOf<Nut>(
         kpfc_100g = Kpfc(560, 45.3, 20.6, 27.5),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Кедровый орех
     Nut(
         id = "pine_nut",
         titleRes = R.string.pine_nut,
+        descRes = R.string.desc_pine_nut,
         imageRes = R.drawable.pine_nut,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -659,33 +628,10 @@ val allNuts = listOf<Nut>(
         kpfc_100g = Kpfc(673, 68.4, 13.7, 13.1),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Бразильский орех
-//    Nut(
-//        id = "brazil_nut",
-//        titleRes = R.string.brazil_nut,
-//        imageRes = R.drawable.brazil_nut,
-//        relatedReceipts = emptyList(),
-//        vitamins = listOf(
-//            vitaminsMap["vitamin_e"]!!,
-//            vitaminsMap["vitamin_b1"]!!,
-//            vitaminsMap["vitamin_b6"]!!
-//        ),
-//        minerals = listOf(
-//            mineralsMap["selenium"]!!, // Бразильский орех - рекордсмен по селену
-//            mineralsMap["magnesium"]!!,
-//            mineralsMap["copper"]!!,
-//            mineralsMap["zinc"]!!
-//        ),
-//        fatKisloty = emptyList(),
-//        kpfc_100g = Kpfc(659, 67.1, 14.3, 11.7),
-//        timeForFood = TimeForFood.BREAKFAST
-//    ),
-
-    // Пекан
     Nut(
         id = "pecan",
         titleRes = R.string.pecan,
+        descRes = R.string.desc_pecan,
         imageRes = R.drawable.pecan,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -702,17 +648,13 @@ val allNuts = listOf<Nut>(
         kpfc_100g = Kpfc(691, 72.0, 9.2, 13.9),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Макадамия
     Nut(
         id = "macadamia",
         titleRes = R.string.macadamia,
+        descRes = R.string.desc_macadamia,
         imageRes = R.drawable.macadamia,
         relatedReceipts = emptyList(),
-        vitamins = listOf(
-            vitaminsMap["vitamin_b1"]!!,
-            vitaminsMap["vitamin_b6"]!!
-        ),
+        vitamins = listOf(vitaminsMap["vitamin_b1"]!!, vitaminsMap["vitamin_b6"]!!),
         minerals = listOf(
             mineralsMap["manganese"]!!,
             mineralsMap["copper"]!!,
@@ -722,11 +664,10 @@ val allNuts = listOf<Nut>(
         kpfc_100g = Kpfc(718, 75.8, 7.9, 13.8),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Каштан (технически орех, но сильно отличается по составу)
     Nut(
         id = "chestnut",
         titleRes = R.string.chestnut,
+        descRes = R.string.desc_chestnut,
         imageRes = R.drawable.chestnut,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -746,10 +687,10 @@ val allNuts = listOf<Nut>(
 )
 
 val allVegetables = listOf<Vegetable>(
-    // Картофель
     Vegetable(
         id = "potato",
         titleRes = R.string.potato,
+        descRes = R.string.desc_potato,
         imageRes = R.drawable.potato,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -768,11 +709,10 @@ val allVegetables = listOf<Vegetable>(
         kpfc_100g = Kpfc(77, 0.1, 2.0, 17.0, fiber = 2.2),
         timeForFood = TimeForFood.DINNER
     ),
-
-    // Морковь
     Vegetable(
         id = "carrot",
         titleRes = R.string.carrot,
+        descRes = R.string.desc_carrot,
         imageRes = R.drawable.carrot,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -791,11 +731,10 @@ val allVegetables = listOf<Vegetable>(
         kpfc_100g = Kpfc(41, 0.2, 0.9, 9.6, fiber = 2.8),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Лук репчатый
     Vegetable(
         id = "onion",
         titleRes = R.string.onion,
+        descRes = R.string.desc_onion,
         imageRes = R.drawable.onion,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -814,11 +753,10 @@ val allVegetables = listOf<Vegetable>(
         kpfc_100g = Kpfc(40, 0.1, 1.1, 9.3, fiber = 1.7),
         timeForFood = TimeForFood.DINNER
     ),
-
-    // Чеснок
     Vegetable(
         id = "garlic",
         titleRes = R.string.garlic,
+        descRes = R.string.desc_garlic,
         imageRes = R.drawable.garlic,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -838,11 +776,10 @@ val allVegetables = listOf<Vegetable>(
         kpfc_100g = Kpfc(149, 0.5, 6.4, 33.1, fiber = 4.5),
         timeForFood = TimeForFood.DINNER
     ),
-
-    // Томат (помидор)
     Vegetable(
         id = "tomato",
         titleRes = R.string.tomato,
+        descRes = R.string.desc_tomato,
         imageRes = R.drawable.tomato,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -861,11 +798,10 @@ val allVegetables = listOf<Vegetable>(
         kpfc_100g = Kpfc(18, 0.2, 0.9, 3.9, fiber = 1.2),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Огурец
     Vegetable(
         id = "cucumber",
         titleRes = R.string.cucumber,
+        descRes = R.string.desc_cucumber,
         imageRes = R.drawable.cucumber,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -883,11 +819,10 @@ val allVegetables = listOf<Vegetable>(
         kpfc_100g = Kpfc(15, 0.1, 0.7, 3.6, fiber = 0.5),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Капуста белокочанная
     Vegetable(
         id = "cabbage",
         titleRes = R.string.cabbage,
+        descRes = R.string.desc_cabbage,
         imageRes = R.drawable.cabbage,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -906,11 +841,10 @@ val allVegetables = listOf<Vegetable>(
         kpfc_100g = Kpfc(25, 0.1, 1.3, 5.8, fiber = 2.5),
         timeForFood = TimeForFood.DINNER
     ),
-
-    // Брокколи
     Vegetable(
         id = "broccoli",
         titleRes = R.string.broccoli,
+        descRes = R.string.desc_broccoli,
         imageRes = R.drawable.broccoli,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -925,17 +859,14 @@ val allVegetables = listOf<Vegetable>(
             mineralsMap["iron"]!!,
             mineralsMap["calcium"]!!
         ),
-        fatKisloty = listOf(
-            fatsMap["omega3"]!!
-        ),
+        fatKisloty = listOf(fatsMap["omega3"]!!),
         kpfc_100g = Kpfc(34, 0.4, 2.8, 6.6, fiber = 2.6),
         timeForFood = TimeForFood.DINNER
     ),
-
-    // Перец болгарский
     Vegetable(
         id = "bell_pepper",
         titleRes = R.string.bell_pepper,
+        descRes = R.string.desc_bell_pepper,
         imageRes = R.drawable.bell_pepper,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -954,11 +885,10 @@ val allVegetables = listOf<Vegetable>(
         kpfc_100g = Kpfc(20, 0.2, 0.9, 4.6, fiber = 1.7),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Свекла
     Vegetable(
         id = "beet",
         titleRes = R.string.beet,
+        descRes = R.string.desc_beet,
         imageRes = R.drawable.beet,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -976,11 +906,10 @@ val allVegetables = listOf<Vegetable>(
         kpfc_100g = Kpfc(43, 0.2, 1.6, 9.6, fiber = 2.8),
         timeForFood = TimeForFood.DINNER
     ),
-
-    // Тыква
     Vegetable(
         id = "pumpkin",
         titleRes = R.string.pumpkin,
+        descRes = R.string.desc_pumpkin,
         imageRes = R.drawable.pumpkin,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -999,11 +928,10 @@ val allVegetables = listOf<Vegetable>(
         kpfc_100g = Kpfc(26, 0.1, 1.0, 6.5, fiber = 1.5),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Кабачок
     Vegetable(
         id = "zucchini",
         titleRes = R.string.zucchini,
+        descRes = R.string.desc_zucchini,
         imageRes = R.drawable.zucchini,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -1022,11 +950,10 @@ val allVegetables = listOf<Vegetable>(
         kpfc_100g = Kpfc(17, 0.3, 1.2, 3.1, fiber = 1.1),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Баклажан
     Vegetable(
         id = "eggplant",
         titleRes = R.string.eggplant,
+        descRes = R.string.desc_eggplant,
         imageRes = R.drawable.eggplant,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -1045,11 +972,10 @@ val allVegetables = listOf<Vegetable>(
         kpfc_100g = Kpfc(25, 0.2, 1.0, 5.9, fiber = 3.0),
         timeForFood = TimeForFood.DINNER
     ),
-
-    // Редис
     Vegetable(
         id = "radish",
         titleRes = R.string.radish,
+        descRes = R.string.desc_radish,
         imageRes = R.drawable.radish,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -1067,11 +993,10 @@ val allVegetables = listOf<Vegetable>(
         kpfc_100g = Kpfc(16, 0.1, 0.7, 3.4, fiber = 1.6),
         timeForFood = TimeForFood.BREAKFAST
     ),
-
-    // Шпинат
     Vegetable(
         id = "spinach",
         titleRes = R.string.spinach,
+        descRes = R.string.desc_spinach,
         imageRes = R.drawable.spinach,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -1089,19 +1014,17 @@ val allVegetables = listOf<Vegetable>(
             mineralsMap["calcium"]!!,
             mineralsMap["potassium"]!!
         ),
-        fatKisloty = listOf(
-            fatsMap["omega3"]!!
-        ),
+        fatKisloty = listOf(fatsMap["omega3"]!!),
         kpfc_100g = Kpfc(23, 0.4, 2.9, 3.6, fiber = 2.2),
         timeForFood = TimeForFood.BREAKFAST
     )
 )
 
 val allMeat = listOf<Meat>(
-    // Куриная грудка
     Meat(
         id = "chicken_breast",
         titleRes = R.string.chicken_breast,
+        descRes = R.string.desc_chicken_breast,
         imageRes = R.drawable.chicken_2,
         foodType = FoodType.MEAT,
         relatedReceipts = emptyList(),
@@ -1119,11 +1042,10 @@ val allMeat = listOf<Meat>(
         kpfc_100g = Kpfc(165, 3.6, 31.0, 0.0),
         timeForFood = TimeForFood.DINNER
     ),
-
-    // Куриное бедро
     Meat(
         id = "chicken_thigh",
         titleRes = R.string.chicken_thigh,
+        descRes = R.string.desc_chicken_thigh,
         imageRes = R.drawable.chicken,
         foodType = FoodType.MEAT,
         relatedReceipts = emptyList(),
@@ -1132,20 +1054,15 @@ val allMeat = listOf<Meat>(
             vitaminsMap["vitamin_b6"]!!,
             vitaminsMap["vitamin_b12"]!!
         ),
-        minerals = listOf(
-            mineralsMap["selenium"]!!,
-            mineralsMap["zinc"]!!,
-            mineralsMap["iron"]!!
-        ),
+        minerals = listOf(mineralsMap["selenium"]!!, mineralsMap["zinc"]!!, mineralsMap["iron"]!!),
         fatKisloty = emptyList(),
         kpfc_100g = Kpfc(209, 11.0, 26.0, 0.0),
         timeForFood = TimeForFood.DINNER
     ),
-
-    // Индейка (грудка)
     Meat(
         id = "turkey_breast",
         titleRes = R.string.turkey_breast,
+        descRes = R.string.desc_turkey_breast,
         imageRes = R.drawable.turkey_breast,
         foodType = FoodType.MEAT,
         relatedReceipts = emptyList(),
@@ -1163,11 +1080,10 @@ val allMeat = listOf<Meat>(
         kpfc_100g = Kpfc(135, 1.0, 30.0, 0.0),
         timeForFood = TimeForFood.DINNER
     ),
-
-    // Говядина (постная)
     Meat(
         id = "beef_lean",
         titleRes = R.string.beef_lean,
+        descRes = R.string.desc_beef_lean,
         imageRes = R.drawable.steak,
         foodType = FoodType.MEAT,
         relatedReceipts = emptyList(),
@@ -1186,11 +1102,10 @@ val allMeat = listOf<Meat>(
         kpfc_100g = Kpfc(250, 15.0, 26.0, 0.0),
         timeForFood = TimeForFood.DINNER
     ),
-
-    // Говяжий стейк (рибай)
     Meat(
         id = "beef_ribeye",
         titleRes = R.string.beef_ribeye,
+        descRes = R.string.desc_beef_ribeye,
         imageRes = R.drawable.steak,
         foodType = FoodType.MEAT,
         relatedReceipts = emptyList(),
@@ -1199,20 +1114,15 @@ val allMeat = listOf<Meat>(
             vitaminsMap["vitamin_b3"]!!,
             vitaminsMap["vitamin_b6"]!!
         ),
-        minerals = listOf(
-            mineralsMap["iron"]!!,
-            mineralsMap["zinc"]!!,
-            mineralsMap["selenium"]!!
-        ),
+        minerals = listOf(mineralsMap["iron"]!!, mineralsMap["zinc"]!!, mineralsMap["selenium"]!!),
         fatKisloty = emptyList(),
         kpfc_100g = Kpfc(291, 22.0, 24.0, 0.0),
         timeForFood = TimeForFood.DINNER
     ),
-
-    // Свинина (постная, вырезка)
     Meat(
         id = "pork_tenderloin",
         titleRes = R.string.pork_tenderloin,
+        descRes = R.string.desc_pork_tenderloin,
         imageRes = R.drawable.pork_tenderloin,
         foodType = FoodType.MEAT,
         relatedReceipts = emptyList(),
@@ -1230,11 +1140,10 @@ val allMeat = listOf<Meat>(
         kpfc_100g = Kpfc(143, 3.5, 26.0, 0.0),
         timeForFood = TimeForFood.DINNER
     ),
-
-    // Свинина (шея)
     Meat(
         id = "pork_neck",
         titleRes = R.string.pork_neck,
+        descRes = R.string.desc_pork_neck,
         imageRes = R.drawable.steak,
         foodType = FoodType.MEAT,
         relatedReceipts = emptyList(),
@@ -1243,20 +1152,15 @@ val allMeat = listOf<Meat>(
             vitaminsMap["vitamin_b6"]!!,
             vitaminsMap["vitamin_b12"]!!
         ),
-        minerals = listOf(
-            mineralsMap["selenium"]!!,
-            mineralsMap["zinc"]!!,
-            mineralsMap["iron"]!!
-        ),
+        minerals = listOf(mineralsMap["selenium"]!!, mineralsMap["zinc"]!!, mineralsMap["iron"]!!),
         fatKisloty = emptyList(),
         kpfc_100g = Kpfc(242, 18.0, 20.0, 0.0),
         timeForFood = TimeForFood.DINNER
     ),
-
-    // Баранина
     Meat(
         id = "lamb",
         titleRes = R.string.lamb,
+        descRes = R.string.desc_lamb,
         imageRes = R.drawable.steak,
         foodType = FoodType.MEAT,
         relatedReceipts = emptyList(),
@@ -1265,20 +1169,15 @@ val allMeat = listOf<Meat>(
             vitaminsMap["vitamin_b3"]!!,
             vitaminsMap["vitamin_b6"]!!
         ),
-        minerals = listOf(
-            mineralsMap["iron"]!!,
-            mineralsMap["zinc"]!!,
-            mineralsMap["selenium"]!!
-        ),
+        minerals = listOf(mineralsMap["iron"]!!, mineralsMap["zinc"]!!, mineralsMap["selenium"]!!),
         fatKisloty = emptyList(),
         kpfc_100g = Kpfc(258, 18.0, 23.0, 0.0),
         timeForFood = TimeForFood.DINNER
     ),
-
-    // Телятина
     Meat(
         id = "veal",
         titleRes = R.string.veal,
+        descRes = R.string.desc_veal,
         imageRes = R.drawable.steak,
         foodType = FoodType.MEAT,
         relatedReceipts = emptyList(),
@@ -1296,11 +1195,10 @@ val allMeat = listOf<Meat>(
         kpfc_100g = Kpfc(172, 7.0, 25.0, 0.0),
         timeForFood = TimeForFood.DINNER
     ),
-
-    // Кролик
     Meat(
         id = "rabbit",
         titleRes = R.string.rabbit,
+        descRes = R.string.desc_rabbit,
         imageRes = R.drawable.rabbit,
         foodType = FoodType.MEAT,
         relatedReceipts = emptyList(),
@@ -1318,11 +1216,10 @@ val allMeat = listOf<Meat>(
         kpfc_100g = Kpfc(173, 7.0, 26.0, 0.0),
         timeForFood = TimeForFood.DINNER
     ),
-
-    // Утка
     Meat(
         id = "duck",
         titleRes = R.string.duck,
+        descRes = R.string.desc_duck,
         imageRes = R.drawable.duck,
         foodType = FoodType.MEAT,
         relatedReceipts = emptyList(),
@@ -1331,20 +1228,15 @@ val allMeat = listOf<Meat>(
             vitaminsMap["vitamin_b6"]!!,
             vitaminsMap["vitamin_b12"]!!
         ),
-        minerals = listOf(
-            mineralsMap["selenium"]!!,
-            mineralsMap["zinc"]!!,
-            mineralsMap["iron"]!!
-        ),
+        minerals = listOf(mineralsMap["selenium"]!!, mineralsMap["zinc"]!!, mineralsMap["iron"]!!),
         fatKisloty = emptyList(),
         kpfc_100g = Kpfc(337, 28.0, 19.0, 0.0),
         timeForFood = TimeForFood.DINNER
     ),
-
-    // Гусь
     Meat(
         id = "goose",
         titleRes = R.string.goose,
+        descRes = R.string.desc_goose,
         imageRes = R.drawable.chicken,
         foodType = FoodType.MEAT,
         relatedReceipts = emptyList(),
@@ -1353,11 +1245,7 @@ val allMeat = listOf<Meat>(
             vitaminsMap["vitamin_b6"]!!,
             vitaminsMap["vitamin_b12"]!!
         ),
-        minerals = listOf(
-            mineralsMap["selenium"]!!,
-            mineralsMap["zinc"]!!,
-            mineralsMap["iron"]!!
-        ),
+        minerals = listOf(mineralsMap["selenium"]!!, mineralsMap["zinc"]!!, mineralsMap["iron"]!!),
         fatKisloty = emptyList(),
         kpfc_100g = Kpfc(371, 33.0, 18.0, 0.0),
         timeForFood = TimeForFood.DINNER
@@ -1365,11 +1253,10 @@ val allMeat = listOf<Meat>(
 )
 
 val allFish = listOf<Fish>(
-
-    // Лосось
     Fish(
         id = "salmon",
         titleRes = R.string.salmon,
+        descRes = R.string.desc_salmon,
         imageRes = R.drawable.salmon,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -1382,23 +1269,14 @@ val allFish = listOf<Fish>(
             mineralsMap["phosphorus"]!!,
             mineralsMap["potassium"]!!
         ),
-        fatKisloty = listOf(
-            fatsMap["omega3"]!!
-        ),
-        kpfc_100g = Kpfc(
-            208,
-            13.0,
-            20.0,
-            0.0,
-            omega3 = 2.3
-        ),
+        fatKisloty = listOf(fatsMap["omega3"]!!),
+        kpfc_100g = Kpfc(208, 13.0, 20.0, 0.0, omega3 = 2.3),
         timeForFood = TimeForFood.DINNER
     ),
-
-    // Скумбрия
     Fish(
         id = "mackerel",
         titleRes = R.string.mackerel,
+        descRes = R.string.desc_mackerel,
         imageRes = R.drawable.mackerel,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -1406,188 +1284,91 @@ val allFish = listOf<Fish>(
             vitaminsMap["vitamin_b12"]!!,
             vitaminsMap["vitamin_b3"]!!
         ),
-        minerals = listOf(
-            mineralsMap["selenium"]!!,
-            mineralsMap["phosphorus"]!!
-        ),
-        fatKisloty = listOf(
-            fatsMap["omega3"]!!
-        ),
-        kpfc_100g = Kpfc(
-            305,
-            25.0,
-            19.0,
-            0.0,
-            omega3 = 4.1
-        ),
+        minerals = listOf(mineralsMap["selenium"]!!, mineralsMap["phosphorus"]!!),
+        fatKisloty = listOf(fatsMap["omega3"]!!),
+        kpfc_100g = Kpfc(305, 25.0, 19.0, 0.0, omega3 = 4.1),
         timeForFood = TimeForFood.DINNER
     ),
-
-    // Сельдь
     Fish(
         id = "herring",
         titleRes = R.string.herring,
+        descRes = R.string.desc_herring,
         imageRes = R.drawable.herring,
         relatedReceipts = emptyList(),
-        vitamins = listOf(
-            vitaminsMap["vitamin_d"]!!,
-            vitaminsMap["vitamin_b12"]!!
-        ),
-        minerals = listOf(
-            mineralsMap["selenium"]!!,
-            mineralsMap["phosphorus"]!!
-        ),
-        fatKisloty = listOf(
-            fatsMap["omega3"]!!
-        ),
-        kpfc_100g = Kpfc(
-            158,
-            9.0,
-            18.0,
-            0.0,
-            omega3 = 1.7
-        ),
+        vitamins = listOf(vitaminsMap["vitamin_d"]!!, vitaminsMap["vitamin_b12"]!!),
+        minerals = listOf(mineralsMap["selenium"]!!, mineralsMap["phosphorus"]!!),
+        fatKisloty = listOf(fatsMap["omega3"]!!),
+        kpfc_100g = Kpfc(158, 9.0, 18.0, 0.0, omega3 = 1.7),
         timeForFood = TimeForFood.DINNER
     ),
-
-    // Тунец
     Fish(
         id = "tuna",
         titleRes = R.string.tuna,
+        descRes = R.string.desc_tuna,
         imageRes = R.drawable.tuna,
         relatedReceipts = emptyList(),
-        vitamins = listOf(
-            vitaminsMap["vitamin_b12"]!!,
-            vitaminsMap["vitamin_b3"]!!
-        ),
-        minerals = listOf(
-            mineralsMap["selenium"]!!,
-            mineralsMap["phosphorus"]!!
-        ),
-        fatKisloty = listOf(
-            fatsMap["omega3"]!!
-        ),
-        kpfc_100g = Kpfc(
-            132,
-            1.0,
-            29.0,
-            0.0,
-            omega3 = 0.3
-        ),
+        vitamins = listOf(vitaminsMap["vitamin_b12"]!!, vitaminsMap["vitamin_b3"]!!),
+        minerals = listOf(mineralsMap["selenium"]!!, mineralsMap["phosphorus"]!!),
+        fatKisloty = listOf(fatsMap["omega3"]!!),
+        kpfc_100g = Kpfc(132, 1.0, 29.0, 0.0, omega3 = 0.3),
         timeForFood = TimeForFood.DINNER
     ),
-
-    // Форель
     Fish(
         id = "trout",
         titleRes = R.string.trout,
+        descRes = R.string.desc_trout,
         imageRes = R.drawable.trout,
         relatedReceipts = emptyList(),
-        vitamins = listOf(
-            vitaminsMap["vitamin_d"]!!,
-            vitaminsMap["vitamin_b12"]!!
-        ),
-        minerals = listOf(
-            mineralsMap["selenium"]!!
-        ),
-        fatKisloty = listOf(
-            fatsMap["omega3"]!!
-        ),
-        kpfc_100g = Kpfc(
-            190,
-            12.0,
-            20.0,
-            0.0,
-            omega3 = 1.0
-        ),
+        vitamins = listOf(vitaminsMap["vitamin_d"]!!, vitaminsMap["vitamin_b12"]!!),
+        minerals = listOf(mineralsMap["selenium"]!!),
+        fatKisloty = listOf(fatsMap["omega3"]!!),
+        kpfc_100g = Kpfc(190, 12.0, 20.0, 0.0, omega3 = 1.0),
         timeForFood = TimeForFood.DINNER
     ),
-
-    // Сардина
     Fish(
         id = "sardine",
         titleRes = R.string.sardine,
+        descRes = R.string.desc_sardine,
         imageRes = R.drawable.sardine,
         relatedReceipts = emptyList(),
-        vitamins = listOf(
-            vitaminsMap["vitamin_d"]!!,
-            vitaminsMap["vitamin_b12"]!!
-        ),
-        minerals = listOf(
-            mineralsMap["calcium"]!!,
-            mineralsMap["selenium"]!!
-        ),
-        fatKisloty = listOf(
-            fatsMap["omega3"]!!
-        ),
-        kpfc_100g = Kpfc(
-            208,
-            11.0,
-            25.0,
-            0.0,
-            omega3 = 1.5
-        ),
+        vitamins = listOf(vitaminsMap["vitamin_d"]!!, vitaminsMap["vitamin_b12"]!!),
+        minerals = listOf(mineralsMap["calcium"]!!, mineralsMap["selenium"]!!),
+        fatKisloty = listOf(fatsMap["omega3"]!!),
+        kpfc_100g = Kpfc(208, 11.0, 25.0, 0.0, omega3 = 1.5),
         timeForFood = TimeForFood.DINNER
     ),
-
-    // Треска
     Fish(
         id = "cod",
         titleRes = R.string.cod,
+        descRes = R.string.desc_cod,
         imageRes = R.drawable.cod,
         relatedReceipts = emptyList(),
-        vitamins = listOf(
-            vitaminsMap["vitamin_b6"]!!,
-            vitaminsMap["vitamin_b12"]!!
-        ),
-        minerals = listOf(
-            mineralsMap["phosphorus"]!!,
-            mineralsMap["selenium"]!!
-        ),
+        vitamins = listOf(vitaminsMap["vitamin_b6"]!!, vitaminsMap["vitamin_b12"]!!),
+        minerals = listOf(mineralsMap["phosphorus"]!!, mineralsMap["selenium"]!!),
         fatKisloty = emptyList(),
-        kpfc_100g = Kpfc(
-            82,
-            0.7,
-            18.0,
-            0.0,
-            omega3 = 0.2
-        ),
+        kpfc_100g = Kpfc(82, 0.7, 18.0, 0.0, omega3 = 0.2),
         timeForFood = TimeForFood.DINNER
     ),
-
-    // Минтай
     Fish(
         id = "pollock",
         titleRes = R.string.pollock,
+        descRes = R.string.desc_pollock,
         imageRes = R.drawable.pollock,
         relatedReceipts = emptyList(),
-        vitamins = listOf(
-            vitaminsMap["vitamin_b12"]!!
-        ),
-        minerals = listOf(
-            mineralsMap["selenium"]!!
-        ),
+        vitamins = listOf(vitaminsMap["vitamin_b12"]!!),
+        minerals = listOf(mineralsMap["selenium"]!!),
         fatKisloty = emptyList(),
-        kpfc_100g = Kpfc(
-            92,
-            1.0,
-            19.0,
-            0.0,
-            omega3 = 0.5
-        ),
+        kpfc_100g = Kpfc(92, 1.0, 19.0, 0.0, omega3 = 0.5),
         timeForFood = TimeForFood.DINNER
     )
-
 )
 
-// Убедись, что класс Mushroom определен (как ты скинул в вопросе)
-
 val allMushrooms = listOf<Mushroom>(
-    // Шампиньоны
     Mushroom(
         id = "champignon",
         titleRes = R.string.champignon,
-        imageRes = R.drawable.sumpinion, // Закинь картинку
+        descRes = R.string.desc_champignon,
+        imageRes = R.drawable.champignon,
         relatedReceipts = emptyList(),
         vitamins = listOf(
             vitaminsMap["vitamin_b2"]!!,
@@ -1605,11 +1386,10 @@ val allMushrooms = listOf<Mushroom>(
         kpfc_100g = Kpfc(27, 1.0, 4.3, 0.1, fiber = 2.0),
         timeForFood = TimeForFood.LUNCH
     ),
-
-    // Белый гриб (Боровик)
     Mushroom(
         id = "white_mushroom",
         titleRes = R.string.white_mushroom,
+        descRes = R.string.desc_white_mushroom,
         imageRes = R.drawable.white_mushroom,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -1622,21 +1402,20 @@ val allMushrooms = listOf<Mushroom>(
             mineralsMap["selenium"]!!,
             mineralsMap["potassium"]!!,
             mineralsMap["manganese"]!!,
-            mineralsMap["iron"]!! // В белых много железа
+            mineralsMap["iron"]!!
         ),
         fatKisloty = emptyList(),
         kpfc_100g = Kpfc(34, 1.7, 3.7, 1.1, fiber = 3.0),
         timeForFood = TimeForFood.LUNCH
     ),
-
-    // Лисички
     Mushroom(
         id = "chanterelle",
         titleRes = R.string.chanterelle,
-        imageRes = R.drawable.lisichka,
+        descRes = R.string.desc_chanterelle,
+        imageRes = R.drawable.chanterelle,
         relatedReceipts = emptyList(),
         vitamins = listOf(
-            vitaminsMap["vitamin_a"]!!, // Рекордсмен по витамину А среди грибов
+            vitaminsMap["vitamin_a"]!!,
             vitaminsMap["vitamin_b1"]!!,
             vitaminsMap["vitamin_d"]!!,
             vitaminsMap["vitamin_c"]!!
@@ -1650,12 +1429,11 @@ val allMushrooms = listOf<Mushroom>(
         kpfc_100g = Kpfc(19, 0.5, 1.5, 1.0, fiber = 1.0),
         timeForFood = TimeForFood.LUNCH
     ),
-
-    // Вешенки
     Mushroom(
         id = "oyster_mushroom",
         titleRes = R.string.oyster_mushroom,
-        imageRes = R.drawable.oyster_mushroom, // Закинь картинку
+        descRes = R.string.desc_oyster_mushroom,
+        imageRes = R.drawable.oyster_mushroom,
         relatedReceipts = emptyList(),
         vitamins = listOf(
             vitaminsMap["vitamin_b3"]!!,
@@ -1669,13 +1447,12 @@ val allMushrooms = listOf<Mushroom>(
         ),
         fatKisloty = emptyList(),
         kpfc_100g = Kpfc(33, 0.4, 3.3, 6.0, fiber = 2.3),
-        timeForFood = TimeForFood.DINNER // Легче усваиваются
+        timeForFood = TimeForFood.DINNER
     ),
-
-    // Шиитаке
     Mushroom(
         id = "shiitake",
         titleRes = R.string.shiitake,
+        descRes = R.string.desc_shiitake,
         imageRes = R.drawable.shiitake,
         relatedReceipts = emptyList(),
         vitamins = listOf(
@@ -1694,6 +1471,5 @@ val allMushrooms = listOf<Mushroom>(
         timeForFood = TimeForFood.LUNCH
     )
 )
-
 
 val allFood = allFruits + allBerries + allNuts + allVegetables + allMeat + allFish + allMushrooms

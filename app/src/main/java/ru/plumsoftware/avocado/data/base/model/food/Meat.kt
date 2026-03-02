@@ -9,6 +9,7 @@ data class Meat(
     override val id: String,
     override val titleRes: Int,
     override val imageRes: Int,
+    override val descRes: Int,
     override val foodType: FoodType,
     override val relatedReceipts: List<String>,
     override val vitamins: List<Vitamin>,

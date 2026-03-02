@@ -8,6 +8,7 @@ import ru.plumsoftware.avocado.data.base.model.healthy.Vitamin
 data class Mushroom(
     override val id: String,
     override val titleRes: Int,
+    override val descRes: Int,
     override val imageRes: Int,
     override val foodType: FoodType = FoodType.MUSHROOM,
     override val relatedReceipts: List<String>,
