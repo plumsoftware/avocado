@@ -167,7 +167,8 @@ class MainActivity : ComponentActivity() {
                                 val viewModel: ListViewModel = viewModel(
                                     factory = ListViewModel.Companion.ListViewModelFactory(
                                         favoritesRepository = favRepo,
-                                        userPreferencesRepository = userRepo
+                                        userPreferencesRepository = userRepo,
+                                        context = this@MainActivity
                                     )
                                 )
 

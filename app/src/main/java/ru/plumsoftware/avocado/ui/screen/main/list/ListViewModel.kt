@@ -4,10 +4,13 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -19,6 +22,7 @@ import ru.plumsoftware.avocado.data.base.model.food.allFood
 import ru.plumsoftware.avocado.data.database.AvocadoDatabase
 import ru.plumsoftware.avocado.data.favorite.FavoritesRepository
 import ru.plumsoftware.avocado.data.onboarding.UserGoal
+import ru.plumsoftware.avocado.data.onboarding.UserRestriction
 import ru.plumsoftware.avocado.data.user_preferences.UserPreferencesRepository
 import ru.plumsoftware.avocado.ui.log
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.filter.Filter
@@ -26,24 +30,24 @@ import ru.plumsoftware.avocado.ui.screen.main.list.elements.food.FoodColorCache
 
 class ListViewModel(
     private val favoritesRepository: FavoritesRepository,
-    private val userPreferencesRepository: UserPreferencesRepository
+    private val userPreferencesRepository: UserPreferencesRepository,
+    private val context: Context
 ) : ViewModel() {
-    private val filters_ =
-        MutableStateFlow(ru.plumsoftware.avocado.ui.screen.main.list.elements.filter.filters.toMutableList())
+
+    private val filters_ = MutableStateFlow(ru.plumsoftware.avocado.ui.screen.main.list.elements.filter.filters.toMutableList())
     val filters = filters_.asStateFlow()
 
     private val selectedFilter_ = MutableStateFlow(Filter.empty())
     val selectedFilter = selectedFilter_.asStateFlow()
 
-    private val recomendedOnBreakfast_ =
-        MutableStateFlow(ru.plumsoftware.avocado.ui.screen.main.list.elements.food.recomendedOnBreakfast.toMutableList())
-    private val withFiber_ =
-        MutableStateFlow(ru.plumsoftware.avocado.ui.screen.main.list.elements.food.withFiber.toMutableList())
+    // Списки продуктов (как было)
+    private val recomendedOnBreakfast_ = MutableStateFlow(ru.plumsoftware.avocado.ui.screen.main.list.elements.food.recomendedOnBreakfast.toMutableList())
     val recomendedOnBreakfast = recomendedOnBreakfast_.asStateFlow()
+
+    private val withFiber_ = MutableStateFlow(ru.plumsoftware.avocado.ui.screen.main.list.elements.food.withFiber.toMutableList())
     val withFiber = withFiber_.asStateFlow()
 
-    val heavyProtein_ =
-        MutableStateFlow(ru.plumsoftware.avocado.ui.screen.main.list.elements.food.top7HighProteinFoods.toMutableList())
+    val heavyProtein_ = MutableStateFlow(ru.plumsoftware.avocado.ui.screen.main.list.elements.food.top7HighProteinFoods.toMutableList())
     val heavyProtein = heavyProtein_.asStateFlow()
 
     val healthyFatsItems_ = MutableStateFlow(ru.plumsoftware.avocado.ui.screen.main.list.elements.food.topOmega3.toMutableList())
@@ -51,6 +55,22 @@ class ListViewModel(
 
     val allFood_ = MutableStateFlow(ru.plumsoftware.avocado.data.base.model.food.allFood)
     val allFood = allFood_.asStateFlow()
+
+    // --- ПОИСК ---
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery = _searchQuery.asStateFlow()
+
+    // Flow результатов поиска с задержкой (Debounce)
+    @OptIn(FlowPreview::class)
+    val searchResults: StateFlow<List<Food>> = _searchQuery
+        .debounce(500L)
+        .combine(allFood_) { query, foodList ->
+            if (query.isBlank()) emptyList()
+            else foodList.filter { context.getString(it.titleRes).contains(query, true) }
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    fun onSearchQueryChange(newQuery: String) { _searchQuery.value = newQuery }
 
     val favoriteIds: StateFlow<Set<String>> = favoritesRepository.favoriteIds
         .stateIn(
@@ -63,10 +83,15 @@ class ListViewModel(
     val homeSections = _homeSections.asStateFlow()
 
     init {
-        // Наблюдаем за целями и перестраиваем главную страницу
         viewModelScope.launch {
-            userPreferencesRepository.userGoals.collect { goals ->
-                _homeSections.value = buildHomeSections(goals, allFood.value)
+            combine(
+                userPreferencesRepository.userGoals,
+                userPreferencesRepository.userRestrictions,
+                allFood
+            ) { goals, restrictions, food ->
+                buildHomeSections(goals, restrictions, food)
+            }.collect { sections ->
+                _homeSections.value = sections
             }
         }
     }
@@ -79,7 +104,6 @@ class ListViewModel(
         }
     }
 
-    // Проверка для UI
     fun isFavorite(foodId: String): Boolean {
         return favoriteIds.value.contains(foodId)
     }
@@ -92,145 +116,130 @@ class ListViewModel(
         return colorCache.getHarmoniousColors(imageRes, context)
     }
 
-    fun getLighterColorForFood(imageRes: Int, context: Context): Int {
-        return getLightenedColor(getBackgroundColorForFood(imageRes = imageRes, context = context))
-    }
-
     fun updateSelectedFilter(newFilter: Filter) {
-        // Обновляем список фильтров
         filters_.update { oldList ->
             oldList.map { filter ->
-                if (filter.id == newFilter.id) {
-                    // Инвертируем состояние выбранного фильтра
-                    filter.copy(isSelected = !filter.isSelected)
-                } else {
-                    // Все остальные сбрасываем
-                    filter.copy(isSelected = false)
-                }
+                if (filter.id == newFilter.id) filter.copy(isSelected = !filter.isSelected)
+                else filter.copy(isSelected = false)
             } as MutableList<Filter>
         }
-
-        // Обновляем selectedFilter_
-        val isNowSelected = !newFilter.isSelected // Инвертируем текущее состояние
-
+        val isNowSelected = !newFilter.isSelected
         selectedFilter_.update {
-            if (isNowSelected) {
-                // Фильтр стал выбранным
-                newFilter.copy(isSelected = true)
-            } else {
-                // Фильтр стал невыбранным - возвращаем пустой фильтр
-                Filter.empty()
-            }
+            if (isNowSelected) newFilter.copy(isSelected = true) else Filter.empty()
         }
     }
 
     fun getFoodById(id: String): Food? {
-        // Ищем в полном списке
         return allFood.value.find { it.id == id }
     }
 
-    private fun buildHomeSections(goals: List<UserGoal>, allFood: List<Food>): List<HomeSection> {
+    private fun buildHomeSections(
+        goals: List<UserGoal>,
+        restrictions: List<UserRestriction>,
+        allFood: List<Food>
+    ): List<HomeSection> {
+
+        // 1. ФИЛЬТР БЕЗОПАСНОСТИ (Убираем запрещенку)
+        var safeFood = allFood
+
+        if (restrictions.contains(UserRestriction.VEGETARIAN)) {
+            safeFood = safeFood.filter { it.foodType != FoodType.MEAT && it.foodType != FoodType.FISH }
+        }
+        if (restrictions.contains(UserRestriction.VEGAN)) {
+            safeFood = safeFood.filter {
+                it.foodType != FoodType.MEAT && it.foodType != FoodType.FISH
+                // добавь сюда DAIRY/EGGS если есть такие типы
+            }
+        }
+        if (restrictions.contains(UserRestriction.NUT_ALLERGY)) {
+            safeFood = safeFood.filter { it.foodType != FoodType.NUT }
+        }
+        if (restrictions.contains(UserRestriction.SEAFOOD_ALLERGY)) {
+            safeFood = safeFood.filter { it.foodType != FoodType.FISH } // и SEAFOOD
+        }
+        if (restrictions.contains(UserRestriction.NO_SUGAR) || restrictions.contains(UserRestriction.KETO)) {
+            safeFood = safeFood.filter { it.kpfc_100g.carbohydrates < 15.0 }
+        }
+
         val sections = mutableListOf<HomeSection>()
 
-        // Если целей нет, показываем дефолт
+        // 2. ЕСЛИ ЦЕЛЕЙ НЕТ -> Дефолтные секции
         if (goals.isEmpty()) {
-            sections.add(HomeSection(R.string.for_breakfast, allFood.filter { it.timeForFood == TimeForFood.BREAKFAST }))
-            sections.add(HomeSection(R.string.healthy_fats, allFood.filter { it.kpfc_100g.omega3 > 1.0 }))
+            sections.add(HomeSection(R.string.for_breakfast, safeFood.filter { it.timeForFood == TimeForFood.BREAKFAST }.take(10)))
+            sections.add(HomeSection(R.string.healthy_fats, safeFood.filter { it.kpfc_100g.omega3 > 1.0 }.take(10)))
             return sections
         }
 
-        // Генерируем секции под цели
+        // 3. ПОДБОР ПОД ЦЕЛИ
         goals.forEach { goal ->
             when (goal) {
                 UserGoal.LOSE_WEIGHT -> {
-                    // Низкокалорийные (< 50 ккал) ИЛИ Клетчатка (> 2.5г) - насыщает
-                    val dietFood = allFood.filter {
-                        it.kpfc_100g.kals < 50 || it.kpfc_100g.fiber > 2.5
-                    }
-                    sections.add(HomeSection(R.string.section_weight_loss, dietFood.take(6)))
+                    val list = safeFood.filter { it.kpfc_100g.kals < 50 || it.kpfc_100g.fiber > 2.5 }
+                    if (list.isNotEmpty()) sections.add(HomeSection(R.string.section_weight_loss, list.take(6)))
                 }
-
                 UserGoal.GAIN_MUSCLE -> {
-                    // Много белка (> 12г)
-                    val proteinFood = allFood.filter {
-                        it.kpfc_100g.proteins > 12.0
-                    }
-                    sections.add(HomeSection(R.string.section_muscle, proteinFood.take(6)))
+                    val list = safeFood.filter { it.kpfc_100g.proteins > 12.0 }
+                    if (list.isNotEmpty()) sections.add(HomeSection(R.string.section_muscle, list.take(6)))
                 }
-
                 UserGoal.BETTER_SKIN -> {
-                    // Витамин A, E, C (Антиоксиданты) + Омега-3
-                    val skinFood = allFood.filter { food ->
-                        food.vitamins.any { it.id == "vitamin_a" || it.id == "vitamin_e" || it.id == "vitamin_c" } ||
-                                food.kpfc_100g.omega3 > 0.5
-                    }
-                    sections.add(HomeSection(R.string.section_skin, skinFood.take(6)))
+                    val list = safeFood.filter { f -> f.vitamins.any { it.id == "vitamin_a" || it.id == "vitamin_c" } }
+                    if (list.isNotEmpty()) sections.add(HomeSection(R.string.section_skin, list.take(6)))
                 }
-
                 UserGoal.HEART_HEALTH -> {
-                    // Омега-3, Магний, Калий
-                    val heartFood = allFood.filter { food ->
-                        food.kpfc_100g.omega3 > 0.5 ||
-                                food.minerals.any { it.id == "potassium" || it.id == "magnesium" }
-                    }
-                    sections.add(HomeSection(R.string.section_heart, heartFood.take(6)))
+                    val list = safeFood.filter { f -> f.kpfc_100g.omega3 > 0.5 || f.minerals.any { it.id == "potassium" } }
+                    if (list.isNotEmpty()) sections.add(HomeSection(R.string.section_heart, list.take(6)))
                 }
-
                 UserGoal.ENERGY -> {
-                    // Железо, Витамины группы B (B1, B2, B6, B12), Медленные углеводы
-                    val energyFood = allFood.filter { food ->
-                        food.minerals.any { it.id == "iron" } ||
-                                food.vitamins.any { it.id.startsWith("vitamin_b") } ||
-                                (food.kpfc_100g.carbohydrates > 10.0 && food.kpfc_100g.fiber > 1.0) // Сложные углеводы
-                    }
-                    sections.add(HomeSection(R.string.section_energy, energyFood.take(6)))
+                    val list = safeFood.filter { f -> f.vitamins.any { it.id.startsWith("vitamin_b") } || f.minerals.any { it.id == "iron" } }
+                    if (list.isNotEmpty()) sections.add(HomeSection(R.string.section_energy, list.take(6)))
                 }
-
                 UserGoal.DIGESTION -> {
-                    // Высокая клетчатка (> 3г) или легкие овощи
-                    val digestionFood = allFood.filter { food ->
-                        food.kpfc_100g.fiber > 3.0 || food.foodType == FoodType.VEGETABLE
-                    }
-                    sections.add(HomeSection(R.string.section_digestion, digestionFood.take(6)))
+                    val list = safeFood.filter { it.kpfc_100g.fiber > 3.0 }
+                    if (list.isNotEmpty()) sections.add(HomeSection(R.string.section_digestion, list.take(6)))
                 }
-
                 UserGoal.IMMUNITY -> {
-                    // Витамин C, D, Цинк, Селен
-                    val immunityFood = allFood.filter { food ->
-                        food.vitamins.any { it.id == "vitamin_c" || it.id == "vitamin_d" } ||
-                                food.minerals.any { it.id == "zinc" || it.id == "selenium" }
-                    }
-                    sections.add(HomeSection(R.string.section_immunity, immunityFood.take(6)))
+                    val list = safeFood.filter { f -> f.vitamins.any { it.id == "vitamin_c" } || f.minerals.any { it.id == "zinc" } }
+                    if (list.isNotEmpty()) sections.add(HomeSection(R.string.section_immunity, list.take(6)))
                 }
-
                 UserGoal.SLEEP -> {
-                    // Магний, B6 (помогают выработке мелатонина), Кальций
-                    val sleepFood = allFood.filter { food ->
-                        food.minerals.any { it.id == "magnesium" || it.id == "calcium" } ||
-                                food.vitamins.any { it.id == "vitamin_b6" }
-                    }
-                    sections.add(HomeSection(R.string.section_sleep, sleepFood.take(6)))
+                    val list = safeFood.filter { f -> f.minerals.any { it.id == "magnesium" } }
+                    if (list.isNotEmpty()) sections.add(HomeSection(R.string.section_sleep, list.take(6)))
                 }
             }
         }
 
-        // Всегда добавляем "Для завтрака" в конце, если не было
-        sections.add(HomeSection(R.string.for_breakfast, allFood.filter { it.timeForFood == TimeForFood.BREAKFAST }))
+        // 4. ЗАПАСНОЙ ВАРИАНТ (Если ничего не подобралось)
+        if (sections.isEmpty()) {
+            sections.add(HomeSection(R.string.for_breakfast, safeFood.filter { it.timeForFood == TimeForFood.BREAKFAST }.take(10)))
+        }
 
-        return sections.distinctBy { it.titleRes } // Убираем дубли
+        return sections.distinctBy { it.titleRes }
     }
 
     companion object {
         class ListViewModelFactory(
             private val favoritesRepository: FavoritesRepository,
-            private val userPreferencesRepository: UserPreferencesRepository
+            private val userPreferencesRepository: UserPreferencesRepository,
+            private val context: Context
         ) : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(ListViewModel::class.java)) {
                     @Suppress("UNCHECKED_CAST")
-                    return ListViewModel(favoritesRepository = favoritesRepository, userPreferencesRepository = userPreferencesRepository) as T
+                    return ListViewModel(favoritesRepository = favoritesRepository, userPreferencesRepository = userPreferencesRepository, context = context) as T
                 }
                 throw IllegalArgumentException("Unknown ViewModel class")
+            }
+        }
+
+        // Правильная фабрика для MainActivity
+        class Factory(
+            private val context: Context,
+            private val favoritesRepo: FavoritesRepository,
+            private val userPrefsRepo: UserPreferencesRepository
+        ) : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                @Suppress("UNCHECKED_CAST")
+                return ListViewModel(favoritesRepo, userPrefsRepo, context) as T
             }
         }
     }

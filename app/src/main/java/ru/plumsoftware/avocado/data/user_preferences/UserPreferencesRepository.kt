@@ -38,6 +38,12 @@ class UserPreferencesRepository(
         }
     }
 
+    val userRestrictions: Flow<List<UserRestriction>> = dataStore.data.map { prefs ->
+        prefs.userRestrictionsList.mapNotNull { restName ->
+            try { UserRestriction.valueOf(restName) } catch (e: Exception) { null }
+        }
+    }
+
 
     // Сохранить тему
     suspend fun setAppTheme(theme: AppTheme) {

@@ -22,6 +22,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -43,26 +46,37 @@ import ru.plumsoftware.avocado.ui.screen.main.list.elements.food.FoodCard
 import ru.plumsoftware.avocado.ui.theme.Dimen
 
 @Composable
-fun MainListScreen(navController: NavHostController, favoritesRepository: FavoritesRepository, userPreferencesRepository: UserPreferencesRepository) {
+fun MainListScreen(
+    navController: NavHostController,
+    favoritesRepository: FavoritesRepository,
+    userPreferencesRepository: UserPreferencesRepository
+) {
     val context = LocalContext.current
 
+    // Используем нашу новую Фабрику
     val viewModel: ListViewModel = viewModel(
-        factory = ListViewModel.Companion.ListViewModelFactory(
-            favoritesRepository = favoritesRepository,
-            userPreferencesRepository = userPreferencesRepository
+        factory = ListViewModel.Companion.Factory(
+            context = context.applicationContext,
+            favoritesRepo = favoritesRepository,
+            userPrefsRepo = userPreferencesRepository
         )
     )
 
+    // --- ПОДПИСКИ ---
     val filters by viewModel.filters.collectAsState()
     val selectedFilter by viewModel.selectedFilter.collectAsState()
     val favorites by viewModel.favoriteIds.collectAsState()
-
-    // Списки продуктов
-    val breakfastItems = viewModel.recomendedOnBreakfast.collectAsState().value
-    val fiberItems = viewModel.withFiber.collectAsState().value
-    val heavyProtein = viewModel.heavyProtein.collectAsState().value
-    val healthyFatsItems = viewModel.healthyFatsItems.collectAsState().value
     val sections by viewModel.homeSections.collectAsState()
+
+    // ПОИСК
+    val searchQuery by viewModel.searchQuery.collectAsState()
+    val searchResults by viewModel.searchResults.collectAsState()
+
+    // Состояние фокуса поиска (для анимации кнопки "Отмена")
+    var isSearchFocused by remember { mutableStateOf(false) }
+
+    // Активен ли режим поиска? (Если есть текст)
+    val isSearching = searchQuery.isNotEmpty()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -71,148 +85,118 @@ fun MainListScreen(navController: NavHostController, favoritesRepository: Favori
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize()) {
 
-            // --- ИЗМЕНЕНИЕ: ИСПОЛЬЗУЕМ ОБЫЧНУЮ СЕТКУ ---
             LazyVerticalGrid(
-                columns = GridCells.Fixed(2), // Строгая сетка в 2 колонки
+                columns = GridCells.Fixed(2),
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = Dimen.medium), // Отступы сразу в Grid
-                // В обычной сетке verticalArrangement управляет отступами между строками
+                    .padding(horizontal = Dimen.medium),
                 verticalArrangement = Arrangement.spacedBy(Dimen.medium),
                 horizontalArrangement = Arrangement.spacedBy(Dimen.medium),
-                contentPadding = PaddingValues(bottom = 100.dp) // Нижний отступ для контента
+                contentPadding = PaddingValues(bottom = 100.dp)
             ) {
 
-                // 1. ВЕРХНИЙ ОТСТУП (под TopBar)
+                // Отступ сверху
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     Spacer(modifier = Modifier.height(84.dp))
                 }
 
-                // 2. ФИЛЬТРЫ (Горизонтальный скролл)
-                item(span = { GridItemSpan(maxLineSpan) }) {
-                    // Лучше использовать LazyRow для скролла фильтров
-                    LazyRow(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(Dimen.mediumHalf),
-                        // contentPadding добавляет отступы, чтобы элементы не прилипали к краям при скролле
-                        contentPadding = PaddingValues(horizontal = Dimen.extraSmall)
-                    ) {
-                        items(filters) { item ->
-                            FilterItem(
-                                item = item
+                // --- ЛОГИКА ОТОБРАЖЕНИЯ ---
+
+                if (isSearching) {
+                    // --- РЕЖИМ ПОИСКА ---
+
+                    if (searchResults.isEmpty()) {
+                        // Ничего не найдено
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(200.dp),
+                                contentAlignment = Alignment.Center
                             ) {
-                                viewModel.updateSelectedFilter(newFilter = item)
-                            }
-                        }
-                    }
-                }
-
-                // ЛОГИКА ОТОБРАЖЕНИЯ (Выбран фильтр или Главная)
-
-                if (selectedFilter.isSelected) {
-                    // Заголовок фильтра
-                    item(span = { GridItemSpan(maxLineSpan) }) {
-                        SectionTitle(title = stringResource(selectedFilter.title))
-                    }
-
-                    // Элементы фильтра
-                    itemsIndexed(
-                        items = viewModel.allFood.value.filter { it.foodType == selectedFilter.foodType }
-                    ) { _, item ->
-                        FoodCardItem(
-                            item = item,
-                            isFavorite = favorites.contains(item.id),
-                            viewModel = viewModel,
-                            onFoodClick = { navController.navigate(AppDestination.DetailedScreen(foodId = it.id)) }
-                        )
-                    }
-                } else {
-                    // --- ГЛАВНАЯ СТРАНИЦА ---
-
-                    sections.forEach { section ->
-                        // Рендерим секцию только если в ней есть продукты
-                        if (section.items.isNotEmpty()) {
-                            item(span = { GridItemSpan(maxLineSpan) }) {
-                                SectionTitle(title = stringResource(section.titleRes))
-                            }
-
-                            itemsIndexed(section.items) { _, item ->
-                                FoodCardItem(
-                                    item = item,
-                                    isFavorite = favorites.contains(item.id),
-                                    viewModel = viewModel,
-                                    onFoodClick = {
-                                        navController.navigate(AppDestination.DetailedScreen(foodId = it.id))
-                                    }
+                                Text(
+                                    text = "Ничего не найдено",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                         }
+                    } else {
+                        // Результаты поиска
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            SectionTitle(title = "Результаты поиска")
+                        }
+
+                        itemsIndexed(searchResults) { _, item ->
+                            FoodCardItem(
+                                item = item,
+                                isFavorite = favorites.contains(item.id),
+                                viewModel = viewModel,
+                                onFoodClick = { navController.navigate(AppDestination.DetailedScreen(foodId = item.id)) }
+                            )
+                        }
                     }
 
-//                    // Секция: Завтрак
-//                    item(span = { GridItemSpan(maxLineSpan) }) {
-//                        SectionTitle(title = stringResource(R.string.for_breakfast))
-//                    }
-//                    itemsIndexed(breakfastItems) { _, item ->
-//                        FoodCardItem(
-//                            item = item,
-//                            isFavorite = favorites.contains(item.id),
-//                            viewModel = viewModel,
-//                            onFoodClick = { navController.navigate(AppDestination.DetailedScreen(foodId = it.id)) }
-//                        )
-//                    }
-//
-//                    // Секция: Клетчатка
-//                    item(span = { GridItemSpan(maxLineSpan) }) {
-//                        SectionTitle(title = stringResource(R.string.with_fiber))
-//                    }
-//                    itemsIndexed(fiberItems) { _, item ->
-//                        FoodCardItem(
-//                            item = item,
-//                            isFavorite = favorites.contains(item.id),
-//                            viewModel = viewModel,
-//                            onFoodClick = { navController.navigate(AppDestination.DetailedScreen(foodId = it.id)) }
-//                        )
-//                    }
-//
-//                    // Секция: Белок
-//                    item(span = { GridItemSpan(maxLineSpan) }) {
-//                        SectionTitle(title = stringResource(R.string.protein_sources))
-//                    }
-//                    itemsIndexed(heavyProtein) { _, item ->
-//                        FoodCardItem(
-//                            item = item,
-//                            isFavorite = favorites.contains(item.id),
-//                            viewModel = viewModel,
-//                            onFoodClick = { navController.navigate(AppDestination.DetailedScreen(foodId = it.id)) }
-//                        )
-//                    }
-//
-//                    // Секция: Жиры
-//                    item(span = { GridItemSpan(maxLineSpan) }) {
-//                        SectionTitle(title = stringResource(R.string.healthy_fats))
-//                    }
-//                    itemsIndexed(healthyFatsItems) { _, item ->
-//                        FoodCardItem(
-//                            item = item,
-//                            isFavorite = favorites.contains(item.id),
-//                            viewModel = viewModel,
-//                            onFoodClick = { navController.navigate(AppDestination.DetailedScreen(foodId = it.id)) }
-//                        )
-//                    }
+                } else {
+                    // --- ОБЫЧНЫЙ РЕЖИМ (Фильтры + Главная) ---
+
+                    // Фильтры
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        LazyRow(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(Dimen.mediumHalf),
+                            contentPadding = PaddingValues(horizontal = Dimen.extraSmall)
+                        ) {
+                            items(filters) { item ->
+                                FilterItem(item = item) {
+                                    viewModel.updateSelectedFilter(newFilter = item)
+                                }
+                            }
+                        }
+                    }
+
+                    if (selectedFilter.isSelected) {
+                        // Выбран фильтр
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            SectionTitle(title = stringResource(selectedFilter.title))
+                        }
+                        itemsIndexed(
+                            items = viewModel.allFood.value.filter { it.foodType == selectedFilter.foodType }
+                        ) { _, item ->
+                            FoodCardItem(
+                                item = item,
+                                isFavorite = favorites.contains(item.id),
+                                viewModel = viewModel,
+                                onFoodClick = { navController.navigate(AppDestination.DetailedScreen(foodId = item.id)) }
+                            )
+                        }
+                    } else {
+                        // Главная страница (Секции)
+                        sections.forEach { section ->
+                            if (section.items.isNotEmpty()) {
+                                item(span = { GridItemSpan(maxLineSpan) }) {
+                                    SectionTitle(title = stringResource(section.titleRes))
+                                }
+                                itemsIndexed(section.items) { _, item ->
+                                    FoodCardItem(
+                                        item = item,
+                                        isFavorite = favorites.contains(item.id),
+                                        viewModel = viewModel,
+                                        onFoodClick = { navController.navigate(AppDestination.DetailedScreen(foodId = item.id)) }
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
-            // --- ВЕРХНЯЯ ПАНЕЛЬ (Top Bar) ---
-            // Остается без изменений, так как лежит поверх списка в Box
+            // --- TOP BAR ---
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.TopCenter)
-                    .height(90.dp) // Чуть увеличим зону фона
-                    // Добавляем blur (размытие фона списка под хедером) - iOS Style
-                    // Работает на Android 12+, на старых просто будет прозрачным
-                    // .blur(20.dp) // Раскомментируй, если minSdk >= 31
+                    .height(90.dp)
                     .background(
                         brush = Brush.verticalGradient(
                             colors = listOf(
@@ -232,10 +216,10 @@ fun MainListScreen(navController: NavHostController, favoritesRepository: Favori
                 Spacer(modifier = Modifier.height(40.dp))
 
                 IOSTopBar(
-                    searchQuery = "",
-                    onSearchQueryChange = { },
-                    isSearchFocused = false,
-                    onFocusChange = { },
+                    searchQuery = searchQuery,
+                    onSearchQueryChange = { viewModel.onSearchQueryChange(it) },
+                    isSearchFocused = isSearchFocused,
+                    onFocusChange = { isSearchFocused = it },
                     onFilterClick = {},
                 )
             }

@@ -37,6 +37,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -50,13 +53,23 @@ import ru.plumsoftware.avocado.ui.screen.AppDestination
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.food.FoodCard
 
 @Composable
-fun FavoriteScreen(favoritesRepository: FavoritesRepository, navController: NavHostController) {
+fun FavoriteScreen(
+    favoritesRepository: FavoritesRepository,
+    navController: NavHostController
+) {
+    val context = LocalContext.current
+
+    // Передаем Context в фабрику
     val viewModel: FavoriteViewModel = viewModel(
-        factory = FavoriteViewModel.Companion.FavoriteViewModelFactory(favoritesRepository)
+        factory = FavoriteViewModel.Companion.Factory(favoritesRepository, context.applicationContext)
     )
 
-    // Подписываемся на список избранного
     val favoriteItems by viewModel.favoriteFood.collectAsState()
+    val isDatabaseEmpty by viewModel.isDatabaseEmpty.collectAsState()
+
+    // Состояния поиска
+    val searchQuery by viewModel.searchQuery.collectAsState()
+    var isSearchFocused by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -65,58 +78,70 @@ fun FavoriteScreen(favoritesRepository: FavoritesRepository, navController: NavH
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize()) {
 
-            if (favoriteItems.isEmpty()) {
-                // --- ПУСТОЙ ЭКРАН (EMPTY STATE) ---
-                EmptyFavoritesState(modifier = Modifier.align(Alignment.Center))
-            } else {
-                // --- СПИСОК ИЗБРАННОГО ---
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = Dimen.medium),
-                    verticalArrangement = Arrangement.spacedBy(Dimen.medium),
-                    horizontalArrangement = Arrangement.spacedBy(Dimen.medium),
-                    contentPadding = PaddingValues(bottom = 100.dp)
-                ) {
-                    // Отступ под TopBar
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = Dimen.medium),
+                verticalArrangement = Arrangement.spacedBy(Dimen.medium),
+                horizontalArrangement = Arrangement.spacedBy(Dimen.medium),
+                contentPadding = PaddingValues(bottom = 100.dp)
+            ) {
+                // Отступ под TopBar
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    Spacer(modifier = Modifier.height(84.dp))
+                }
+
+                // ЛОГИКА ОТОБРАЖЕНИЯ КОНТЕНТА
+                if (favoriteItems.isEmpty()) {
                     item(span = { GridItemSpan(maxLineSpan) }) {
-                        Spacer(modifier = Modifier.height(84.dp))
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(400.dp), // Высота для центрирования
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (isDatabaseEmpty) {
+                                // 1. Вообще нет избранного
+                                EmptyFavoritesState()
+                            } else {
+                                // 2. Избранное есть, но поиск ничего не нашел
+                                Text(
+                                    text = "Ничего не найдено",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    }
+                } else {
+                    // СПИСОК ЭЛЕМЕНТОВ
+
+                    // Заголовок (показываем только если не идет поиск, для чистоты)
+                    if (searchQuery.isEmpty()) {
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            Text(
+                                text = stringResource(R.string.fav),
+                                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                        }
                     }
 
-                    // Заголовок (Опционально, но в iOS обычно пишут "Избранное")
-                    item(span = { GridItemSpan(maxLineSpan) }) {
-                        Text(
-                            text = stringResource(R.string.fav), // "Избранное"
-                            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
-                    }
-
-                    // Сами карточки
                     items(favoriteItems) { item ->
                         FoodCard(
                             item = item,
                             isFavorite = true,
                             modifier = Modifier.fillMaxWidth(),
-                            onGetColor = { res, ctx ->
-                                viewModel.getBackgroundColorForFood(
-                                    res,
-                                    ctx
-                                )
-                            },
-                            onLikeClick = {
-                                viewModel.onLikeClick(item.id)
-                            },
-                            onFoodClick = {
-                                navController.navigate(AppDestination.DetailedScreen(foodId = item.id))
-                            }
+                            onGetColor = { res, ctx -> viewModel.getBackgroundColorForFood(res, ctx) },
+                            onLikeClick = { viewModel.onLikeClick(item.id) },
+                            onFoodClick = { navController.navigate(AppDestination.DetailedScreen(foodId = item.id)) }
                         )
                     }
                 }
             }
 
-            // --- TOP BAR (Как на главной) ---
+            // --- TOP BAR ---
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -139,19 +164,19 @@ fun FavoriteScreen(favoritesRepository: FavoritesRepository, navController: NavH
                     .align(Alignment.TopCenter)
             ) {
                 Spacer(modifier = Modifier.height(40.dp))
-                // Можно оставить поиск, если хочешь искать внутри избранного
+
+                // Подключили поиск
                 IOSTopBar(
-                    searchQuery = "",
-                    onSearchQueryChange = { },
-                    isSearchFocused = false,
-                    onFocusChange = { },
-                    onFilterClick = {},
+                    searchQuery = searchQuery,
+                    onSearchQueryChange = { viewModel.onSearchQueryChange(it) },
+                    isSearchFocused = isSearchFocused,
+                    onFocusChange = { isSearchFocused = it },
+                    onFilterClick = {}, // Фильтр тут не нужен
                 )
             }
         }
     }
 }
-
 // Красивая заглушка, если пусто
 @Composable
 fun EmptyFavoritesState(modifier: Modifier = Modifier) {
