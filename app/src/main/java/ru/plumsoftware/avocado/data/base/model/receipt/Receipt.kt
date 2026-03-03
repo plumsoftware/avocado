@@ -6,6 +6,7 @@ import androidx.annotation.StringRes
 interface Receipt {
     val id: String
     @get:StringRes val titleRes: Int
+    @get:StringRes val receiptText: Int
     @get:DrawableRes val imageRes: Int
     val relatedFood: List<String>
 }
