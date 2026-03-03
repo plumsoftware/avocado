@@ -11,6 +11,8 @@ interface Food {
     val id: String
     @get:StringRes
     val titleRes: Int
+    @get:StringRes
+    val descRes: Int
     @get:DrawableRes
     val imageRes: Int
     val foodType: FoodType
