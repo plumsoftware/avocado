@@ -25,6 +25,7 @@ import ru.plumsoftware.avocado.data.user_preferences.UserPreferencesRepository
 import ru.plumsoftware.avocado.ui.screen.main.elements.BottomNavBar
 import ru.plumsoftware.avocado.ui.screen.main.favorite.FavoriteScreen
 import ru.plumsoftware.avocado.ui.screen.main.list.MainListScreen
+import ru.plumsoftware.avocado.ui.screen.main.receipt.RecipesScreen
 import ru.plumsoftware.avocado.ui.screen.main.settings.SettingsScreen
 import ru.plumsoftware.avocado.ui.screen.main.settings.SettingsViewModel
 
@@ -62,7 +63,11 @@ fun MainScreen(
                         navController = navController
                     )
                 }
-                MainScreenStates.Rec -> {}
+                MainScreenStates.Rec -> {
+                    RecipesScreen(
+                        navController = navController,
+                    )
+                }
                 MainScreenStates.Settings -> {
                     SettingsScreen(
                         viewModel = settingsViewModel,

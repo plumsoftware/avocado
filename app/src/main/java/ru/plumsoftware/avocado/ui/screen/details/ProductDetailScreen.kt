@@ -6,6 +6,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -46,6 +48,8 @@ import ru.plumsoftware.avocado.data.base.model.food.TimeForFood
 import ru.plumsoftware.avocado.ui.screen.details.elements.IOSPopup
 import ru.plumsoftware.avocado.ui.theme.Dimen
 import ru.plumsoftware.avocado.R
+import ru.plumsoftware.avocado.data.base.model.receipt.getReceiptsByIds
+import ru.plumsoftware.avocado.ui.screen.main.receipt.elements.SmallReceiptCard
 
 // Высота шапки с картинкой
 private val HEADER_HEIGHT = 400.dp
@@ -57,7 +61,8 @@ fun ProductDetailScreen(
     isFavorite: Boolean,
     onBackClick: () -> Unit,
     onLikeClick: () -> Unit,
-    onGetColor: (Int, Context) -> Int
+    onGetColor: (Int, Context) -> Int,
+    onReceiptClick: (String) -> Unit
 ) {
     val context = LocalContext.current
     val scrollState = rememberScrollState()
@@ -67,6 +72,9 @@ fun ProductDetailScreen(
     val colorStart = remember(baseColorInt) { Color(getLightenedColor(baseColorInt, 0.6f)) }
     val colorEnd = remember(baseColorInt) { Color(getLightenedColor(baseColorInt, 0.2f)) }
     val dominantColor = Color(baseColorInt)
+    val relatedReceipts = remember(item.relatedReceipts) {
+        getReceiptsByIds(item.relatedReceipts)
+    }
 
     Box(
         modifier = Modifier
@@ -237,6 +245,35 @@ fun ProductDetailScreen(
                             MineralChip(
                                 text = stringResource(mineral.title),
                                 healthyForRes = mineral.healthyFor
+                            )
+                        }
+                    }
+                }
+
+                if (relatedReceipts.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(32.dp))
+
+                    // Заголовок секции
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        DetailSectionTitle("Готовим с этим")
+
+                        // Кнопка "См. все" (опционально)
+                        // Text(text = "Все", color = IOSGreen, ...)
+                    }
+
+                    // Горизонтальный список
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        contentPadding = PaddingValues(horizontal = 4.dp) // Небольшой отступ
+                    ) {
+                        items(relatedReceipts) { receipt ->
+                            SmallReceiptCard(
+                                receipt = receipt,
+                                onClick = { onReceiptClick(receipt.id) }
                             )
                         }
                     }

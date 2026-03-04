@@ -17,4 +17,7 @@ object AppDestination {
 
     @Serializable
     data object Favorite
+
+    @Serializable
+    data class ReceiptDetailRoute(val receiptId: String)
 }

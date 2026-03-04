@@ -49,6 +49,7 @@ import ru.plumsoftware.avocado.ui.screen.main.MainScreen
 import ru.plumsoftware.avocado.ui.screen.main.MainViewModel
 import ru.plumsoftware.avocado.ui.screen.main.favorite.FavoriteScreen
 import ru.plumsoftware.avocado.ui.screen.main.list.ListViewModel
+import ru.plumsoftware.avocado.ui.screen.main.receipt.details.ReceiptDetailScreen
 import ru.plumsoftware.avocado.ui.screen.main.settings.SettingsViewModel
 import ru.plumsoftware.avocado.ui.screen.onboarding.OnboardingScreen
 import ru.plumsoftware.avocado.ui.theme.AvocadoTheme
@@ -186,6 +187,9 @@ class MainActivity : ComponentActivity() {
                                                 res,
                                                 ctx
                                             )
+                                        },
+                                        onReceiptClick = { receiptId ->
+                                            navController.navigate(AppDestination.ReceiptDetailRoute(receiptId))
                                         }
                                     )
                                 } else {
@@ -208,6 +212,15 @@ class MainActivity : ComponentActivity() {
                             composable<AppDestination.Favorite> {
                                 FavoriteScreen(
                                     favoritesRepository = favRepo,
+                                    navController = navController
+                                )
+                            }
+
+                            composable<AppDestination.ReceiptDetailRoute> { backStackEntry ->
+                                val args = backStackEntry.toRoute<AppDestination.ReceiptDetailRoute>()
+
+                                ReceiptDetailScreen(
+                                    receiptId = args.receiptId,
                                     navController = navController
                                 )
                             }

@@ -361,7 +361,7 @@ val allBerries = listOf<Berry>(
         titleRes = R.string.avocado,
         descRes = R.string.desc_avocado,
         imageRes = R.drawable.avocado,
-        relatedReceipts = emptyList(),
+        relatedReceipts = listOf("avocado_toast", "green_smoothie"),
         vitamins = listOf(
             vitaminsMap["vitamin_k"]!!,
             vitaminsMap["vitamin_b9"]!!,
@@ -998,7 +998,7 @@ val allVegetables = listOf<Vegetable>(
         titleRes = R.string.spinach,
         descRes = R.string.desc_spinach,
         imageRes = R.drawable.spinach,
-        relatedReceipts = emptyList(),
+        relatedReceipts = listOf("green_smoothie"),
         vitamins = listOf(
             vitaminsMap["vitamin_k"]!!,
             vitaminsMap["vitamin_a"]!!,
