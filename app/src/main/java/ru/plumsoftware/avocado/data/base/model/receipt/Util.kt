@@ -45,6 +45,62 @@ val allReceipts = listOf(
         calories = 180,
         difficulty = 1,
         category = "Смузи"
+    ),
+
+    // 4. Курица с брокколи
+    TypicalReceipt(
+        id = "chicken_broccoli",
+        titleRes = R.string.rec_chicken_broccoli,
+        descRes = R.string.rec_desc_chicken_broccoli,
+        receiptText = R.string.rec_text_chicken_broccoli,
+        imageRes = R.drawable.chicken_2, // Используем картинку курицы или добавь свою
+        relatedFood = listOf("chicken_breast", "broccoli", "garlic"),
+        timeMinutes = 20,
+        calories = 280,
+        difficulty = 1,
+        category = "Ужин"
+    ),
+
+    // 5. Лосось
+    TypicalReceipt(
+        id = "baked_salmon",
+        titleRes = R.string.rec_baked_salmon,
+        descRes = R.string.rec_desc_baked_salmon,
+        receiptText = R.string.rec_text_baked_salmon,
+        imageRes = R.drawable.salmon, // Картинка лосося
+        relatedFood = listOf("salmon", "lemon"),
+        timeMinutes = 25,
+        calories = 380,
+        difficulty = 1,
+        category = "Ужин"
+    ),
+
+    // 6. Рататуй
+    TypicalReceipt(
+        id = "ratatouille",
+        titleRes = R.string.rec_ratatouille,
+        descRes = R.string.rec_desc_ratatouille,
+        receiptText = R.string.rec_text_ratatouille,
+        imageRes = R.drawable.tomato, // Временно томат, лучше найти картинку рататуя
+        relatedFood = listOf("eggplant", "zucchini", "tomato", "bell_pepper", "garlic"),
+        timeMinutes = 50,
+        calories = 150,
+        difficulty = 2,
+        category = "Обед"
+    ),
+
+    // 7. Фруктовый салат
+    TypicalReceipt(
+        id = "fruit_salad",
+        titleRes = R.string.rec_fruit_salad,
+        descRes = R.string.rec_desc_fruit_salad,
+        receiptText = R.string.rec_text_fruit_salad,
+        imageRes = R.drawable.apple, // Временно яблоко
+        relatedFood = listOf("banana", "apple", "kiwi", "mandarin", "yogurt"), // yogurt если есть, или убери
+        timeMinutes = 10,
+        calories = 120,
+        difficulty = 1,
+        category = "Завтрак"
     )
 )
 
