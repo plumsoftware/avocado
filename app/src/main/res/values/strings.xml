@@ -385,4 +385,53 @@
     <string name="rec_fruit_salad">Витаминный фруктовый салат</string>
     <string name="rec_desc_fruit_salad">Заряд энергии и витаминов. Отличная замена вредным сладостям.</string>
     <string name="rec_text_fruit_salad">1. Очистите киви, банан и мандарин.\n2. Нарежьте все фрукты (включая яблоко) кубиками одинакового размера.\n3. Смешайте в глубокой миске.\n4. Заправьте натуральным йогуртом или сбрызните лимонным соком.\n5. Можно добавить орешки для хруста.</string>
+
+    <!-- РЕЦЕПТ 8: Ягодный взрыв -->
+    <string name="rec_berry_blast">Смузи «Ягодный взрыв»</string>
+    <string name="rec_desc_berry_blast">Мощнейший заряд антиоксидантов. Смесь лесных ягод для молодости и иммунитета.</string>
+    <string name="rec_text_berry_blast">1. Помойте клубнику, малину и чернику.\n2. Если ягоды замороженные — дайте им постоять 5 минут.\n3. Добавьте в блендер полстакана воды или йогурта.\n4. Взбейте до однородного пюре.\n5. Украсьте целыми ягодами.</string>
+
+    <!-- РЕЦЕПТ 9: Тропический рай -->
+    <string name="rec_tropical_paradise">Тропический рай с манго</string>
+    <string name="rec_desc_tropical_paradise">Сладкий, солнечный вкус отпуска. Манго и ананас богаты ферментами для пищеварения.</string>
+    <string name="rec_text_tropical_paradise">1. Очистите манго и ананас, нарежьте кубиками.\n2. Выжмите сок из апельсина.\n3. Смешайте все фрукты в блендере.\n4. Добавьте немного льда для свежести.\n5. Взбейте на высокой скорости.</string>
+
+    <!-- РЕЦЕПТ 10: Арахисовый заряд -->
+    <string name="rec_peanut_power">Сытный смузи с арахисом</string>
+    <string name="rec_desc_peanut_power">Питательный коктейль с высоким содержанием белка. Идеален после тренировки или вместо завтрака.</string>
+    <string name="rec_text_peanut_power">1. Очистите банан и поломайте его на кусочки.\n2. Добавьте горсть арахиса (или ложку арахисовой пасты).\n3. Влейте стакан молока (можно миндального).\n4. Взбейте до кремовой текстуры.</string>
+
+    <!-- РЕЦЕПТ 11: Витаминное сияние (Морковный) -->
+    <string name="rec_vitamin_glow">Морковно-цитрусовый смузи</string>
+    <string name="rec_desc_vitamin_glow">Бета-каротин и Витамин С для идеального цвета лица и зрения.</string>
+    <string name="rec_text_vitamin_glow">1. Очистите и нарежьте морковь (лучше потереть или использовать мощный блендер).\n2. Очистите апельсин и удалите косточки.\n3. Добавьте кусочек яблока для сладости.\n4. Взбейте с добавлением воды до гладкости.</string>
+
+    <!-- РЕЦЕПТ 12: Свекольный Детокс -->
+    <string name="rec_beet_detox">Красный Детокс</string>
+    <string name="rec_desc_beet_detox">Очищающий напиток. Свекла улучшает выносливость и чистит кровь.</string>
+    <string name="rec_text_beet_detox">1. Сырую свеклу очистите и нарежьте мелкими кубиками.\n2. Добавьте зеленое яблоко и немного лимонного сока.\n3. Положите ингредиенты в блендер, добавьте воду.\n4. Тщательно взбейте. Можно процедить через сито, если не любите мякоть.</string>
+
+    <!-- КАТЕГОРИИ РЕЦЕПТОВ -->
+    <string name="cat_all_recipes">Все рецепты</string>
+    <string name="cat_all">Все</string>
+    <string name="cat_breakfast">Завтрак</string>
+    <string name="cat_lunch">Обед</string>
+    <string name="cat_dinner">Ужин</string>
+    <string name="cat_salad">Салаты</string>
+    <string name="cat_smoothie">Смузи</string>
+    <string name="cat_snack">Перекусы</string>
+    <string name="cat_soup">Супы</string>
+    <string name="cat_dessert">Десерты</string>
+
+    <!-- ЭКРАН РЕЦЕПТОВ -->
+    <string name="recipes_title">Рецепты</string>
+    <string name="recipes_subtitle">Вкусное и полезное на каждый день</string>
+    <string name="recipes_recommended_badge">РЕКОМЕНДУЕМ</string>
+    <string name="recipes_empty_category">В этой категории пока нет рецептов</string>
+    <string name="recipes_header_all">Все рецепты</string>
+
+    <!-- Форматы (для подстановки чисел) -->
+    <string name="format_minutes">%1$d мин</string>
+    <string name="format_kcal">%1$d ккал</string>
+
 </resources>

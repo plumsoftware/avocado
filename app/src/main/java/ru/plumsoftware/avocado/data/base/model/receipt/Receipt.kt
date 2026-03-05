@@ -13,4 +13,6 @@ interface Receipt {
     val timeMinutes: Int
     val calories: Int
     val difficulty: Int
+
+    val category: RecipeCategory
 }

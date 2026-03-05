@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import ru.plumsoftware.avocado.data.base.model.food.Food
+import ru.plumsoftware.avocado.data.base.model.receipt.RecipeCategory
 import ru.plumsoftware.avocado.data.base.model.receipt.TypicalReceipt
 import kotlin.collections.take
 
@@ -22,21 +23,21 @@ class RecipesViewModel : ViewModel() {
     // --- STATE FLOWS ---
 
     // 1. Категории фильтров
-    private val _categories = MutableStateFlow(listOf("Все", "Завтрак", "Обед", "Ужин", "Салаты", "Смузи"))
+    private val _categories = MutableStateFlow(RecipeCategory.entries)
     val categories = _categories.asStateFlow()
 
-    // 2. Выбранная категория
-    private val _selectedCategory = MutableStateFlow("Все")
+    // 2. Выбранная категория: По умолчанию ALL
+    private val _selectedCategory = MutableStateFlow(RecipeCategory.ALL)
     val selectedCategory = _selectedCategory.asStateFlow()
 
-    // 3. Рецепты для баннера (Featured)
-    private val _featuredReceipts = MutableStateFlow(allReceipts.take(3)) // Берем первые 3 или случайные
+    // 3. Featured (Баннер)
+    private val _featuredReceipts = MutableStateFlow(allReceipts.take(3))
     val featuredReceipts = _featuredReceipts.asStateFlow()
 
     // 4. Основной список (Фильтрованный)
     val recipeList: StateFlow<List<TypicalReceipt>> = _selectedCategory
         .combine(MutableStateFlow(allReceipts)) { category, receipts ->
-            if (category == "Все") {
+            if (category == RecipeCategory.ALL) {
                 receipts
             } else {
                 receipts.filter { it.category == category }
@@ -50,10 +51,9 @@ class RecipesViewModel : ViewModel() {
 
     // --- EVENTS ---
 
-    fun onCategorySelect(category: String) {
+    fun onCategorySelect(category: RecipeCategory) {
         _selectedCategory.value = category
     }
-
     // Внутри RecipesViewModel
 
     // Получить рецепт по ID

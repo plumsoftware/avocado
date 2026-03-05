@@ -13,5 +13,5 @@ data class TypicalReceipt(
     override val timeMinutes: Int, // Время готовки
     override val calories: Int,
     override val difficulty: Int = 1, // 1 - легко, 2 - средне, 3 - сложно
-    val category: String
-) : Receipt // Твой интерфейс
+    override val category: RecipeCategory
+) : Receipt

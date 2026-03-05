@@ -34,21 +34,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import ru.plumsoftware.avocado.data.base.model.receipt.RecipeCategory
 import ru.plumsoftware.avocado.data.base.model.receipt.TypicalReceipt
 import ru.plumsoftware.avocado.ui.modifier.iosClickable
 import ru.plumsoftware.avocado.ui.screen.AppDestination
 import ru.plumsoftware.avocado.ui.screen.onboarding.IOSGreen
 import ru.plumsoftware.avocado.ui.theme.Dimen
+import ru.plumsoftware.avocado.R
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun RecipesScreen(
     navController: NavHostController
 ) {
-    // Инициализация ViewModel
     val viewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory())
 
-    // Сбор данных из StateFlow
     val featuredReceipts by viewModel.featuredReceipts.collectAsState()
     val recipeList by viewModel.recipeList.collectAsState()
     val categories by viewModel.categories.collectAsState()
@@ -66,7 +66,7 @@ fun RecipesScreen(
                 .padding(padding)
                 .padding(horizontal = Dimen.medium),
             verticalArrangement = Arrangement.spacedBy(Dimen.large),
-            contentPadding = PaddingValues(bottom = 100.dp)
+            contentPadding = PaddingValues(bottom = Dimen.bottomNavPadding)
         ) {
 
             item {
@@ -75,16 +75,16 @@ fun RecipesScreen(
 
             // 1. ЗАГОЛОВОК ЭКРАНА
             item {
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(Dimen.spacerVertical))
                 Text(
-                    text = "Рецепты",
+                    text = stringResource(R.string.recipes_title),
                     style = MaterialTheme.typography.displaySmall.copy(
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 )
                 Text(
-                    text = "Вкусное и полезное на каждый день",
+                    text = stringResource(R.string.recipes_subtitle),
                     style = MaterialTheme.typography.bodyMedium.copy(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -119,10 +119,10 @@ fun RecipesScreen(
                                 val color = if (pagerState.currentPage == iteration) IOSGreen else Color.LightGray
                                 Box(
                                     modifier = Modifier
-                                        .padding(4.dp)
+                                        .padding(Dimen.extraSmall)
                                         .clip(CircleShape)
                                         .background(color)
-                                        .size(6.dp)
+                                        .size(6.dp) // Размер точки можно оставить числом или добавить в Dimen
                                 )
                             }
                         }
@@ -133,7 +133,7 @@ fun RecipesScreen(
             // 3. ФИЛЬТРЫ (Категории)
             item {
                 LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(Dimen.mediumHalf)
                 ) {
                     items(categories) { category ->
                         val isSelected = category == selectedCategory
@@ -147,10 +147,10 @@ fun RecipesScreen(
                                 .background(bgColor)
                                 .border(1.dp, borderColor, RoundedCornerShape(50))
                                 .clickable { viewModel.onCategorySelect(category) }
-                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                                .padding(horizontal = Dimen.medium, vertical = Dimen.mediumHalf)
                         ) {
                             Text(
-                                text = category,
+                                text = stringResource(category.titleRes),
                                 style = MaterialTheme.typography.bodyMedium.copy(
                                     fontWeight = FontWeight.Medium,
                                     color = contentColor
@@ -164,7 +164,9 @@ fun RecipesScreen(
             // 4. ЗАГОЛОВОК СПИСКА
             item {
                 Text(
-                    text = if (selectedCategory == "Все") "Все рецепты" else selectedCategory,
+                    text = if (selectedCategory == RecipeCategory.ALL)
+                        stringResource(R.string.recipes_header_all)
+                    else stringResource(selectedCategory.titleRes),
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.onBackground
                 )
@@ -174,10 +176,10 @@ fun RecipesScreen(
             if (recipeList.isEmpty()) {
                 item {
                     Text(
-                        text = "В этой категории пока нет рецептов",
+                        text = stringResource(R.string.recipes_empty_category),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(vertical = 32.dp)
+                        modifier = Modifier.padding(vertical = Dimen.extraLarge)
                     )
                 }
             } else {
@@ -195,7 +197,7 @@ fun RecipesScreen(
 }
 
 // ==========================================
-// КОМПОНЕНТЫ UI (Вынес в тот же файл для удобства)
+// КОМПОНЕНТЫ UI
 // ==========================================
 
 @Composable
@@ -206,7 +208,7 @@ fun FeaturedReceiptCard(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(280.dp)
+            .height(Dimen.bannerHeight)
             .clip(RoundedCornerShape(Dimen.large))
             .iosClickable { onClick() }
     ) {
@@ -217,7 +219,7 @@ fun FeaturedReceiptCard(
             modifier = Modifier.fillMaxSize()
         )
 
-        // Градиент для читаемости текста
+        // Градиент
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -236,12 +238,12 @@ fun FeaturedReceiptCard(
         ) {
             Box(
                 modifier = Modifier
-                    .clip(RoundedCornerShape(8.dp))
+                    .clip(RoundedCornerShape(Dimen.mediumHalf))
                     .background(Color.White.copy(alpha = 0.9f))
-                    .padding(horizontal = 10.dp, vertical = 4.dp)
+                    .padding(horizontal = 10.dp, vertical = Dimen.extraSmall)
             ) {
                 Text(
-                    text = "РЕКОМЕНДУЕМ",
+                    text = stringResource(R.string.recipes_recommended_badge),
                     style = MaterialTheme.typography.labelSmall.copy(
                         fontWeight = FontWeight.Bold,
                         color = Color.Black
@@ -261,32 +263,32 @@ fun FeaturedReceiptCard(
                 overflow = TextOverflow.Ellipsis
             )
 
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(Dimen.extraSmall))
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.Default.Schedule,
                     contentDescription = null,
                     tint = Color.White.copy(alpha = 0.8f),
-                    modifier = Modifier.size(14.dp)
+                    modifier = Modifier.size(Dimen.iconSizeTiny)
                 )
-                Spacer(modifier = Modifier.width(4.dp))
+                Spacer(modifier = Modifier.width(Dimen.extraSmall))
                 Text(
-                    text = "${receipt.timeMinutes} мин",
+                    text = stringResource(R.string.format_minutes, receipt.timeMinutes),
                     style = MaterialTheme.typography.bodySmall.copy(color = Color.White.copy(alpha = 0.8f))
                 )
 
-                Spacer(modifier = Modifier.width(12.dp))
+                Spacer(modifier = Modifier.width(Dimen.mediumAboveHalf))
 
                 Icon(
                     imageVector = Icons.Default.LocalFireDepartment,
                     contentDescription = null,
                     tint = Color.White.copy(alpha = 0.8f),
-                    modifier = Modifier.size(14.dp)
+                    modifier = Modifier.size(Dimen.iconSizeTiny)
                 )
-                Spacer(modifier = Modifier.width(4.dp))
+                Spacer(modifier = Modifier.width(Dimen.extraSmall))
                 Text(
-                    text = "${receipt.calories} ккал",
+                    text = stringResource(R.string.format_kcal, receipt.calories),
                     style = MaterialTheme.typography.bodySmall.copy(color = Color.White.copy(alpha = 0.8f))
                 )
             }
@@ -310,7 +312,7 @@ fun ReceiptListItem(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(180.dp)
+                .height(Dimen.receiptItemImageHeight)
                 .clip(RoundedCornerShape(Dimen.medium))
         ) {
             Image(
@@ -323,7 +325,7 @@ fun ReceiptListItem(
 
         Spacer(modifier = Modifier.height(Dimen.mediumHalf))
 
-        Column(modifier = Modifier.padding(horizontal = 4.dp)) {
+        Column(modifier = Modifier.padding(horizontal = Dimen.extraSmall)) {
             Text(
                 text = stringResource(receipt.titleRes),
                 style = MaterialTheme.typography.titleMedium.copy(
@@ -334,7 +336,7 @@ fun ReceiptListItem(
                 overflow = TextOverflow.Ellipsis
             )
 
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(Dimen.extraSmall))
 
             Text(
                 text = stringResource(receipt.descRes),
@@ -346,12 +348,12 @@ fun ReceiptListItem(
                 overflow = TextOverflow.Ellipsis
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(Dimen.mediumHalf))
 
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(Dimen.mediumHalf)) {
                 ReceiptMetaChip(
                     icon = Icons.Default.Schedule,
-                    text = "${receipt.timeMinutes} мин"
+                    text = stringResource(R.string.format_minutes, receipt.timeMinutes)
                 )
                 ReceiptMetaChip(
                     icon = Icons.Default.Bolt,
@@ -367,17 +369,17 @@ fun ReceiptMetaChip(icon: ImageVector, text: String) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            .clip(RoundedCornerShape(6.dp))
+            .clip(RoundedCornerShape(6.dp)) // Можно тоже в Dimen
             .background(MaterialTheme.colorScheme.surfaceContainerHigh)
             .padding(horizontal = 6.dp, vertical = 4.dp)
     ) {
         Icon(
             imageVector = icon,
             contentDescription = null,
-            modifier = Modifier.size(12.dp),
+            modifier = Modifier.size(Dimen.iconSizeMicro),
             tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        Spacer(modifier = Modifier.width(4.dp))
+        Spacer(modifier = Modifier.width(Dimen.extraSmall))
         Text(
             text = text,
             style = MaterialTheme.typography.labelSmall.copy(
