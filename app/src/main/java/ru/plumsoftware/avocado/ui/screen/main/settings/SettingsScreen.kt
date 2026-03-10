@@ -1,6 +1,17 @@
 package ru.plumsoftware.avocado.ui.screen.main.settings
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
+import android.os.PowerManager
+import android.provider.Settings
 import androidx.activity.compose.LocalActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,6 +25,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -29,6 +41,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,6 +52,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import ru.plumsoftware.avocado.R
@@ -46,8 +62,12 @@ import ru.plumsoftware.avocado.ui.getTopInsetInDp
 import ru.plumsoftware.avocado.ui.modifier.iosClickable
 import ru.plumsoftware.avocado.ui.screen.AppDestination
 import ru.plumsoftware.avocado.ui.screen.main.settings.elements.IOSSettingsItem
+import ru.plumsoftware.avocado.ui.screen.main.settings.elements.IOSSettingsSwitchItem
 import ru.plumsoftware.avocado.ui.theme.Dimen
+import androidx.core.net.toUri
 
+
+@SuppressLint("BatteryLife")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
@@ -57,6 +77,34 @@ fun SettingsScreen(
     val currentTheme by viewModel.currentTheme.collectAsState()
     val context = LocalContext.current
     val activity = LocalActivity.current
+
+    // --- ПРОВЕРКА РАЗРЕШЕНИЙ (Реактивная) ---
+    var hasNotifications by remember {
+        mutableStateOf(
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+            } else true
+        )
+    }
+
+    val notifLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted -> hasNotifications = isGranted }
+
+    // --- 2. ПРОВЕРКА ФОНОВОГО РЕЖИМА (Батарея) ---
+    val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+
+    var hasBackgroundWork by remember {
+        mutableStateOf(powerManager.isIgnoringBatteryOptimizations(context.packageName))
+    }
+
+    // Лаунчер для отслеживания возврата с экрана настроек батареи
+    val backgroundLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) {
+        // Проверяем статус заново после возврата в приложение
+        hasBackgroundWork = powerManager.isIgnoringBatteryOptimizations(context.packageName)
+    }
 
     // Получаем версию приложения
     val appVersion = try {
@@ -113,6 +161,66 @@ fun SettingsScreen(
                         navController.navigate(AppDestination.Onboarding)
                     },
                     showDivider = false
+                )
+            }
+
+            Spacer(modifier = Modifier.height(Dimen.large))
+
+            Text(
+                text = stringResource(R.string.settings_section_permissions),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(start = Dimen.medium, bottom = Dimen.mediumHalf)
+            )
+
+            Column(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(Dimen.large))
+                    .background(MaterialTheme.colorScheme.surface)
+            ) {
+                // 1. Уведомления
+                IOSSettingsSwitchItem(
+                    title = stringResource(R.string.settings_item_push),
+                    isChecked = hasNotifications,
+                    onCheckedChange = { turnOn ->
+                        if (turnOn) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                notifLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                            }
+                        } else {
+                            val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                                    putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                                }
+                            } else {
+                                Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                    data = Uri.fromParts("package", context.packageName, null)
+                                }
+                            }
+                            context.startActivity(intent)
+                        }
+                    },
+                    showDivider = true // Теперь тут есть разделитель!
+                )
+
+                // 2. Работа в фоне (Игнорирование экономии заряда)
+                IOSSettingsSwitchItem(
+                    title = stringResource(R.string.settings_item_background),
+                    isChecked = hasBackgroundWork,
+                    onCheckedChange = { turnOn ->
+                        if (turnOn) {
+                            // Просим разрешить работу в фоне
+                            val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
+                                data = "package:${context.packageName}".toUri()
+                            }
+                            backgroundLauncher.launch(intent)
+                        } else {
+                            // Если юзер хочет выключить — перекидываем в общие настройки батареи
+                            val intent = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
+                            context.startActivity(intent)
+                        }
+                    },
+                    showDivider = false // Последний элемент без линии
                 )
             }
 

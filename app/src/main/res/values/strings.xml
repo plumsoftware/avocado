@@ -98,6 +98,20 @@
     <string name="onboarding_restrictions_title">Есть ограничения?</string>
     <string name="onboarding_restrictions_subtitle">Мы скроем неподходящие продукты</string>
 
+    <!-- Уведомления (Онбординг) -->
+    <string name="onboarding_notif_title">Не пропустите важное</string>
+    <string name="onboarding_notif_subtitle">Разрешите уведомления, чтобы получать напоминания пить воду, советы дня и новые рецепты. Никакого спама!</string>
+    <string name="onboarding_btn_allow_notif">Включить уведомления</string>
+    <string name="onboarding_notif_granted">Уведомления включены ✓</string>
+
+    <!-- Настройки -->
+    <string name="settings_section_notifications">УВЕДОМЛЕНИЯ</string>
+    <string name="settings_item_push">Push-уведомления</string>
+
+    <!-- Разрешения и фон -->
+    <string name="settings_section_permissions">РАЗРЕШЕНИЯ</string>
+    <string name="settings_item_background">Работа в фоне</string>
+
     <!-- Кнопки Онбординга -->
     <string name="onboarding_btn_read">Прочитал</string>
     <string name="onboarding_btn_continue">Продолжить</string>

@@ -36,6 +36,15 @@ import ru.plumsoftware.avocado.ui.modifier.iosClickable
 import ru.plumsoftware.avocado.ui.theme.Dimen
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AutoAwesome
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import androidx.compose.material.icons.filled.NotificationsActive
+import androidx.compose.material.icons.rounded.CheckCircle
+import androidx.compose.ui.platform.LocalContext
 
 // Цвета (лучше тоже вынести в Color.kt, но пока здесь)
 val IOSGreen = Color(0xFF5E8C31)
@@ -47,10 +56,9 @@ val IOSLightGray = Color(0xFFE5E5EA)
 fun OnboardingScreen(
     onFinish: (List<UserGoal>, List<UserRestriction>) -> Unit
 ) {
-    // ... (код состояния и анимаций остался прежним) ...
     val selectedGoals = remember { mutableStateListOf<UserGoal>() }
     val selectedRestrictions = remember { mutableStateListOf<UserRestriction>() }
-    val pagerState = rememberPagerState(pageCount = { 3 })
+    val pagerState = rememberPagerState(pageCount = { 4 })
     val scope = rememberCoroutineScope()
 
     Box(
@@ -66,6 +74,16 @@ fun OnboardingScreen(
                 .clip(RoundedCornerShape(topStart = Dimen.large, topEnd = Dimen.large))
                 .background(Color.White)
         ) {
+            Box(
+                modifier = Modifier
+                    .padding(top = Dimen.mediumAboveHalf)
+                    .width(Dimen.grabberWidth)
+                    .height(Dimen.grabberHeight)
+                    .clip(RoundedCornerShape(50))
+                    .background(Color(0xFFC7C7CC))
+                    .align(Alignment.CenterHorizontally)
+            )
+
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier
@@ -77,10 +95,10 @@ fun OnboardingScreen(
                     0 -> WelcomePage()
                     1 -> GoalsPage(selectedGoals)
                     2 -> RestrictionsPage(selectedRestrictions)
+                    3 -> NotificationsPage()
                 }
             }
 
-            // 3. Нижняя панель
             Column(
                 modifier = Modifier
                     .padding(horizontal = Dimen.large)
@@ -90,7 +108,8 @@ fun OnboardingScreen(
             ) {
                 // Точки
                 Row(horizontalArrangement = Arrangement.spacedBy(Dimen.mediumHalf)) {
-                    repeat(3) { index ->
+                    // 🔥 ИЗМЕНЕНО: repeat(4)
+                    repeat(4) { index ->
                         val isSelected = pagerState.currentPage == index
                         val color by animateColorAsState(
                             if (isSelected) IOSGreen else Color(0xFFC7C7CC),
@@ -105,14 +124,12 @@ fun OnboardingScreen(
                     }
                 }
 
-                // Кнопка
-                val isLastPage = pagerState.currentPage == 2
-
-                // Текст кнопки из ресурсов
+                // 🔥 ИЗМЕНЕНО: Последняя страница теперь 3
+                val isLastPage = pagerState.currentPage == 3
                 val buttonText = when (pagerState.currentPage) {
                     0 -> stringResource(R.string.onboarding_btn_read)
-                    1 -> stringResource(R.string.onboarding_btn_continue)
-                    2 -> stringResource(R.string.onboarding_btn_start)
+                    1, 2 -> stringResource(R.string.onboarding_btn_continue)
+                    3 -> stringResource(R.string.onboarding_btn_start)
                     else -> stringResource(R.string.onboarding_btn_continue)
                 }
 
@@ -142,6 +159,114 @@ fun OnboardingScreen(
                         fontWeight = FontWeight.Bold
                     )
                 }
+            }
+        }
+    }
+}
+
+// --- НОВЫЙ ЭКРАН: УВЕДОМЛЕНИЯ ---
+@Composable
+fun NotificationsPage() {
+    val context = LocalContext.current
+
+    // Проверяем, дано ли разрешение (для Android 13+)
+    var isGranted by remember {
+        mutableStateOf(
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+            } else {
+                true // На старых Android разрешения даются при установке
+            }
+        )
+    }
+
+    // Лаунчер для запроса разрешения
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { granted ->
+            isGranted = granted
+        }
+    )
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = Dimen.extraLarge),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        // Красивая иконка колокольчика
+        Box(
+            modifier = Modifier
+                .size(140.dp)
+                .background(Color(0xFFFFF3E0), CircleShape), // Мягкий оранжевый фон
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.NotificationsActive,
+                contentDescription = null,
+                tint = Color(0xFFFF9800), // Яркий оранжевый
+                modifier = Modifier.size(64.dp)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(40.dp))
+
+        Text(
+            text = stringResource(R.string.onboarding_notif_title),
+            style = MaterialTheme.typography.displaySmall.copy(
+                fontWeight = FontWeight.Bold,
+                fontSize = 28.sp
+            ),
+            color = Color.Black,
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(modifier = Modifier.height(Dimen.mediumAboveHalf))
+
+        Text(
+            text = stringResource(R.string.onboarding_notif_subtitle),
+            style = MaterialTheme.typography.bodyLarge.copy(
+                fontSize = 17.sp,
+                lineHeight = 24.sp
+            ),
+            color = Color.Gray,
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(modifier = Modifier.height(40.dp))
+
+        // Кнопка запроса разрешения (внутри слайда)
+        if (isGranted) {
+            // Если уже разрешил (или Android < 13)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Rounded.CheckCircle, contentDescription = null, tint = IOSGreen)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = stringResource(R.string.onboarding_notif_granted),
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold, color = IOSGreen)
+                )
+            }
+        } else {
+            // Кнопка в стиле iOS "Secondary Action"
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(Dimen.chipCornerRadius))
+                    .background(Color(0xFFE5E5EA)) // System Gray 5
+                    .iosClickable {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                        }
+                    }
+                    .padding(horizontal = 24.dp, vertical = 14.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.onboarding_btn_allow_notif),
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFF007AFF) // iOS Blue Link Color
+                    )
+                )
             }
         }
     }
