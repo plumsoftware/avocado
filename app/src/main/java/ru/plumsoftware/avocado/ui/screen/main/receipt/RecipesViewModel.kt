@@ -8,19 +8,27 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import ru.plumsoftware.avocado.data.base.model.food.Food
 import ru.plumsoftware.avocado.data.base.model.receipt.RecipeCategory
 import ru.plumsoftware.avocado.data.base.model.receipt.TypicalReceipt
+import ru.plumsoftware.avocado.data.onboarding.UserGoal
+import ru.plumsoftware.avocado.data.user_preferences.UserPreferencesRepository
 import kotlin.collections.take
 
-class RecipesViewModel : ViewModel() {
+class RecipesViewModel(
+    userPreferencesRepository: UserPreferencesRepository
+) : ViewModel() {
 
     // --- ДАННЫЕ (MOCK DATA) ---
     // В реальности это должно приходить из Repository
     private val allReceipts = ru.plumsoftware.avocado.data.base.model.receipt.allReceipts
 
     // --- STATE FLOWS ---
+
+    val userGoals: StateFlow<List<UserGoal>> = userPreferencesRepository.userGoals
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     // 1. Категории фильтров
     private val _categories = MutableStateFlow(RecipeCategory.entries)
@@ -31,23 +39,24 @@ class RecipesViewModel : ViewModel() {
     val selectedCategory = _selectedCategory.asStateFlow()
 
     // 3. Featured (Баннер)
-    private val _featuredReceipts = MutableStateFlow(allReceipts.take(3))
-    val featuredReceipts = _featuredReceipts.asStateFlow()
+    private val _featuredReceipts = MutableStateFlow(allReceipts.take(5))
+    val featuredReceipts: StateFlow<List<TypicalReceipt>> = userGoals.map { goals ->
+        if (goals.isEmpty()) {
+            allReceipts.shuffled().take(7) // Если целей нет - просто случайные
+        } else {
+            // Сортируем: чем больше совпадений по целям, тем выше рецепт
+            allReceipts.sortedByDescending { recipe ->
+                recipe.suitableGoals.count { goal -> goals.contains(goal) }
+            }.take(7)
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), allReceipts.take(7))
 
     // 4. Основной список (Фильтрованный)
     val recipeList: StateFlow<List<TypicalReceipt>> = _selectedCategory
         .combine(MutableStateFlow(allReceipts)) { category, receipts ->
-            if (category == RecipeCategory.ALL) {
-                receipts
-            } else {
-                receipts.filter { it.category == category }
-            }
+            if (category == RecipeCategory.ALL) receipts else receipts.filter { it.category == category }
         }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = allReceipts
-        )
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), allReceipts)
 
     // --- EVENTS ---
 
@@ -69,10 +78,10 @@ class RecipesViewModel : ViewModel() {
     }
 
     // Фабрика
-    class Factory : ViewModelProvider.Factory {
+    class Factory(private val userPrefsRepo: UserPreferencesRepository) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return RecipesViewModel() as T
+            return RecipesViewModel(userPrefsRepo) as T
         }
     }
 }

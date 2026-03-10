@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import ru.plumsoftware.avocado.data.base.model.food.Food
+import ru.plumsoftware.avocado.data.user_preferences.UserPreferencesRepository
 import ru.plumsoftware.avocado.ui.modifier.iosClickable
 import ru.plumsoftware.avocado.ui.screen.AppDestination
 import ru.plumsoftware.avocado.ui.screen.details.DisclaimerCard
@@ -50,22 +51,22 @@ private val HEADER_HEIGHT = 380.dp
 @Composable
 fun ReceiptDetailScreen(
     receiptId: String,
-    navController: NavController
+    navController: NavController,
+    userPreferencesRepository: UserPreferencesRepository
 ) {
-    val viewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory())
+    val viewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory(userPrefsRepo = userPreferencesRepository))
     val receipt = remember { viewModel.getReceiptById(receiptId) }
 
-    // Если рецепт не найден (ошибка), показываем заглушку или выходим
     if (receipt == null) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("Рецепт не найден") }
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text("Рецепт не найден", color = MaterialTheme.colorScheme.onBackground)
+        }
         return
     }
 
     val ingredients = remember { viewModel.getIngredients(receipt.relatedFood) }
     val scrollState = rememberScrollState()
-    val context = LocalContext.current
 
-    // Получаем текст инструкции и разбиваем на шаги по переносу строки
     val rawInstructions = stringResource(receipt.receiptText)
     val steps = remember(rawInstructions) {
         rawInstructions.split("\n").filter { it.isNotBlank() }
@@ -92,13 +93,12 @@ fun ReceiptDetailScreen(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
             )
-            // Градиент, чтобы картинка плавно переходила в белый фон (опционально)
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(
                         Brush.verticalGradient(
-                            colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.3f)),
+                            colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.4f)),
                             startY = 0f,
                             endY = 1000f
                         )
@@ -139,7 +139,7 @@ fun ReceiptDetailScreen(
                     text = stringResource(receipt.titleRes),
                     style = MaterialTheme.typography.displaySmall.copy(
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface // Адаптивный цвет
                     )
                 )
 
@@ -147,20 +147,19 @@ fun ReceiptDetailScreen(
                 Text(
                     text = stringResource(receipt.descRes),
                     style = MaterialTheme.typography.bodyLarge.copy(
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant, // Адаптивный серый
                         lineHeight = 22.sp
                     ),
                     modifier = Modifier.padding(top = 8.dp, bottom = 24.dp)
                 )
 
-                // --- МЕТА ДАННЫЕ (Время, Ккал, Сложность) ---
+                // --- МЕТА ДАННЫЕ ---
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     ReceiptMetaBig(Icons.Default.Schedule, "${receipt.timeMinutes} мин", "Время")
                     ReceiptMetaBig(Icons.Default.LocalFireDepartment, "${receipt.calories}", "Ккал")
-                    // Сложность: 1-Легко, 2-Средне, 3-Сложно
                     val diffText = when(receipt.difficulty) {
                         1 -> "Легко"
                         2 -> "Средне"
@@ -171,24 +170,25 @@ fun ReceiptDetailScreen(
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                // --- ИНГРЕДИЕНТЫ (Горизонтальный список) ---
+                // --- ИНГРЕДИЕНТЫ ---
                 if (ingredients.isNotEmpty()) {
                     Text(
                         text = "Ингредиенты",
-                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface // ИСПРАВЛЕНО: Явный цвет!
+                        ),
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
 
-                    // Скролл ингредиентов (можно нажимать!)
                     Row(
                         modifier = Modifier
-                            .horizontalScroll(rememberScrollState()) // Или LazyRow, но тут мало элементов
+                            .horizontalScroll(rememberScrollState())
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         ingredients.forEach { food ->
                             IngredientItem(food) {
-                                // Навигация на экран продукта
                                 navController.navigate(AppDestination.DetailedScreen(foodId = food.id))
                             }
                         }
@@ -196,10 +196,13 @@ fun ReceiptDetailScreen(
                     Spacer(modifier = Modifier.height(32.dp))
                 }
 
-                // --- ПРИГОТОВЛЕНИЕ (Шаги) ---
+                // --- ПРИГОТОВЛЕНИЕ ---
                 Text(
                     text = "Приготовление",
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface // ИСПРАВЛЕНО: Явный цвет!
+                    ),
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
 
@@ -219,8 +222,7 @@ fun ReceiptDetailScreen(
 
         // --- 3. BACK BUTTON ---
         Box(
-            modifier = Modifier
-                .padding(top = 48.dp, start = 16.dp)
+            modifier = Modifier.padding(top = 48.dp, start = 16.dp)
         ) {
             GlassButton(onClick = { navController.popBackStack() }) {
                 Icon(
@@ -241,9 +243,10 @@ fun ReceiptDetailScreen(
 fun ReceiptMetaBig(icon: ImageVector, value: String, label: String) {
     Column(
         modifier = Modifier
-            .width(100.dp) // Фиксированная ширина для ровности
+            .width(100.dp)
             .clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.surfaceContainerLow)
+            // ИСПРАВЛЕНО: surfaceVariant лучше работает в Dark Mode, чем surfaceContainerLow
+            .background(MaterialTheme.colorScheme.surfaceVariant)
             .padding(vertical = 12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -256,11 +259,16 @@ fun ReceiptMetaBig(icon: ImageVector, value: String, label: String) {
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = value,
-            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+            style = MaterialTheme.typography.titleMedium.copy(
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface // ИСПРАВЛЕНО: Явный цвет
+            )
         )
         Text(
             text = label,
-            style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+            style = MaterialTheme.typography.bodySmall.copy(
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f) // ИСПРАВЛЕНО
+            )
         )
     }
 }
@@ -277,7 +285,7 @@ fun IngredientItem(food: Food, onClick: () -> Unit) {
             modifier = Modifier
                 .size(70.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                .background(MaterialTheme.colorScheme.surfaceVariant) // Серый кружок для контраста
                 .border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f), CircleShape),
             contentAlignment = Alignment.Center
         ) {
@@ -291,7 +299,10 @@ fun IngredientItem(food: Food, onClick: () -> Unit) {
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = stringResource(food.titleRes),
-            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+            style = MaterialTheme.typography.bodyMedium.copy(
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurface // ИСПРАВЛЕНО: Цвет названия
+            ),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
@@ -301,7 +312,6 @@ fun IngredientItem(food: Food, onClick: () -> Unit) {
 @Composable
 fun StepItem(number: Int, text: String) {
     Row(modifier = Modifier.fillMaxWidth()) {
-        // Номер шага
         Box(
             modifier = Modifier
                 .size(28.dp)
@@ -320,13 +330,12 @@ fun StepItem(number: Int, text: String) {
 
         Spacer(modifier = Modifier.width(12.dp))
 
-        // Текст шага (очищаем от "1. " если есть в ресурсах)
         val cleanText = text.replaceFirst(Regex("^\\d+\\.\\s*"), "")
         Text(
             text = cleanText,
             style = MaterialTheme.typography.bodyLarge.copy(
                 lineHeight = 24.sp,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface // ИСПРАВЛЕНО: Явный цвет шагов
             )
         )
     }

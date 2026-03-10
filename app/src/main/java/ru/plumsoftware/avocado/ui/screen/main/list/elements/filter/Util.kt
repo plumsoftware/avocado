@@ -36,12 +36,12 @@ val filters = listOf(
         icon = R.drawable.fish_icon,
         foodType = FoodType.FISH
     ),
-    Filter(
-        id = 6,
-        title = R.string.green,
-        icon = R.drawable.green_icon,
-        foodType = FoodType.GREEN
-    ),
+//    Filter(
+//        id = 6,
+//        title = R.string.green,
+//        icon = R.drawable.green_icon,
+//        foodType = FoodType.GREEN
+//    ),
     Filter(
         id = 7,
         title = R.string.nut,
@@ -54,10 +54,10 @@ val filters = listOf(
         icon = R.drawable.mushroom_icon,
         foodType = FoodType.MUSHROOM
     ),
-    Filter(
-        id = 9,
-        title = R.string.seafood,
-        icon = R.drawable.seafood_icon,
-        foodType = FoodType.SEAFOOD
-    )
+//    Filter(
+//        id = 9,
+//        title = R.string.seafood,
+//        icon = R.drawable.seafood_icon,
+//        foodType = FoodType.SEAFOOD
+//    )
 )

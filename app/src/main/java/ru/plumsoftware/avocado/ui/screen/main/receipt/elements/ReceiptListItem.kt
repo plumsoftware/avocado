@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -32,13 +33,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.plumsoftware.avocado.data.base.model.receipt.Receipt
+import ru.plumsoftware.avocado.data.onboarding.UserGoal
 import ru.plumsoftware.avocado.ui.modifier.iosClickable
+import ru.plumsoftware.avocado.ui.screen.onboarding.IOSGreen
 import ru.plumsoftware.avocado.ui.theme.Dimen
 
 @Composable
 fun ReceiptListItem(
     receipt: Receipt,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    matchingGoal: UserGoal?,
 ) {
     Column(
         modifier = Modifier
@@ -66,7 +70,33 @@ fun ReceiptListItem(
         Spacer(modifier = Modifier.height(Dimen.mediumHalf))
 
         // Текстовый блок
-        Column(modifier = Modifier.padding(horizontal = 4.dp)) { // Небольшой отступ с краев
+        Column(modifier = Modifier.padding(horizontal = Dimen.extraSmall)) {
+
+            // --- УМНАЯ СНОСКА ДЛЯ СПИСКА ---
+            if (matchingGoal != null) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(top = Dimen.mediumHalf, bottom = 4.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.AutoAwesome,
+                        contentDescription = null,
+                        tint = IOSGreen,
+                        modifier = Modifier.size(12.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "Поможет ${stringResource(matchingGoal.titleRes).lowercase()}",
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = IOSGreen
+                        )
+                    )
+                }
+            } else {
+                Spacer(modifier = Modifier.height(Dimen.mediumHalf))
+            }
+
             Text(
                 text = stringResource(receipt.titleRes),
                 style = MaterialTheme.typography.titleMedium.copy(
@@ -76,21 +106,6 @@ fun ReceiptListItem(
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            // Описание (серое)
-            Text(
-                text = stringResource(receipt.descRes),
-                style = MaterialTheme.typography.bodySmall.copy(
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    lineHeight = 16.sp
-                ),
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
 
             // Мета-данные (Чипсы с параметрами)
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {

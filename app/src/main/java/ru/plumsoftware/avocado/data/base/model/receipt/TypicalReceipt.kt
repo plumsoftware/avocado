@@ -2,6 +2,7 @@ package ru.plumsoftware.avocado.data.base.model.receipt
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import ru.plumsoftware.avocado.data.onboarding.UserGoal
 
 data class TypicalReceipt(
     override val id: String,
@@ -13,5 +14,6 @@ data class TypicalReceipt(
     override val timeMinutes: Int, // Время готовки
     override val calories: Int,
     override val difficulty: Int = 1, // 1 - легко, 2 - средне, 3 - сложно
-    override val category: RecipeCategory
+    override val category: RecipeCategory,
+    val suitableGoals: List<UserGoal> = emptyList()
 ) : Receipt

@@ -66,6 +66,7 @@ fun MainScreen(
                 MainScreenStates.Rec -> {
                     RecipesScreen(
                         navController = navController,
+                        userPreferencesRepository = userPreferencesRepository
                     )
                 }
                 MainScreenStates.Settings -> {

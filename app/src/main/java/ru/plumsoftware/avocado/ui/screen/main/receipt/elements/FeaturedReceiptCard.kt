@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -31,14 +32,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import ru.plumsoftware.avocado.R
 import ru.plumsoftware.avocado.data.base.model.receipt.Receipt
+import ru.plumsoftware.avocado.data.onboarding.UserGoal
 import ru.plumsoftware.avocado.ui.modifier.iosClickable
+import ru.plumsoftware.avocado.ui.screen.onboarding.IOSGreen
 import ru.plumsoftware.avocado.ui.theme.Dimen
 
 @Composable
 fun FeaturedReceiptCard(
     receipt: Receipt,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    matchingGoal: UserGoal?,
 ) {
     Box(
         modifier = Modifier
@@ -69,39 +74,46 @@ fun FeaturedReceiptCard(
 
         // 3. Текст поверх картинки
         Column(
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(Dimen.large)
+            modifier = Modifier.align(Alignment.BottomStart).padding(Dimen.large)
         ) {
-            // Бейдж "Рецепт дня"
+            // УМНЫЙ БЕЙДЖ
             Box(
                 modifier = Modifier
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(Color.White.copy(alpha = 0.9f))
-                    .padding(horizontal = 10.dp, vertical = 4.dp)
+                    .clip(RoundedCornerShape(Dimen.mediumHalf))
+                    .background(Color.White.copy(alpha = 0.95f))
+                    .padding(horizontal = 10.dp, vertical = Dimen.extraSmall)
             ) {
-                Text(
-                    text = "РЕКОМЕНДУЕМ",
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black
+                if (matchingGoal != null) {
+                    // Если совпало с целью -> показываем магию
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Rounded.AutoAwesome,
+                            contentDescription = null,
+                            tint = IOSGreen,
+                            modifier = Modifier.size(14.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "ИДЕАЛЬНО ДЛЯ: ${stringResource(matchingGoal.titleRes).uppercase()}",
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontWeight = FontWeight.Bold,
+                                color = IOSGreen
+                            )
+                        )
+                    }
+                } else {
+                    // Если нет целей или не совпало -> Стандарт
+                    Text(
+                        text = stringResource(R.string.recipes_recommended_badge),
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black
+                        )
                     )
-                )
+                }
             }
 
             Spacer(modifier = Modifier.height(Dimen.mediumHalf))
-
-            Text(
-                text = stringResource(receipt.titleRes),
-                style = MaterialTheme.typography.headlineSmall.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                ),
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
-
-            Spacer(modifier = Modifier.height(4.dp))
 
             // Время и Калории (белый текст)
             Row(verticalAlignment = Alignment.CenterVertically) {

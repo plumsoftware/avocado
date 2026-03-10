@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -41,18 +42,23 @@ import ru.plumsoftware.avocado.ui.screen.AppDestination
 import ru.plumsoftware.avocado.ui.screen.onboarding.IOSGreen
 import ru.plumsoftware.avocado.ui.theme.Dimen
 import ru.plumsoftware.avocado.R
+import ru.plumsoftware.avocado.data.onboarding.UserGoal
+import ru.plumsoftware.avocado.data.user_preferences.UserPreferencesRepository
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun RecipesScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    userPreferencesRepository: UserPreferencesRepository
 ) {
-    val viewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory())
+    val viewModel: RecipesViewModel =
+        viewModel(factory = RecipesViewModel.Factory(userPrefsRepo = userPreferencesRepository))
 
     val featuredReceipts by viewModel.featuredReceipts.collectAsState()
     val recipeList by viewModel.recipeList.collectAsState()
     val categories by viewModel.categories.collectAsState()
     val selectedCategory by viewModel.selectedCategory.collectAsState()
+    val userGoals by viewModel.userGoals.collectAsState()
 
     val pagerState = rememberPagerState(pageCount = { featuredReceipts.size })
 
@@ -100,10 +106,20 @@ fun RecipesScreen(
                             modifier = Modifier.fillMaxWidth(),
                             pageSpacing = Dimen.medium
                         ) { page ->
+                            val receipt = featuredReceipts[page]
+                            // Ищем первое совпадение с целью юзера
+                            val matchingGoal =
+                                receipt.suitableGoals.firstOrNull { userGoals.contains(it) }
+
                             FeaturedReceiptCard(
-                                receipt = featuredReceipts[page],
+                                receipt = receipt,
+                                matchingGoal = matchingGoal,
                                 onClick = {
-                                    navController.navigate(AppDestination.ReceiptDetailRoute(featuredReceipts[page].id))
+                                    navController.navigate(
+                                        AppDestination.ReceiptDetailRoute(
+                                            receipt.id
+                                        )
+                                    )
                                 }
                             )
                         }
@@ -116,7 +132,8 @@ fun RecipesScreen(
                             horizontalArrangement = Arrangement.Center
                         ) {
                             repeat(featuredReceipts.size) { iteration ->
-                                val color = if (pagerState.currentPage == iteration) IOSGreen else Color.LightGray
+                                val color =
+                                    if (pagerState.currentPage == iteration) IOSGreen else Color.LightGray
                                 Box(
                                     modifier = Modifier
                                         .padding(Dimen.extraSmall)
@@ -137,9 +154,12 @@ fun RecipesScreen(
                 ) {
                     items(categories) { category ->
                         val isSelected = category == selectedCategory
-                        val bgColor = if (isSelected) IOSGreen else MaterialTheme.colorScheme.surface
-                        val contentColor = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface
-                        val borderColor = if (isSelected) Color.Transparent else MaterialTheme.colorScheme.outlineVariant
+                        val bgColor =
+                            if (isSelected) IOSGreen else MaterialTheme.colorScheme.surface
+                        val contentColor =
+                            if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface
+                        val borderColor =
+                            if (isSelected) Color.Transparent else MaterialTheme.colorScheme.outlineVariant
 
                         Box(
                             modifier = Modifier
@@ -184,11 +204,12 @@ fun RecipesScreen(
                 }
             } else {
                 items(recipeList) { receipt ->
+                    val matchingGoal = receipt.suitableGoals.firstOrNull { userGoals.contains(it) }
+
                     ReceiptListItem(
                         receipt = receipt,
-                        onClick = {
-                            navController.navigate(AppDestination.ReceiptDetailRoute(receipt.id))
-                        }
+                        matchingGoal = matchingGoal,
+                        onClick = { navController.navigate(AppDestination.ReceiptDetailRoute(receipt.id)) }
                     )
                 }
             }
@@ -203,7 +224,8 @@ fun RecipesScreen(
 @Composable
 fun FeaturedReceiptCard(
     receipt: TypicalReceipt,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    matchingGoal: UserGoal?,
 ) {
     Box(
         modifier = Modifier
@@ -231,24 +253,47 @@ fun FeaturedReceiptCard(
                 )
         )
 
+        // 3. Текст поверх картинки
         Column(
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .padding(Dimen.large)
         ) {
+            // УМНЫЙ БЕЙДЖ
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(Dimen.mediumHalf))
-                    .background(Color.White.copy(alpha = 0.9f))
-                    .padding(horizontal = 10.dp, vertical = Dimen.extraSmall)
+                    .background(Color.White.copy(alpha = 0.95f))
+                    .padding(horizontal = Dimen.mediumAboveHalf, vertical = Dimen.extraSmall)
             ) {
-                Text(
-                    text = stringResource(R.string.recipes_recommended_badge),
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black
+                if (matchingGoal != null) {
+                    // Если совпало с целью -> показываем магию
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Rounded.AutoAwesome,
+                            contentDescription = null,
+                            tint = IOSGreen,
+                            modifier = Modifier.size(14.dp)
+                        )
+                        Spacer(modifier = Modifier.width(Dimen.extraSmall))
+                        Text(
+                            text = stringResource(matchingGoal.titleRes).uppercase(),
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontWeight = FontWeight.Bold,
+                                color = IOSGreen
+                            )
+                        )
+                    }
+                } else {
+                    // Если нет целей или не совпало -> Стандарт
+                    Text(
+                        text = stringResource(R.string.recipes_recommended_badge),
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black
+                        )
                     )
-                )
+                }
             }
 
             Spacer(modifier = Modifier.height(Dimen.mediumHalf))
@@ -299,7 +344,8 @@ fun FeaturedReceiptCard(
 @Composable
 fun ReceiptListItem(
     receipt: TypicalReceipt,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    matchingGoal: UserGoal?,
 ) {
     Column(
         modifier = Modifier
@@ -325,7 +371,34 @@ fun ReceiptListItem(
 
         Spacer(modifier = Modifier.height(Dimen.mediumHalf))
 
+        // Текстовый блок
         Column(modifier = Modifier.padding(horizontal = Dimen.extraSmall)) {
+
+            // --- УМНАЯ СНОСКА ДЛЯ СПИСКА ---
+            if (matchingGoal != null) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(top = Dimen.mediumHalf, bottom = 4.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.AutoAwesome,
+                        contentDescription = null,
+                        tint = IOSGreen,
+                        modifier = Modifier.size(12.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "Поможет ${stringResource(matchingGoal.titleRes).lowercase()}",
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = IOSGreen
+                        )
+                    )
+                }
+            } else {
+                Spacer(modifier = Modifier.height(Dimen.mediumHalf))
+            }
+
             Text(
                 text = stringResource(receipt.titleRes),
                 style = MaterialTheme.typography.titleMedium.copy(

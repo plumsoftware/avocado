@@ -221,7 +221,8 @@ class MainActivity : ComponentActivity() {
 
                                 ReceiptDetailScreen(
                                     receiptId = args.receiptId,
-                                    navController = navController
+                                    navController = navController,
+                                    userPreferencesRepository = userRepo
                                 )
                             }
                         }
