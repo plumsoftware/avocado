@@ -113,7 +113,7 @@ val allFruits = listOf<Fruit>(
         titleRes = R.string.lemon,
         descRes = R.string.desc_lemon,
         imageRes = R.drawable.lemon,
-        relatedReceipts = listOf("baked_salmon", "beet_detox"),
+        relatedReceipts = listOf("baked_salmon", "beet_detox", "garlic_shrimp"),
         vitamins = listOf(
             vitaminsMap["vitamin_c"]!!,
             vitaminsMap["vitamin_b6"]!!,
@@ -758,7 +758,7 @@ val allVegetables = listOf<Vegetable>(
         titleRes = R.string.garlic,
         descRes = R.string.desc_garlic,
         imageRes = R.drawable.garlic,
-        relatedReceipts = listOf("chicken_broccoli", "ratatouille", "turkey_meatballs"),
+        relatedReceipts = listOf("chicken_broccoli", "ratatouille", "turkey_meatballs", "garlic_shrimp"),
         vitamins = listOf(
             vitaminsMap["vitamin_c"]!!,
             vitaminsMap["vitamin_b6"]!!,
@@ -1359,6 +1359,37 @@ val allFish = listOf<Fish>(
         minerals = listOf(mineralsMap["selenium"]!!),
         fatKisloty = emptyList(),
         kpfc_100g = Kpfc(92, 1.0, 19.0, 0.0, omega3 = 0.5),
+        timeForFood = TimeForFood.DINNER
+    ),
+    // Креветки
+    Fish(
+        id = "shrimp",
+        titleRes = R.string.shrimp,
+        descRes = R.string.desc_shrimp,
+        imageRes = R.drawable.shrimp,
+        foodType = FoodType.FISH,
+        relatedReceipts = listOf("garlic_shrimp"),
+        vitamins = listOf(
+            vitaminsMap["vitamin_b12"]!!,
+            vitaminsMap["vitamin_b3"]!!,
+            vitaminsMap["vitamin_e"]!!
+        ),
+        minerals = listOf(
+            mineralsMap["iodine"]!!,
+            mineralsMap["zinc"]!!,
+            mineralsMap["selenium"]!!,
+            mineralsMap["phosphorus"]!!
+        ),
+        fatKisloty = listOf(
+            fatsMap["omega3"]!!
+        ),
+        kpfc_100g = Kpfc(
+            kals = 87,
+            proteins = 18.0,
+            fats = 1.2,
+            carbohydrates = 0.2,
+            omega3 = 0.3
+        ),
         timeForFood = TimeForFood.DINNER
     )
 )

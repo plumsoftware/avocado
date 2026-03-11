@@ -280,6 +280,21 @@ val allReceipts = listOf(
         difficulty = 1,
         category = RecipeCategory.BREAKFAST,
         suitableGoals = listOf(UserGoal.GAIN_MUSCLE, UserGoal.ENERGY, UserGoal.LOSE_WEIGHT)
+    ),
+
+    // 19. Креветки в чесночном соусе
+    TypicalReceipt(
+        id = "garlic_shrimp",
+        titleRes = R.string.rec_garlic_shrimp,
+        descRes = R.string.rec_desc_garlic_shrimp,
+        receiptText = R.string.rec_text_garlic_shrimp,
+        imageRes = R.drawable.garlic_shrimp,
+        relatedFood = listOf("shrimp", "garlic", "lemon"),
+        timeMinutes = 10,
+        calories = 150,
+        difficulty = 1,
+        category = RecipeCategory.DINNER,
+        suitableGoals = listOf(UserGoal.LOSE_WEIGHT, UserGoal.GAIN_MUSCLE, UserGoal.HEART_HEALTH)
     )
 )
 
