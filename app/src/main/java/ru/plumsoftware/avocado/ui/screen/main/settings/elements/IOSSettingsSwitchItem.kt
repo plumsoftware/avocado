@@ -53,15 +53,21 @@ fun IOSSettingsSwitchItem(
                 color = MaterialTheme.colorScheme.onSurface
             )
 
-            // Switch в цветах iOS
+            // Switch в цветах iOS (Адаптивный)
             Switch(
                 checked = isChecked,
                 onCheckedChange = onCheckedChange,
                 colors = SwitchDefaults.colors(
+                    // Включенное состояние (Всегда зеленое с белым кружком)
                     checkedThumbColor = Color.White,
-                    checkedTrackColor = Color(0xFF34C759), // iOS Green Switch
-                    uncheckedThumbColor = Color.White,
-                    uncheckedTrackColor = Color(0xFFE5E5EA),
+                    checkedTrackColor = Color(0xFF34C759),
+
+                    // Выключенное состояние
+                    uncheckedThumbColor = Color.White, // Кружок в iOS всегда белый/светло-серый
+
+                    // 🔥 ИСПРАВЛЕНО: Адаптивный серый цвет (Светлый в Light, Темный в Dark)
+                    uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant,
+
                     uncheckedBorderColor = Color.Transparent
                 )
             )

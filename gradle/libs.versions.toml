@@ -28,6 +28,7 @@ protobufKotlinLite = "4.33.5"
 
 # AndroidX
 paletteKtx = "1.0.0"
+workRuntimeKtx = "2.11.1"
 
 [libraries]
 androidx-compose-foundation-layout = { module = "androidx.compose.foundation:foundation-layout", version.ref = "foundationLayout" }
@@ -66,6 +67,9 @@ androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "d
 
 # AndroidX
 androidx-palette-ktx = { module = "androidx.palette:palette-ktx", version.ref = "paletteKtx" }
+
+# Worker
+androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

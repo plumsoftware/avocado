@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -40,6 +41,9 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import ru.plumsoftware.avocado.data.database.AvocadoDatabase
 import ru.plumsoftware.avocado.data.favorite.FavoritesRepository
+import ru.plumsoftware.avocado.data.notification.NotificationArgs
+import ru.plumsoftware.avocado.data.notification.worker.DebugNotificationSender
+import ru.plumsoftware.avocado.data.notification.worker.NotificationScheduler
 import ru.plumsoftware.avocado.data.user_preferences.UserPreferencesRepository
 import ru.plumsoftware.avocado.data.user_preferences.util.AppTheme
 import ru.plumsoftware.avocado.data.user_preferences.util.userPreferencesDataStore
@@ -59,11 +63,19 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // 🟢 Запускаем планировщик
+        NotificationScheduler.scheduleDailyNotification(applicationContext)
+
+        if (BuildConfig.DEBUG) {
+            DebugNotificationSender.sendTestNotifications(applicationContext)
+        }
+
         // 1. Создаем БД
         val db = AvocadoDatabase.getDatabase(this)
         // 2. Создаем Репозиторий
         val favRepo = FavoritesRepository(db.favoriteDao())
         val userRepo = UserPreferencesRepository(this.userPreferencesDataStore)
+        val destinationRoute = intent.getStringExtra(NotificationArgs.DESTINATION_ROUTE)
 
         enableEdgeToEdge(
             navigationBarStyle = SystemBarStyle.auto(
@@ -84,7 +96,6 @@ class MainActivity : ComponentActivity() {
             )
             WindowInsetsCompat.CONSUMED
         }
-
 
         setContent {
 
@@ -149,6 +160,25 @@ class MainActivity : ComponentActivity() {
                     }
 
                     MainViewModel.StartDestination.Main -> {
+                        LaunchedEffect(destinationRoute) {
+                            if (destinationRoute != null) {
+                                val parts = destinationRoute.split("/")
+                                if (parts.size == 2) {
+                                    val type = parts[0] // "food" или "receipt"
+                                    val id = parts[1]   // "broccoli" или "avocado_toast"
+
+                                    when (type) {
+                                        "food" -> {
+                                            navController.navigate(AppDestination.DetailedScreen(foodId = id))
+                                        }
+                                        "receipt" -> {
+                                            navController.navigate(AppDestination.ReceiptDetailRoute(receiptId = id))
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                         NavHost(
                             navController = navController,
                             startDestination = AppDestination.MainScreen

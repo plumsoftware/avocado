@@ -474,6 +474,46 @@
     <string name="recipes_empty_category">В этой категории пока нет рецептов</string>
     <string name="recipes_header_all">Все рецепты</string>
 
+    <!-- УВЕДОМЛЕНИЯ: Канал -->
+    <string name="notif_channel_name">Ежедневные советы</string>
+    <string name="notif_channel_desc">Рецепты и факты о здоровом питании</string>
+
+    <!-- УВЕДОМЛЕНИЯ: Утренние (Завтраки) -->
+    <string-array name="notif_morning_titles">
+        <item>Доброе утро! 🍳</item>
+        <item>Время проснуться ☀️</item>
+        <item>Начни день правильно 🥑</item>
+    </string-array>
+    <string-array name="notif_morning_bodies">
+        <item>Как насчет тоста с авокадо? Идеальный полезный завтрак за 10 минут.</item>
+        <item>Фруктовый салат зарядит энергией лучше, чем кофе. Смотри рецепт!</item>
+        <item>Пышный омлет со шпинатом даст нужный белок для бодрости.</item>
+    </string-array>
+
+    <!-- УВЕДОМЛЕНИЯ: Дневные (Факты и продукты) -->
+    <string-array name="notif_day_titles">
+        <item>Продукт дня: Брокколи 🥦</item>
+        <item>А ты знал? 💡</item>
+        <item>Время перекуса 🍏</item>
+    </string-array>
+    <string-array name="notif_day_bodies">
+        <item>Узнай, почему этот овощ называют главным защитником иммунитета.</item>
+        <item>В киви больше витамина С, чем в апельсине! Читай подробности в каталоге.</item>
+        <item>Горсть миндаля спасет от голода и улучшит работу мозга.</item>
+    </string-array>
+
+    <!-- УВЕДОМЛЕНИЯ: Вечерние (Ужины и восстановление) -->
+    <string-array name="notif_evening_titles">
+        <item>Легкий ужин 🐟</item>
+        <item>Сохраняем форму 🥗</item>
+        <item>Подготовка ко сну 🌙</item>
+    </string-array>
+    <string-array name="notif_evening_bodies">
+        <item>Запеченный лосось с лимоном — идеальный ужин без тяжести в желудке.</item>
+        <item>Домашний рататуй поможет пищеварению и не добавит лишних калорий.</item>
+        <item>Продукты с магнием (например, шпинат) помогут уснуть быстрее.</item>
+    </string-array>
+
     <!-- Форматы (для подстановки чисел) -->
     <string name="format_minutes">%1$d мин</string>
     <string name="format_kcal">%1$d ккал</string>
