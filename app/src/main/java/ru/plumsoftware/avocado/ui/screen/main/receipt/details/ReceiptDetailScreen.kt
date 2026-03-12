@@ -18,7 +18,10 @@ import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,13 +51,15 @@ import ru.plumsoftware.avocado.ui.theme.Dimen
 
 private val HEADER_HEIGHT = 380.dp
 
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class) // Нужен для ModalBottomSheet
 @Composable
 fun ReceiptDetailScreen(
     receiptId: String,
     navController: NavController,
     userPreferencesRepository: UserPreferencesRepository
 ) {
-    val viewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory(userPrefsRepo = userPreferencesRepository))
+    val viewModel: RecipesViewModel =
+        viewModel(factory = RecipesViewModel.Factory(userPrefsRepo = userPreferencesRepository))
     val receipt = remember { viewModel.getReceiptById(receiptId) }
 
     if (receipt == null) {
@@ -66,11 +71,15 @@ fun ReceiptDetailScreen(
 
     val ingredients = remember { viewModel.getIngredients(receipt.relatedFood) }
     val scrollState = rememberScrollState()
+    val context = LocalContext.current
 
     val rawInstructions = stringResource(receipt.receiptText)
     val steps = remember(rawInstructions) {
         rawInstructions.split("\n").filter { it.isNotBlank() }
     }
+
+    // Состояние для отображения режима готовки (шторки)
+    var showCookingMode by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -78,6 +87,7 @@ fun ReceiptDetailScreen(
             .background(MaterialTheme.colorScheme.background)
     ) {
         // --- 1. PARALLAX HEADER ---
+        // ... (Код хедера остается без изменений) ...
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -132,14 +142,14 @@ fun ReceiptDetailScreen(
                         .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f))
                 )
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(60.dp))
 
                 // Заголовок
                 Text(
                     text = stringResource(receipt.titleRes),
                     style = MaterialTheme.typography.displaySmall.copy(
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface // Адаптивный цвет
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 )
 
@@ -147,7 +157,7 @@ fun ReceiptDetailScreen(
                 Text(
                     text = stringResource(receipt.descRes),
                     style = MaterialTheme.typography.bodyLarge.copy(
-                        color = MaterialTheme.colorScheme.onSurfaceVariant, // Адаптивный серый
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         lineHeight = 22.sp
                     ),
                     modifier = Modifier.padding(top = 8.dp, bottom = 24.dp)
@@ -160,12 +170,29 @@ fun ReceiptDetailScreen(
                 ) {
                     ReceiptMetaBig(Icons.Default.Schedule, "${receipt.timeMinutes} мин", "Время")
                     ReceiptMetaBig(Icons.Default.LocalFireDepartment, "${receipt.calories}", "Ккал")
-                    val diffText = when(receipt.difficulty) {
+                    val diffText = when (receipt.difficulty) {
                         1 -> "Легко"
                         2 -> "Средне"
                         else -> "Сложно"
                     }
                     ReceiptMetaBig(Icons.Default.Bolt, diffText, "Уровень")
+                }
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                // --- КНОПКА "НАЧАТЬ ГОТОВКУ" (НОВАЯ) ---
+                Button(
+                    onClick = { showCookingMode = true },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(Dimen.buttonHeight),
+                    shape = MaterialTheme.shapes.medium,
+                    colors = ButtonDefaults.buttonColors(containerColor = IOSGreen, contentColor = Color.White)
+                ) {
+                    Text(
+                        "Начать готовку",
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(32.dp))
@@ -176,7 +203,7 @@ fun ReceiptDetailScreen(
                         text = "Ингредиенты",
                         style = MaterialTheme.typography.titleLarge.copy(
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface // ИСПРАВЛЕНО: Явный цвет!
+                            color = MaterialTheme.colorScheme.onSurface
                         ),
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
@@ -201,7 +228,7 @@ fun ReceiptDetailScreen(
                     text = "Приготовление",
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface // ИСПРАВЛЕНО: Явный цвет!
+                        color = MaterialTheme.colorScheme.onSurface
                     ),
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
@@ -213,9 +240,7 @@ fun ReceiptDetailScreen(
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                // --- DISCLAIMER ---
                 DisclaimerCard()
-
                 Spacer(modifier = Modifier.height(60.dp))
             }
         }
@@ -232,6 +257,16 @@ fun ReceiptDetailScreen(
                 )
             }
         }
+    }
+
+    // --- МОДАЛЬНАЯ ШТОРКА ГОТОВКИ ---
+    if (showCookingMode) {
+        CookingModeSheet(
+            title = stringResource(receipt.titleRes),
+            ingredients = ingredients,
+            steps = steps,
+            onDismiss = { showCookingMode = false }
+        )
     }
 }
 
@@ -286,7 +321,11 @@ fun IngredientItem(food: Food, onClick: () -> Unit) {
                 .size(70.dp)
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.surfaceVariant) // Серый кружок для контраста
-                .border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f), CircleShape),
+                .border(
+                    1.dp,
+                    MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+                    CircleShape
+                ),
             contentAlignment = Alignment.Center
         ) {
             Image(

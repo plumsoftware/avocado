@@ -80,7 +80,7 @@ class DailyNotificationWorker(
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true) // Скрыть после того как юзер нажал
-            .setColor(ContextCompat.getColor(context, R.color.black))
+            .setColor(ContextCompat.getColor(context, R.color.primary_color))
 
         // 5. Показ
         with(NotificationManagerCompat.from(context)) {

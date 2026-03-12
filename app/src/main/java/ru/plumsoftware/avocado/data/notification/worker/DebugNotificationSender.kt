@@ -83,8 +83,9 @@ object DebugNotificationSender {
                 .setContentTitle(content.title)
                 .setContentText(content.body)
                 .setStyle(NotificationCompat.BigTextStyle().bigText(content.body))
-                .setPriority(NotificationCompat.PRIORITY_HIGH) // Всплывающее окно
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(pendingIntent)
+                .setColor(ContextCompat.getColor(context, R.color.primary_color))
                 .setAutoCancel(true)
 
             try {
