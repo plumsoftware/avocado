@@ -35,6 +35,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -166,7 +167,9 @@ fun CookingModeSheet(
                         }
                     },
                     enabled = pagerState.currentPage > 0,
-                    modifier = Modifier.weight(1f).height(56.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(56.dp),
                     shape = MaterialTheme.shapes.medium,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant,
@@ -190,9 +193,14 @@ fun CookingModeSheet(
                             }
                         }
                     },
-                    modifier = Modifier.weight(1f).height(56.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(56.dp),
                     shape = MaterialTheme.shapes.medium,
-                    colors = ButtonDefaults.buttonColors(containerColor = IOSGreen)
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = IOSGreen,
+                        contentColor = Color.White
+                    )
                 ) {
                     Text(
                         text = if (isLast) "Приятного!" else "Далее",
