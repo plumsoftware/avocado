@@ -1,5 +1,6 @@
 package ru.plumsoftware.avocado.ui.screen.main.receipt.details
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.add
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,6 +23,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,6 +31,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -36,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -49,6 +54,7 @@ import ru.plumsoftware.avocado.ui.modifier.iosClickable
 import ru.plumsoftware.avocado.ui.screen.onboarding.IOSGreen
 import ru.plumsoftware.avocado.ui.theme.Dimen
 
+@SuppressLint("ConfigurationScreenWidthHeight")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun CookingModeSheet(
@@ -61,22 +67,43 @@ fun CookingModeSheet(
     KeepScreenOn()
 
     val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true // Открывается сразу на весь экран
+        skipPartiallyExpanded = true
     )
     val scope = rememberCoroutineScope()
     // +1 шаг для стартового экрана с ингредиентами
     val pagerState = rememberPagerState(pageCount = { steps.size + 1 })
 
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
+    val sheetHeight = screenHeight * 0.92f
+
     ModalBottomSheet(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = Dimen.buttonHeight)
+            .height(sheetHeight),
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         containerColor = MaterialTheme.colorScheme.surface,
-        dragHandle = null, // Убираем стандартную ручку, нарисуем свою
+        dragHandle = {
+            Box(
+                modifier = Modifier
+                    .padding(top = Dimen.medium)
+                    .width(40.dp)
+                    .height(5.dp)
+                    .clip(RoundedCornerShape(5.dp))
+                    .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f))
+            )
+        },
+        tonalElevation = 0.dp,
+        scrimColor = Color.Transparent,
+
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize() // На весь экран
-                .padding(top = 16.dp)
+                .fillMaxWidth()
+                .padding(top = Dimen.medium)
+                .height(sheetHeight)
         ) {
             // --- HEADER ШТОРКИ ---
             Row(
@@ -94,7 +121,7 @@ fun CookingModeSheet(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.fillMaxWidth(0.7f) // Чтобы не налезало на кнопку закрытия
+                        modifier = Modifier.fillMaxWidth(0.7f)
                     )
                     val progressText = if (pagerState.currentPage == 0) "Ингредиенты"
                     else "Шаг ${pagerState.currentPage} из ${steps.size}"

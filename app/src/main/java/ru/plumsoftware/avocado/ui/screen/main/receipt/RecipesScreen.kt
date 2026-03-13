@@ -139,7 +139,7 @@ fun RecipesScreen(
                                         .padding(Dimen.extraSmall)
                                         .clip(CircleShape)
                                         .background(color)
-                                        .size(6.dp) // Размер точки можно оставить числом или добавить в Dimen
+                                        .size(Dimen.small)
                                 )
                             }
                         }
