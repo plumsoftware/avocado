@@ -76,6 +76,9 @@
     <string name="goal_immunity">Крепкий иммунитет</string>
     <string name="goal_sleep">Здоровый сон</string>
 
+    <!-- РЕЖИМ ГОТОВКИ -->
+    <string name="cooking_ingredients_check">Проверьте всё перед стартом:</string>
+
     <!-- ОГРАНИЧЕНИЯ (Onboarding) -->
     <string name="rest_vegetarian">Я вегетарианец</string>
     <string name="rest_no_nuts">Аллергия на орехи</string>
