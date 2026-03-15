@@ -71,24 +71,18 @@ fun CookingModeSheet(
     steps: List<String>,
     onDismiss: () -> Unit
 ) {
-    // Не даем экрану погаснуть
     KeepScreenOn()
 
-    val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true
-    )
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
-    // +1 шаг для стартового экрана с ингредиентами
     val pagerState = rememberPagerState(pageCount = { steps.size + 1 })
 
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
     val sheetHeight = screenHeight * 0.92f
 
-    // 1. Инициализируем TTS
     val tts = rememberTextToSpeech()
 
-    // 2. Останавливаем голос при перелистывании слайда!
     LaunchedEffect(pagerState.currentPage) {
         tts?.stop()
     }
@@ -113,7 +107,6 @@ fun CookingModeSheet(
         },
         tonalElevation = 0.dp,
         scrimColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f),
-
     ) {
         Column(
             modifier = Modifier
@@ -121,7 +114,6 @@ fun CookingModeSheet(
                 .padding(top = Dimen.medium)
                 .height(sheetHeight)
         ) {
-            // --- HEADER ШТОРКИ ---
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -129,7 +121,6 @@ fun CookingModeSheet(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Текст прогресса
                 Column {
                     Text(
                         text = title,
@@ -139,8 +130,13 @@ fun CookingModeSheet(
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.fillMaxWidth(0.7f)
                     )
-                    val progressText = if (pagerState.currentPage == 0) "Ингредиенты"
-                    else "Шаг ${pagerState.currentPage} из ${steps.size}"
+
+                    val progressText = if (pagerState.currentPage == 0) {
+                        stringResource(R.string.ingredients)
+                    } else {
+                        stringResource(R.string.cooking_step_progress, pagerState.currentPage, steps.size)
+                    }
+
                     Text(
                         text = progressText,
                         style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
@@ -148,7 +144,6 @@ fun CookingModeSheet(
                     )
                 }
 
-                // Кнопка закрыть (iOS Style)
                 Box(
                     modifier = Modifier
                         .size(36.dp)
@@ -161,7 +156,7 @@ fun CookingModeSheet(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Close,
-                        contentDescription = "Close",
+                        contentDescription = stringResource(R.string.cd_close),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
@@ -169,9 +164,8 @@ fun CookingModeSheet(
 
             Spacer(modifier = Modifier.height(Dimen.medium))
 
-            // Прогресс бар
             LinearProgressIndicator(
-                progress = { pagerState.currentPage / steps.size.toFloat() }, // От 0 до 1
+                progress = { pagerState.currentPage / steps.size.toFloat() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(Dimen.extraSmall),
@@ -179,28 +173,23 @@ fun CookingModeSheet(
                 trackColor = MaterialTheme.colorScheme.surfaceVariant,
             )
 
-            // --- КОНТЕНТ (СВАЙПЕР) ---
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier.weight(1f)
             ) { page ->
                 if (page == 0) {
-                    // Нулевой слайд: Проверь ингредиенты
                     CookingIngredientsSlide(ingredients = ingredients, tts = tts)
                 } else {
-                    // Шаги (page - 1, потому что 0 это ингредиенты)
                     CookingStepSlide(stepText = steps[page - 1], tts = tts)
                 }
             }
 
-            // --- BOTTOM BUTTONS ---
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(Dimen.large),
                 horizontalArrangement = Arrangement.spacedBy(Dimen.medium)
             ) {
-                // Кнопка Назад
                 Button(
                     onClick = {
                         scope.launch {
@@ -220,10 +209,9 @@ fun CookingModeSheet(
                         disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
                     )
                 ) {
-                    Text("Назад", fontSize = 17.sp, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.back), fontSize = 17.sp, fontWeight = FontWeight.Bold)
                 }
 
-                // Кнопка Далее / Готово
                 val isLast = pagerState.currentPage == steps.size
                 Button(
                     onClick = {
@@ -246,7 +234,7 @@ fun CookingModeSheet(
                     )
                 ) {
                     Text(
-                        text = if (isLast) "Приятного!" else "Далее",
+                        text = if (isLast) stringResource(R.string.good_eating) else stringResource(R.string.dalee),
                         fontSize = 17.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -264,10 +252,9 @@ fun CookingIngredientsSlide(
 ) {
     val context = LocalContext.current
 
-    // Формируем текст для озвучки ингредиентов
     val textToRead = remember(ingredients) {
         val names = ingredients.joinToString(", ") { context.getString(it.titleRes) }
-        "Вам понадобятся следующие ингредиенты: $names"
+        context.getString(R.string.you_need_ingredients, names)
     }
 
     Column(
@@ -275,6 +262,7 @@ fun CookingIngredientsSlide(
             .fillMaxSize()
             .padding(Dimen.large)
     ) {
+        // ИСПРАВЛЕНО: Кнопка озвучки и текст теперь на одной строке корректно
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -285,32 +273,27 @@ fun CookingIngredientsSlide(
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
+
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(IOSGreen.copy(alpha = 0.15f))
+                    .iosClickable {
+                        tts?.speak(textToRead, TextToSpeech.QUEUE_FLUSH, null, null)
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Rounded.VolumeUp,
+                    contentDescription = stringResource(R.string.cd_read_aloud),
+                    tint = IOSGreen
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // 🔊 Кнопка озвучки
-        Box(
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(IOSGreen.copy(alpha = 0.15f))
-                .iosClickable {
-                    tts?.speak(textToRead, TextToSpeech.QUEUE_FLUSH, null, null)
-                },
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Rounded.VolumeUp,
-                contentDescription = "Прочитать",
-                tint = IOSGreen
-            )
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Показываем ингредиенты
-        // Используем LazyColumn, чтобы список скроллился, если ингредиентов много
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
@@ -373,7 +356,6 @@ fun CookingStepSlide(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // 🔊 Большая кнопка озвучки под текстом шага
         Row(
             modifier = Modifier
                 .clip(RoundedCornerShape(50))
@@ -386,12 +368,12 @@ fun CookingStepSlide(
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Rounded.VolumeUp,
-                contentDescription = "Прочитать",
+                contentDescription = stringResource(R.string.cd_read_aloud),
                 tint = IOSGreen
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Озвучить шаг",
+                text = stringResource(R.string.volume_step),
                 style = MaterialTheme.typography.bodyLarge.copy(
                     fontWeight = FontWeight.Bold,
                     color = IOSGreen

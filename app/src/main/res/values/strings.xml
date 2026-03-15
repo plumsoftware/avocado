@@ -1,13 +1,246 @@
 <resources>
+    <!-- ============================================== -->
+    <!-- ОБЩИЕ / GENERAL                                -->
+    <!-- ============================================== -->
     <string name="app_name">Авокадо</string>
+    <string name="loading">Загрузка...</string>
+    <string name="back">Назад</string>
+    <string name="dalee">Далее</string>
 
-    <!-- Main-->
+    <!-- Content Descriptions (Для доступности/Слепых) -->
+    <string name="cd_back">Назад</string>
+    <string name="cd_close">Закрыть</string>
+    <string name="cd_favorite">В избранное</string>
+    <string name="cd_read_aloud">Озвучить текст</string>
+
+    <!-- ============================================== -->
+    <!-- НАВИГАЦИЯ / БОТТОМ БАР                         -->
+    <!-- ============================================== -->
     <string name="main">Главная</string>
     <string name="rec">Рецепты</string>
     <string name="fav">Избранное</string>
     <string name="settings">Настройки</string>
 
-    <!-- Vitamins-->
+    <!-- ============================================== -->
+    <!-- ПОИСК И ПУСТЫЕ ЭКРАНЫ / SEARCH & EMPTY STATES  -->
+    <!-- ============================================== -->
+    <string name="search_placeholder">Поиск</string>
+    <string name="search_cancel">Отмена</string>
+    <string name="search_clear">Очистить</string>
+    <string name="search_no_results">Ничего не найдено</string>
+    <string name="search_results_title">Результаты поиска</string>
+
+    <string name="favorites_empty_title">Пока пусто</string>
+    <string name="favorites_empty_desc">Добавляйте любимые продукты и рецепты, чтобы они всегда были под рукой.</string>
+
+    <!-- ============================================== -->
+    <!-- ОНБОРДИНГ / ONBOARDING                         -->
+    <!-- ============================================== -->
+    <string name="onboarding_welcome_title">Привет, я Аво!</string>
+    <string name="onboarding_welcome_text">Твой личный помощник по здоровому питанию. Я подберу идеальный рацион для твоих целей.</string>
+
+    <string name="onboarding_goals_title">Твоя цель?</string>
+    <string name="onboarding_goals_subtitle">Выбери одну или несколько</string>
+    <string name="goal_lose_weight">Сбросить вес</string>
+    <string name="goal_gain_muscle">Набрать массу</string>
+    <string name="goal_skin">Улучшить кожу</string>
+    <string name="goal_energy">Больше энергии</string>
+    <string name="goal_heart">Здоровье сердца</string>
+    <string name="goal_digestion">Улучшить пищеварение</string>
+    <string name="goal_immunity">Крепкий иммунитет</string>
+    <string name="goal_sleep">Здоровый сон</string>
+
+    <string name="onboarding_restrictions_title">Есть ограничения?</string>
+    <string name="onboarding_restrictions_subtitle">Мы скроем неподходящие продукты</string>
+    <string name="rest_vegetarian">Я вегетарианец</string>
+    <string name="rest_vegan">Я веган</string>
+    <string name="rest_no_nuts">Аллергия на орехи</string>
+    <string name="rest_no_sugar">Без сахара</string>
+    <string name="rest_gluten_free">Без глютена</string>
+    <string name="rest_lactose_free">Без лактозы</string>
+    <string name="rest_keto">Кето-диета</string>
+    <string name="rest_low_carb">Низкоуглеводная</string>
+    <string name="rest_paleo">Палео</string>
+    <string name="rest_seafood">Аллергия на морепродукты</string>
+    <string name="rest_eggs">Без яиц</string>
+
+    <string name="onboarding_notif_title">Не пропустите важное</string>
+    <string name="onboarding_notif_subtitle">Разрешите уведомления, чтобы получать напоминания пить воду, советы дня и новые рецепты. Никакого спама!</string>
+    <string name="onboarding_notif_granted">Уведомления включены ✓</string>
+
+    <string name="onboarding_btn_allow_notif">Включить уведомления</string>
+    <string name="onboarding_btn_read">Прочитал</string>
+    <string name="onboarding_btn_continue">Продолжить</string>
+    <string name="onboarding_btn_start">Начать</string>
+
+    <string name="onboarding_ai_disclaimer">Контент сгенерирован нейросетью и носит справочный характер. Не является медицинской рекомендацией.</string>
+
+    <!-- ============================================== -->
+    <!-- НАСТРОЙКИ / SETTINGS                           -->
+    <!-- ============================================== -->
+    <string name="settings_title">Настройки</string>
+
+    <string name="settings_section_personalization">ПЕРСОНАЛИЗАЦИЯ</string>
+    <string name="settings_item_goals">Мои цели и питание</string>
+
+    <string name="settings_section_permissions">РАЗРЕШЕНИЯ</string>
+    <string name="settings_section_notifications">УВЕДОМЛЕНИЯ</string>
+    <string name="settings_item_push">Push-уведомления</string>
+    <string name="settings_item_background">Работа в фоне</string>
+
+    <string name="settings_section_appearance">ВНЕШНИЙ ВИД</string>
+    <string name="settings_theme_system">Системная</string>
+    <string name="settings_theme_light">Светлая</string>
+    <string name="settings_theme_dark">Темная</string>
+
+    <string name="settings_version_format">Авокадо %1$s (%2$d)</string>
+    <string name="settings_version_fallback">Авокадо v 1.0.0</string>
+
+    <!-- ============================================== -->
+    <!-- ГЛАВНЫЙ ЭКРАН / HOME SCREEN                    -->
+    <!-- ============================================== -->
+    <string name="for_breakfast">Полезно на завтрак</string>
+    <string name="with_fiber">С клетчаткой</string>
+    <string name="superfoods">Суперфуды</string>
+    <string name="protein_sources">Источники белка</string>
+    <string name="healthy_fats">Полезные жиры</string>
+
+    <string name="section_weight_loss">Стройность и легкость</string>
+    <string name="section_muscle">Сила и рельеф</string>
+    <string name="section_skin">Сияющая кожа</string>
+    <string name="section_heart">Здоровое сердце</string>
+    <string name="section_energy">Энергия и тонус</string>
+    <string name="section_digestion">Комфортное пищеварение</string>
+    <string name="section_immunity">Крепкий иммунитет</string>
+    <string name="section_sleep">Для хорошего сна</string>
+
+    <!-- Фильтры категорий продуктов -->
+    <string name="fruits">Фрукты</string>
+    <string name="vegetables">Овощи</string>
+    <string name="berries">Ягоды</string>
+    <string name="meat">Мясо</string>
+    <string name="fish">Рыба и морепродукты</string>
+    <string name="green">Зелень</string>
+    <string name="nut">Орехи</string>
+    <string name="mushrooms">Грибы</string>
+    <string name="seafood">Морепродукты</string>
+
+    <!-- Время приема пищи -->
+    <string name="time_breakfast">Лучше на завтрак</string>
+    <string name="time_lunch">Идеально на обед</string>
+    <string name="time_dinner">Легкий ужин</string>
+    <string name="time_snack">Полезный перекус</string>
+    <string name="time_any">В любое время</string>
+
+    <!-- Трекер воды -->
+    <string name="water_tracker_title">Водный баланс</string>
+    <string name="water_tracker_subtitle">Цель: %1$d мл</string>
+    <string name="water_add_btn">+250 мл</string>
+
+    <!-- ============================================== -->
+    <!-- ДЕТАЛИ ЕДЫ / FOOD DETAILS                      -->
+    <!-- ============================================== -->
+    <string name="fiber">Клетчатка</string>
+    <string name="fiber_high">Богат клетчаткой</string>
+    <string name="fiber_content">Клетчатка: %1$s г</string>
+    <string name="title_super_power">Супер-сила</string>
+
+    <!-- Макросы (Плашки) -->
+    <string name="meta_time">Время</string>
+    <string name="meta_kcal">Ккал</string>
+    <string name="meta_level">Уровень</string>
+    <string name="diff_easy">Легко</string>
+    <string name="diff_medium">Средне</string>
+    <string name="diff_hard">Сложно</string>
+
+    <string name="disclaimer_title">Важно знать</string>
+    <string name="disclaimer_body">Содержимое сгенерировано нейросетью. Информация носит справочный характер. Пожалуйста, проконсультируйтесь с врачом.</string>
+    <string name="title_cook_with_this">Готовим с этим</string>
+
+    <!-- ============================================== -->
+    <!-- ЭКРАН РЕЦЕПТОВ / RECIPES SCREEN                -->
+    <!-- ============================================== -->
+    <string name="recipes_title">Рецепты</string>
+    <string name="recipes_subtitle">Вкусное и полезное на каждый день</string>
+    <string name="recipes_recommended_badge">РЕКОМЕНДУЕМ</string>
+    <string name="recipes_empty_category">В этой категории пока нет рецептов</string>
+    <string name="recipes_header_all">Все рецепты</string>
+
+    <string name="cat_all_recipes">Все рецепты</string>
+    <string name="cat_all">Все</string>
+    <string name="cat_breakfast">Завтрак</string>
+    <string name="cat_lunch">Обед</string>
+    <string name="cat_dinner">Ужин</string>
+    <string name="cat_salad">Салаты</string>
+    <string name="cat_smoothie">Смузи</string>
+    <string name="cat_snack">Перекусы</string>
+    <string name="cat_soup">Супы</string>
+    <string name="cat_dessert">Десерты</string>
+
+    <!-- ============================================== -->
+    <!-- РЕЖИМ ГОТОВКИ И ДЕТАЛИ РЕЦЕПТА / COOKING MODE  -->
+    <!-- ============================================== -->
+    <string name="receipt_not_found">Рецепт не найден</string>
+    <string name="btn_start_cooking">Начать готовку</string>
+    <string name="ingredients">Ингредиенты</string>
+    <string name="cooking">Приготовление</string>
+
+    <string name="cooking_ingredients_check">Проверьте всё перед стартом:</string>
+    <string name="you_need_ingredients">Вам понадобятся следующие ингредиенты: %1$s</string>
+
+    <string name="step">Шаг</string>
+    <string name="iz">из</string>
+    <string name="cooking_step_progress">Шаг %1$d из %2$d</string>
+
+    <string name="volume_step">Озвучить шаг</string>
+    <string name="good_eating">Приятного!</string>
+
+    <!-- Форматы -->
+    <string name="format_minutes">%1$d мин</string>
+    <string name="format_kcal">%1$d ккал</string>
+
+    <!-- ============================================== -->
+    <!-- УВЕДОМЛЕНИЯ (ФОНОВЫЕ) / NOTIFICATIONS          -->
+    <!-- ============================================== -->
+    <string name="notif_channel_name">Ежедневные советы</string>
+    <string name="notif_channel_desc">Рецепты и факты о здоровом питании</string>
+
+    <string-array name="notif_morning_titles">
+        <item>Доброе утро! 🍳</item>
+        <item>Время проснуться ☀️</item>
+        <item>Начни день правильно 🥑</item>
+    </string-array>
+    <string-array name="notif_morning_bodies">
+        <item>Как насчет тоста с авокадо? Идеальный полезный завтрак за 10 минут.</item>
+        <item>Фруктовый салат зарядит энергией лучше, чем кофе. Смотри рецепт!</item>
+        <item>Пышный омлет со шпинатом даст нужный белок для бодрости.</item>
+    </string-array>
+
+    <string-array name="notif_day_titles">
+        <item>Продукт дня: Брокколи 🥦</item>
+        <item>А ты знал? 💡</item>
+        <item>Время перекуса 🍏</item>
+    </string-array>
+    <string-array name="notif_day_bodies">
+        <item>Узнай, почему этот овощ называют главным защитником иммунитета.</item>
+        <item>В киви больше витамина С, чем в апельсине! Читай подробности в каталоге.</item>
+        <item>Горсть миндаля спасет от голода и улучшит работу мозга.</item>
+    </string-array>
+
+    <string-array name="notif_evening_titles">
+        <item>Легкий ужин 🐟</item>
+        <item>Сохраняем форму 🥗</item>
+        <item>Подготовка ко сну 🌙</item>
+    </string-array>
+    <string-array name="notif_evening_bodies">
+        <item>Запеченный лосось с лимоном — идеальный ужин без тяжести в желудке.</item>
+        <item>Домашний рататуй поможет пищеварению и не добавит лишних калорий.</item>
+        <item>Продукты с магнием (например, шпинат) помогут уснуть быстрее.</item>
+    </string-array>
+
+    <!-- ============================================== -->
+    <!-- ВИТАМИНЫ И МИНЕРАЛЫ (СВОЙСТВА)                 -->
+    <!-- ============================================== -->
     <string name="vitamin_a">A</string>
     <string name="vitamin_b1">B1</string>
     <string name="vitamin_b2">B2</string>
@@ -22,131 +255,6 @@
     <string name="vitamin_e">E</string>
     <string name="vitamin_k">K</string>
 
-    <!-- Дополнительно: минералы и вещества -->
-    <string name="calcium">Кальций</string>
-    <string name="magnesium">Магний</string>
-    <string name="zinc">Цинк</string>
-    <string name="iron">Железо</string>
-    <string name="omega3">Омега-3</string>
-    <string name="coenzyme_q10">Коэнзим Q10</string>
-    <string name="potassium">Калий</string>
-    <string name="selenium">Селен</string>
-    <string name="iodine">Йод</string>
-    <string name="chromium">Хром</string>
-    <string name="copper">Медь</string>
-    <string name="manganese">Марганец</string>
-    <string name="phosphorus">Фосфор</string>
-
-    <!-- Фильтры-->
-    <string name="fruits">Фрукты</string>
-    <string name="vegetables">Овощи</string>
-    <string name="berries">Ягоды</string>
-    <string name="meat">Мясо</string>
-    <string name="fish">Рыба и морепродукты</string>
-    <string name="green">Зелень</string>
-    <string name="nut">Орехи</string>
-    <string name="mushrooms">Грибы</string>
-    <string name="seafood">Морепродукты</string>
-
-
-    <!-- Время приема пищи -->
-    <string name="time_breakfast">Лучше на завтрак</string>
-    <string name="time_lunch">Идеально на обед</string>
-    <string name="time_dinner">Легкий ужин</string>
-    <string name="time_snack">Полезный перекус</string>
-    <string name="time_any">В любое время</string>
-
-    <!-- Заголовки секций для Главного экрана (Dynamic) -->
-    <string name="section_weight_loss">Стройность и легкость</string>
-    <string name="section_muscle">Сила и рельеф</string>
-    <string name="section_skin">Сияющая кожа</string>
-    <string name="section_heart">Здоровое сердце</string>
-    <string name="section_energy">Энергия и тонус</string>
-    <string name="section_digestion">Комфортное пищеварение</string>
-    <string name="section_immunity">Крепкий иммунитет</string>
-    <string name="section_sleep">Для хорошего сна</string>
-
-    <!-- ЦЕЛИ ПОЛЬЗОВАТЕЛЯ (Onboarding) -->
-    <string name="goal_lose_weight">Сбросить вес</string>
-    <string name="goal_gain_muscle">Набрать массу</string>
-    <string name="goal_skin">Улучшить кожу</string>
-    <string name="goal_energy">Больше энергии</string>
-    <string name="goal_heart">Здоровье сердца</string>
-    <string name="goal_digestion">Улучшить пищеварение</string>
-    <string name="goal_immunity">Крепкий иммунитет</string>
-    <string name="goal_sleep">Здоровый сон</string>
-
-    <!-- РЕЖИМ ГОТОВКИ -->
-    <string name="cooking_ingredients_check">Проверьте всё перед стартом:</string>
-
-    <!-- ОГРАНИЧЕНИЯ (Onboarding) -->
-    <string name="rest_vegetarian">Я вегетарианец</string>
-    <string name="rest_no_nuts">Аллергия на орехи</string>
-    <string name="rest_no_sugar">Без сахара</string>
-    <string name="rest_vegan">Я веган</string>
-    <string name="rest_gluten_free">Без глютена</string>
-    <string name="rest_lactose_free">Без лактозы</string>
-    <string name="rest_keto">Кето-диета</string>
-    <string name="rest_low_carb">Низкоуглеводная</string>
-    <string name="rest_paleo">Палео</string>
-    <string name="rest_seafood">Аллергия на рыбу</string>
-    <string name="rest_eggs">Без яиц</string>
-    <string name="onboarding_ai_disclaimer">Контент сгенерирован нейросетью и носит справочный характер. Не является медицинской рекомендацией.</string>
-    <string name="onboarding_welcome_title">Привет, я Аво!</string>
-    <string name="onboarding_welcome_text">Твой личный помощник по здоровому питанию. Я подберу идеальный рацион для твоих целей.</string>
-
-    <string name="onboarding_goals_title">Твоя цель?</string>
-    <string name="onboarding_goals_subtitle">Выбери одну или несколько</string>
-
-    <string name="onboarding_restrictions_title">Есть ограничения?</string>
-    <string name="onboarding_restrictions_subtitle">Мы скроем неподходящие продукты</string>
-
-    <!-- Уведомления (Онбординг) -->
-    <string name="onboarding_notif_title">Не пропустите важное</string>
-    <string name="onboarding_notif_subtitle">Разрешите уведомления, чтобы получать напоминания пить воду, советы дня и новые рецепты. Никакого спама!</string>
-    <string name="onboarding_btn_allow_notif">Включить уведомления</string>
-    <string name="onboarding_notif_granted">Уведомления включены ✓</string>
-
-    <!-- Настройки -->
-    <string name="settings_section_notifications">УВЕДОМЛЕНИЯ</string>
-    <string name="settings_item_push">Push-уведомления</string>
-
-    <!-- Разрешения и фон -->
-    <string name="settings_section_permissions">РАЗРЕШЕНИЯ</string>
-    <string name="settings_item_background">Работа в фоне</string>
-
-    <!-- Кнопки Онбординга -->
-    <string name="onboarding_btn_read">Прочитал</string>
-    <string name="onboarding_btn_continue">Продолжить</string>
-    <string name="onboarding_btn_start">Начать</string>
-
-    <!-- SETTINGS (Экран настроек) -->
-    <string name="settings_title">Настройки</string>
-
-    <string name="settings_section_personalization">ПЕРСОНАЛИЗАЦИЯ</string>
-    <string name="settings_item_goals">Мои цели и питание</string>
-
-    <string name="settings_section_appearance">ВНЕШНИЙ ВИД</string>
-    <string name="settings_theme_system">Системная</string>
-    <string name="settings_theme_light">Светлая</string>
-    <string name="settings_theme_dark">Темная</string>
-
-    <!-- ЭКРАН ИЗБРАННОГО -->
-    <string name="favorites_empty_title">Пока пусто</string>
-    <string name="favorites_empty_desc">Добавляйте любимые продукты, чтобы они всегда были под рукой.</string>
-
-    <!-- Версия приложения (Format String) -->
-    <string name="settings_version_format">Авокадо %1$s (%2$d)</string>
-    <string name="settings_version_fallback">Авокадо v 1.0.0</string>
-
-    <!-- Disclaimer -->
-    <string name="disclaimer_title">Важно знать</string>
-    <string name="disclaimer_body">Содержимое изображений сгенерировано нейросетью. Информация носит справочный характер. Пожалуйста, проконсультируйтесь с врачом.</string>
-
-    <string name="loading">Загрузка...</string>
-
-    <!-- ОПИСАНИЕ ПОЛЬЗЫ (Healthy For) -->
-    <!-- Витамины -->
     <string name="desc_vitamin_a">Для острого зрения, здоровья кожи и иммунитета</string>
     <string name="desc_vitamin_b1">Энергия, работа мозга и нервной системы</string>
     <string name="desc_vitamin_b2">Обмен веществ, здоровье глаз и кожи</string>
@@ -161,7 +269,18 @@
     <string name="desc_vitamin_e">Антиоксидант, защита клеток от старения</string>
     <string name="desc_vitamin_k">Свертываемость крови и прочность костей</string>
 
-    <!-- Минералы -->
+    <string name="calcium">Кальций</string>
+    <string name="magnesium">Магний</string>
+    <string name="zinc">Цинк</string>
+    <string name="iron">Железо</string>
+    <string name="potassium">Калий</string>
+    <string name="selenium">Селен</string>
+    <string name="iodine">Йод</string>
+    <string name="chromium">Хром</string>
+    <string name="copper">Медь</string>
+    <string name="manganese">Марганец</string>
+    <string name="phosphorus">Фосфор</string>
+
     <string name="desc_calcium">Основа костей и зубов, работа мышц</string>
     <string name="desc_magnesium">Антистресс, здоровье сердца и крепкий сон</string>
     <string name="desc_zinc">Чистая кожа, иммунитет и мужское здоровье</string>
@@ -174,358 +293,316 @@
     <string name="desc_manganese">Обмен веществ, здоровье хрящей и костей</string>
     <string name="desc_phosphorus">Здоровье костей, зубов и выработка энергии</string>
 
-    <!-- Жирные кислоты и вещества -->
+    <string name="omega3">Омега-3</string>
+    <string name="coenzyme_q10">Коэнзим Q10</string>
     <string name="desc_omega3">Здоровье сердца, мозга и эластичность сосудов</string>
     <string name="desc_coenzyme_q10">Энергия для клеток и замедление старения</string>
 
-    <!-- Для чего-->
-    <string name="for_breakfast">Полезно на завтрак</string>
-    <string name="with_fiber">С клетчаткой</string>
-    <string name="superfoods">Суперфуды</string>
-    <string name="protein_sources">Источники белка</string>
-    <string name="healthy_fats">Полезные жиры</string>
-
-    <!-- Фрукты-->
+    <!-- ============================================== -->
+    <!-- КАТАЛОГ ЕДЫ: НАЗВАНИЯ И ОПИСАНИЯ               -->
+    <!-- ============================================== -->
     <string name="banana">Банан</string>
+    <string name="desc_banana">Сладкий, крахмалистый фрукт с кремовой текстурой. Идеальный источник быстрой энергии и калия для работы мышц. Отлично подходит для перекусов, смузи и выпечки.</string>
+
     <string name="apple">Яблоко</string>
+    <string name="desc_apple">Сочный, хрустящий фрукт с балансом сладости и кислинки. Богат железом и клетчаткой для пищеварения. Едят свежим, запекают в пирогах или добавляют в салаты.</string>
+
     <string name="orange">Апельсин</string>
+    <string name="desc_orange">Яркий цитрус с освежающим кисло-сладким вкусом. Мощный заряд витамина С для иммунитета. Идеален для свежевыжатого сока или как легкий десерт.</string>
+
     <string name="kiwi">Киви</string>
+    <string name="desc_kiwi">Экзотический фрукт с изумрудной мякотью и вкусом, напоминающим смесь клубники и крыжовника. Рекордсмен по витамину С. Отлично размягчает мясо в маринадах.</string>
+
     <string name="grape">Виноград</string>
+    <string name="desc_grape">Сладкие гроздья энергии. Полезен для тонуса, сердца и восстановления сил. Прекрасная закуска к сырам и вину.</string>
+
     <string name="pear">Груша</string>
+    <string name="desc_pear">Нежный, тающий во рту фрукт с медовым ароматом. Полезна при проблемах с поджелудочной железой. Прекрасна в свежем виде и в сочетании с сырами.</string>
+
     <string name="lemon">Лимон</string>
+    <string name="desc_lemon">Кислый цитрус с ярким ароматом. Главный помощник при простуде и для детокса. Используется для заправки салатов, маринадов и приготовления лимонадов.</string>
+
     <string name="peach">Персик</string>
+    <string name="desc_peach">Бархатистый фрукт с сочной сладкой мякотью. Улучшает настроение и состояние кожи. Идеален для десертов, компотов и как самостоятельное лакомство.</string>
+
     <string name="apricot">Абрикос</string>
+    <string name="desc_apricot">Солнечный плод с нежной мякотью. Полезен для сердца и сосудов благодаря калию. Вкуснее всего в свежем виде или в виде кураги.</string>
+
     <string name="mandarin">Мандарин</string>
+    <string name="desc_mandarin">Сладкий цитрус, символ праздника. Легко чистится, богат витаминами группы B. Отличный вариант для быстрого и полезного перекуса на ходу.</string>
 
     <string name="pineapple">Ананас</string>
-    <string name="pomegranate">Гранат</string>
-    <string name="mango">Манго</string>
-    <string name="persimmon">Хурма</string>
+    <string name="desc_pineapple">Тропический фрукт с ярким кисло-сладким вкусом. Содержит бромелайн, помогающий сжигать жиры и переваривать белок. Отличное дополнение к мясу и десертам.</string>
 
-    <!-- Fish-->
+    <string name="pomegranate">Гранат</string>
+    <string name="desc_pomegranate">Король фруктов с терпко-сладкими зернами. Повышает гемоглобин и укрепляет сердце. Используется в салатах, соусах и как украшение блюд.</string>
+
+    <string name="mango">Манго</string>
+    <string name="desc_mango">Тропическое наслаждение с маслянистой структурой и хвойно-персиковым ароматом. «Фрукт счастья», полезен для зрения. Основа для смузи и азиатских салатов.</string>
+
+    <string name="persimmon">Хурма</string>
+    <string name="desc_persimmon">Вязкий, медово-сладкий фрукт. Богат йодом и бета-каротином. Полезен для щитовидной железы. Едят как самостоятельный десерт.</string>
+
+    <string name="watermelon">Арбуз</string>
+    <string name="desc_watermelon">Гигантская ягода, на 90% состоящая из воды. Отлично утоляет жажду и очищает почки. Лучший десерт в жаркий летний день.</string>
+
+    <string name="strawberry">Клубника</string>
+    <string name="desc_strawberry">Ароматная ягода со сладким вкусом. Источник антиоксидантов и хорошего настроения. Классика для десертов, йогуртов и романтических ужинов.</string>
+
+    <string name="avocado">Авокадо</string>
+    <string name="desc_avocado">Уникальный плод с маслянистой мякотью и ореховым вкусом. Источник полезных жиров для кожи и гормонов. Король тостов, салатов и гуакамоле.</string>
+
+    <string name="blueberry">Голубика</string>
+    <string name="desc_blueberry">Ягода с мягким вкусом, суперфуд для мозга и зрения. Содержит редкие антиоксиданты. Идеальна для каш, выпечки и просто горстями.</string>
+
+    <string name="raspberry">Малина</string>
+    <string name="desc_raspberry">Нежная ягода с кисло-сладким вкусом. Природный аспирин, помогает при простуде. Вкусна в чае, варенье и свежем виде.</string>
+
+    <string name="blackberry">Ежевика</string>
+    <string name="desc_blackberry">Темная ягода с насыщенным терпким вкусом. Укрепляет иммунитет и нервную систему. Отлично подходит для смузи и украшения тортов.</string>
+
+    <string name="currant">Смородина</string>
+    <string name="desc_currant">Кислая ягода с мощным ароматом. Чемпион по концентрации витамина С. Идеальна для морсов, джемов и соусов к мясу.</string>
+
+    <string name="cranberry">Клюква</string>
+    <string name="desc_cranberry">Кислaя болотная ягода. Лучшее природное средство для здоровья почек. Незаменима для морсов и соусов к птице.</string>
+
+    <string name="cherry">Вишня</string>
+    <string name="desc_cherry">Сочная ягода с кисло-сладким вкусом. Содержит мелатонин, улучшает сон. Используется в варениках, пирогах и компотах.</string>
+
+    <string name="walnut">Грецкий орех</string>
+    <string name="desc_walnut">Орех в форме мозга, полезный для ума. Богат Омега-3 и йодом. Добавляйте в салаты, каши или ешьте как перекус.</string>
+
+    <string name="almond">Миндаль</string>
+    <string name="desc_almond">Хрустящий орех, источник кальция и витамина Е. Полезен для кожи, волос и ногтей. Отличная основа для растительного молока и муки.</string>
+
+    <string name="hazelnut">Фундук</string>
+    <string name="desc_hazelnut">Круглый орех с насыщенным вкусом. Поддерживает здоровье сердца и сосудов. Идеальный партнер для шоколада и кофе.</string>
+
+    <string name="cashew">Кешью</string>
+    <string name="desc_cashew">Сладковатый мягкий орех в форме запятой. Укрепляет иммунитет и зубную эмаль. Основа для веганских сыров и соусов.</string>
+
+    <string name="peanut">Арахис</string>
+    <string name="desc_peanut">Питательный боб, который мы считаем орехом. Источник белка и энергии. Популярен в жареном виде и как арахисовая паста.</string>
+
+    <string name="pistachio">Фисташки</string>
+    <string name="desc_pistachio">Зеленый «улыбающийся» орех. Полезен для зрения и снижения холестерина. Отличная закуска и добавка в десерты.</string>
+
+    <string name="pine_nut">Кедровый орех</string>
+    <string name="desc_pine_nut">Мелкие маслянистые орешки с хвойным ароматом. Кладезь витаминов и микроэлементов. Обязательный ингредиент соуса песто.</string>
+
+    <string name="brazil_nut">Бразильский орех</string>
+
+    <string name="pecan">Пекан</string>
+    <string name="desc_pecan">Жирный, маслянистый орех со сливочным вкусом. Снижает утомляемость и старение клеток. Звезда выпечки и пирогов.</string>
+
+    <string name="macadamia">Макадамия</string>
+    <string name="desc_macadamia">Самый твердый и дорогой орех с ванильным вкусом. Полезен при мигренях и для кожи. Роскошное лакомство.</string>
+
+    <string name="chestnut">Каштан</string>
+    <string name="desc_chestnut">Крахмалистый орех, который запекают. Богат углеводами, но содержит мало жиров. Популярен как горячая закуска.</string>
+
+    <string name="potato">Картофель</string>
+    <string name="desc_potato">Сытный корнеплод, «второй хлеб». Источник калия и энергии. Универсален: варите, жарьте, запекайте или делайте пюре.</string>
+
+    <string name="carrot">Морковь</string>
+    <string name="desc_carrot">Сладкий хрустящий корнеплод. Главный источник витамина А для зрения и роста. Ешьте сырой со сметаной или добавляйте в супы.</string>
+
+    <string name="onion">Лук репчатый</string>
+    <string name="desc_onion">Острый овощ, убивающий микробы. Необходим для иммунитета. База для большинства супов, соусов и жаркого.</string>
+
+    <string name="garlic">Чеснок</string>
+    <string name="desc_garlic">Пикантная приправа и мощный природный антибиотик. Укрепляет сердце и сосуды. Добавляет аромат любому блюду.</string>
+
+    <string name="tomato">Помидор</string>
+    <string name="desc_tomato">Сочный плод, богатый ликопином. Защищает сердце и продлевает молодость. Основа салатов, соков и пасты.</string>
+
+    <string name="cucumber">Огурец</string>
+    <string name="desc_cucumber">Водянистый хрустящий овощ. Отлично увлажняет и выводит токсины. Идеален для легких салатов и детокса.</string>
+
+    <string name="cabbage">Капуста белокочанная</string>
+    <string name="desc_cabbage">Хрустящий листовой овощ. Богат клетчаткой и витамином С. Используется в борщах, салатах и для квашения.</string>
+
+    <string name="broccoli">Брокколи</string>
+    <string name="desc_broccoli">Зеленое соцветие, суперфуд. Защищает от рака и язвы желудка. Вкусно на пару, в супах-пюре или запеканках.</string>
+
+    <string name="bell_pepper">Перец болгарский</string>
+    <string name="desc_bell_pepper">Сладкий, сочный и яркий. Витамина С в нем больше, чем в лимоне. Ешьте свежим или фаршируйте.</string>
+
+    <string name="beet">Свёкла</string>
+    <string name="desc_beet">Сладкий корнеплод насыщенного цвета. Чистит печень и кровь. Незаменима для борща, винегрета и сельди под шубой.</string>
+
+    <string name="pumpkin">Тыква</string>
+    <string name="desc_pumpkin">Оранжевая королева осени. Полезна для пищеварения и зрения. Из нее готовят каши, супы и десерты.</string>
+
+    <string name="zucchini">Кабачок</string>
+    <string name="desc_zucchini">Легкий диетический овощ. Легко усваивается, полезен для желудка. Жарят, тушат или делают оладьи.</string>
+
+    <string name="eggplant">Баклажан</string>
+    <string name="desc_eggplant">«Синенький» овощ с грибным привкусом. Полезен для сердца и кроветворения. Вкусен в запеченном виде и в икре.</string>
+
+    <string name="radish">Редис</string>
+    <string name="desc_radish">Острый весенний корнеплод. Возбуждает аппетит и улучшает обмен веществ. Главный ингредиент окрошки.</string>
+
+    <string name="spinach">Шпинат</string>
+    <string name="desc_spinach">Листья, полные железа и витаминов. Дает силу мышцам и энергию. Добавляйте в салаты, омлеты и пасту.</string>
+
+    <string name="chicken_breast">Куриная грудка</string>
+    <string name="desc_chicken_breast">Диетическое белое мясо. Чемпион по содержанию чистого белка при минимуме жира. Идеально для спортсменов и худеющих.</string>
+
+    <string name="chicken_thigh">Куриное бедро</string>
+    <string name="desc_chicken_thigh">Сочное и нежное темное мясо. Содержит больше железа и цинка, чем грудка. Отлично подходит для запекания и супов.</string>
+
+    <string name="turkey_breast">Индейка (грудка)</string>
+    <string name="desc_turkey_breast">Гипоаллергенное и самое постное мясо. Содержит триптофан для хорошего сна. Подходит даже для детского питания.</string>
+
+    <string name="beef_lean">Говядина постная</string>
+    <string name="desc_beef_lean">Красное мясо, богатое железом и креатином. Дает силу и повышает гемоглобин. Тушите или варите для максимальной пользы.</string>
+
+    <string name="beef_ribeye">Говяжий стейк (рибай)</string>
+    <string name="desc_beef_ribeye">Мраморное мясо с насыщенным вкусом. Источник качественного белка и жиров. Идеальный выбор для стейка на гриле.</string>
+
+    <string name="pork_tenderloin">Свиная вырезка</string>
+    <string name="desc_pork_tenderloin">Самая нежная и постная часть свинины. Богата витаминами группы B. Готовится быстро, оставаясь сочной.</string>
+
+    <string name="pork_neck">Свиная шея</string>
+    <string name="desc_pork_neck">Сочное мясо с жировыми прослойками. Идеально для шашлыка: получается мягким и ароматным.</string>
+
+    <string name="lamb">Баранина</string>
+    <string name="desc_lamb">Ароматное мясо, богатое лецитином. Полезно для поджелудочной железы. Традиционный выбор для плова и харчо.</string>
+
+    <string name="veal">Телятина</string>
+    <string name="desc_veal">Мясо молодых бычков. Нежное, легко усваивается, содержит много коллагена для суставов. Деликатес.</string>
+
+    <string name="rabbit">Кролик</string>
+    <string name="desc_rabbit">Белое диетическое мясо. Усваивается организмом почти на 100%. Рекомендовано для восстановления после болезней.</string>
+
+    <string name="duck">Утка</string>
+    <string name="desc_duck">Жирное темное мясо с ярким вкусом. Богато витамином А и жирными кислотами. Праздничное блюдо, особенно с яблоками.</string>
+
+    <string name="goose">Гусь</string>
+    <string name="desc_goose">Плотное и сытное мясо. Жир гуся считается лечебным. Традиционно запекается целиком на праздники.</string>
+
     <string name="salmon">Лосось</string>
+    <string name="desc_salmon">Красная рыба, богатая Омега-3 и витамином D. Улучшает память, кожу и настроение. Вкусна в любом виде: соленая, запеченная, на пару.</string>
+
     <string name="mackerel">Скумбрия</string>
+    <string name="desc_mackerel">Жирная морская рыба с насыщенным вкусом. Лидер по содержанию полезных жиров. Идеальна для копчения и запекания.</string>
+
     <string name="herring">Сельдь</string>
+    <string name="desc_herring">Доступная и невероятно полезная рыба. Укрепляет сосуды и кости. Классика закусок и салатов.</string>
+
     <string name="tuna">Тунец</string>
+    <string name="desc_tuna">«Морская телятина». Плотное мясо без мелких костей, богатое белком. Популярна в стейках, салатах и суши.</string>
+
     <string name="trout">Форель</string>
+    <string name="desc_trout">Деликатесная рыба семейства лососевых. Нежная, диетическая, полезна для мозга. Часто запекают целиком или солят.</string>
+
     <string name="sardine">Сардина</string>
+    <string name="desc_sardine">Маленькая рыбка с большой пользой. Источник кальция и фосфора. Удобна в консервах или на гриле.</string>
+
     <string name="cod">Треска</string>
+    <string name="desc_cod">Нежирная белая рыба. Идеальный источник йода и диетического белка. Печень трески — суперфуд.</string>
+
     <string name="pollock">Минтай</string>
+    <string name="desc_pollock">Дикая белая рыба, родственник трески. Доступный источник белка и йода. Отлично подходит для котлет и тушения.</string>
+
     <string name="shrimp">Креветки</string>
     <string name="desc_shrimp">Один из лучших источников чистого, легкоусвояемого белка. В них почти нет жиров и углеводов. Богаты йодом для щитовидной железы, витамином B12 для нервной системы и цинком для иммунитета. Идеальны для ужина и спортивного питания.</string>
 
-    <!-- Ягоды-->
-    <string name="watermelon">Арбуз</string>
-    <string name="strawberry">Клубника</string>
-    <string name="avocado">Авокадо</string>
-    <string name="blueberry">Голубика</string>
-    <string name="raspberry">Малина</string>
-    <string name="blackberry">Ежевика</string>
-    <string name="currant">Смородина</string>
-    <string name="cranberry">Клюква</string>
-    <string name="cherry">Вишня</string>
-
-    <!-- Орехи-->
-    <string name="walnut">Грецкий орех</string>
-    <string name="almond">Миндаль</string>
-    <string name="hazelnut">Фундук</string>
-    <string name="cashew">Кешью</string>
-    <string name="peanut">Арахис</string>
-    <string name="pistachio">Фисташки</string>
-    <string name="pine_nut">Кедровый орех</string>
-    <string name="brazil_nut">Бразильский орех</string>
-    <string name="pecan">Пекан</string>
-    <string name="macadamia">Макадамия</string>
-    <string name="chestnut">Каштан</string>
-
-    <!-- Овощи -->
-    <string name="potato">Картофель</string>
-    <string name="carrot">Морковь</string>
-    <string name="onion">Лук репчатый</string>
-    <string name="garlic">Чеснок</string>
-    <string name="tomato">Помидор</string>
-    <string name="cucumber">Огурец</string>
-    <string name="cabbage">Капуста белокочанная</string>
-    <string name="broccoli">Брокколи</string>
-    <string name="bell_pepper">Перец болгарский</string>
-    <string name="beet">Свёкла</string>
-    <string name="pumpkin">Тыква</string>
-    <string name="zucchini">Кабачок</string>
-    <string name="eggplant">Баклажан</string>
-    <string name="radish">Редис</string>
-    <string name="spinach">Шпинат</string>
-
-    <!-- Мясо -->
-    <string name="chicken_breast">Куриная грудка</string>
-    <string name="chicken_thigh">Куриное бедро</string>
-    <string name="turkey_breast">Индейка (грудка)</string>
-    <string name="beef_lean">Говядина постная</string>
-    <string name="beef_ribeye">Говяжий стейк (рибай)</string>
-    <string name="pork_tenderloin">Свиная вырезка</string>
-    <string name="pork_neck">Свиная шея</string>
-    <string name="lamb">Баранина</string>
-    <string name="veal">Телятина</string>
-    <string name="rabbit">Кролик</string>
-    <string name="duck">Утка</string>
-    <string name="goose">Гусь</string>
-
-    <!-- Клетчатка -->
-    <string name="fiber">Клетчатка</string>
-    <string name="fiber_high">Богат клетчаткой</string>
-    <string name="fiber_content">Клетчатка: %1$s г</string>
-
-
-    <!-- ОПИСАНИЯ ФРУКТОВ -->
-    <string name="desc_banana">Сладкий, крахмалистый фрукт с кремовой текстурой. Идеальный источник быстрой энергии и калия для работы мышц. Отлично подходит для перекусов, смузи и выпечки.</string>
-    <string name="desc_apple">Сочный, хрустящий фрукт с балансом сладости и кислинки. Богат железом и клетчаткой для пищеварения. Едят свежим, запекают в пирогах или добавляют в салаты.</string>
-    <string name="desc_orange">Яркий цитрус с освежающим кисло-сладким вкусом. Мощный заряд витамина С для иммунитета. Идеален для свежевыжатого сока или как легкий десерт.</string>
-    <string name="desc_kiwi">Экзотический фрукт с изумрудной мякотью и вкусом, напоминающим смесь клубники и крыжовника. Рекордсмен по витамину С. Отлично размягчает мясо в маринадах.</string>
-    <string name="desc_pear">Нежный, тающий во рту фрукт с медовым ароматом. Полезна при проблемах с поджелудочной железой. Прекрасна в свежем виде и в сочетании с сырами.</string>
-    <string name="desc_lemon">Кислый цитрус с ярким ароматом. Главный помощник при простуде и для детокса. Используется для заправки салатов, маринадов и приготовления лимонадов.</string>
-    <string name="desc_peach">Бархатистый фрукт с сочной сладкой мякотью. Улучшает настроение и состояние кожи. Идеален для десертов, компотов и как самостоятельное лакомство.</string>
-    <string name="desc_apricot">Солнечный плод с нежной мякотью. Полезен для сердца и сосудов благодаря калию. Вкуснее всего в свежем виде или в виде кураги.</string>
-    <string name="desc_mandarin">Сладкий цитрус, символ праздника. Легко чистится, богат витаминами группы B. Отличный вариант для быстрого и полезного перекуса на ходу.</string>
-    <string name="desc_pineapple">Тропический фрукт с ярким кисло-сладким вкусом. Содержит бромелайн, помогающий сжигать жиры и переваривать белок. Отличное дополнение к мясу и десертам.</string>
-    <string name="desc_pomegranate">Король фруктов с терпко-сладкими зернами. Повышает гемоглобин и укрепляет сердце. Используется в салатах, соусах и как украшение блюд.</string>
-    <string name="desc_mango">Тропическое наслаждение с маслянистой структурой и хвойно-персиковым ароматом. «Фрукт счастья», полезен для зрения. Основа для смузи и азиатских салатов.</string>
-    <string name="desc_persimmon">Вязкий, медово-сладкий фрукт. Богат йодом и бета-каротином. Полезен для щитовидной железы. Едят как самостоятельный десерт.</string>
-
-    <!-- ОПИСАНИЯ ЯГОД -->
-    <string name="desc_strawberry">Ароматная ягода со сладким вкусом. Источник антиоксидантов и хорошего настроения. Классика для десертов, йогуртов и романтических ужинов.</string>
-    <string name="desc_blueberry">Ягода с мягким вкусом, суперфуд для мозга и зрения. Содержит редкие антиоксиданты. Идеальна для каш, выпечки и просто горстями.</string>
-    <string name="desc_watermelon">Гигантская ягода, на 90% состоящая из воды. Отлично утоляет жажду и очищает почки. Лучший десерт в жаркий летний день.</string>
-    <string name="desc_grape">Сладкие гроздья энергии. Полезен для тонуса, сердца и восстановления сил. Прекрасная закуска к сырам и вину.</string>
-    <string name="desc_avocado">Уникальный плод с маслянистой мякотью и ореховым вкусом. Источник полезных жиров для кожи и гормонов. Король тостов, салатов и гуакамоле.</string>
-    <string name="desc_raspberry">Нежная ягода с кисло-сладким вкусом. Природный аспирин, помогает при простуде. Вкусна в чае, варенье и свежем виде.</string>
-    <string name="desc_blackberry">Темная ягода с насыщенным терпким вкусом. Укрепляет иммунитет и нервную систему. Отлично подходит для смузи и украшения тортов.</string>
-    <string name="desc_currant">Кислая ягода с мощным ароматом. Чемпион по концентрации витамина С. Идеальна для морсов, джемов и соусов к мясу.</string>
-    <string name="desc_cranberry">Кислaя болотная ягода. Лучшее природное средство для здоровья почек. Незаменима для морсов и соусов к птице.</string>
-    <string name="desc_cherry">Сочная ягода с кисло-сладким вкусом. Содержит мелатонин, улучшает сон. Используется в варениках, пирогах и компотах.</string>
-
-    <!-- ОПИСАНИЯ ОРЕХОВ -->
-    <string name="desc_walnut">Орех в форме мозга, полезный для ума. Богат Омега-3 и йодом. Добавляйте в салаты, каши или ешьте как перекус.</string>
-    <string name="desc_almond">Хрустящий орех, источник кальция и витамина Е. Полезен для кожи, волос и ногтей. Отличная основа для растительного молока и муки.</string>
-    <string name="desc_hazelnut">Круглый орех с насыщенным вкусом. Поддерживает здоровье сердца и сосудов. Идеальный партнер для шоколада и кофе.</string>
-    <string name="desc_cashew">Сладковатый мягкий орех в форме запятой. Укрепляет иммунитет и зубную эмаль. Основа для веганских сыров и соусов.</string>
-    <string name="desc_peanut">Питательный боб, который мы считаем орехом. Источник белка и энергии. Популярен в жареном виде и как арахисовая паста.</string>
-    <string name="desc_pistachio">Зеленый «улыбающийся» орех. Полезен для зрения и снижения холестерина. Отличная закуска и добавка в десерты.</string>
-    <string name="desc_pine_nut">Мелкие маслянистые орешки с хвойным ароматом. Кладезь витаминов и микроэлементов. Обязательный ингредиент соуса песто.</string>
-    <string name="desc_pecan">Жирный, маслянистый орех со сливочным вкусом. Снижает утомляемость и старение клеток. Звезда выпечки и пирогов.</string>
-    <string name="desc_macadamia">Самый твердый и дорогой орех с ванильным вкусом. Полезен при мигренях и для кожи. Роскошное лакомство.</string>
-    <string name="desc_chestnut">Крахмалистый орех, который запекают. Богат углеводами, но содержит мало жиров. Популярен как горячая закуска.</string>
-
-    <!-- ОПИСАНИЯ ОВОЩЕЙ -->
-    <string name="desc_potato">Сытный корнеплод, «второй хлеб». Источник калия и энергии. Универсален: варите, жарьте, запекайте или делайте пюре.</string>
-    <string name="desc_carrot">Сладкий хрустящий корнеплод. Главный источник витамина А для зрения и роста. Ешьте сырой со сметаной или добавляйте в супы.</string>
-    <string name="desc_onion">Острый овощ, убивающий микробы. Необходим для иммунитета. База для большинства супов, соусов и жаркого.</string>
-    <string name="desc_garlic">Пикантная приправа и мощный природный антибиотик. Укрепляет сердце и сосуды. Добавляет аромат любому блюду.</string>
-    <string name="desc_tomato">Сочный плод, богатый ликопином. Защищает сердце и продлевает молодость. Основа салатов, соков и пасты.</string>
-    <string name="desc_cucumber">Водянистый хрустящий овощ. Отлично увлажняет и выводит токсины. Идеален для легких салатов и детокса.</string>
-    <string name="desc_cabbage">Хрустящий листовой овощ. Богат клетчаткой и витамином С. Используется в борщах, салатах и для квашения.</string>
-    <string name="desc_broccoli">Зеленое соцветие, суперфуд. Защищает от рака и язвы желудка. Вкусно на пару, в супах-пюре или запеканках.</string>
-    <string name="desc_bell_pepper">Сладкий, сочный и яркий. Витамина С в нем больше, чем в лимоне. Ешьте свежим или фаршируйте.</string>
-    <string name="desc_beet">Сладкий корнеплод насыщенного цвета. Чистит печень и кровь. Незаменима для борща, винегрета и сельди под шубой.</string>
-    <string name="desc_pumpkin">Оранжевая королева осени. Полезна для пищеварения и зрения. Из нее готовят каши, супы и десерты.</string>
-    <string name="desc_zucchini">Легкий диетический овощ. Легко усваивается, полезен для желудка. Жарят, тушат или делают оладьи.</string>
-    <string name="desc_eggplant">«Синенький» овощ с грибным привкусом. Полезен для сердца и кроветворения. Вкусен в запеченном виде и в икре.</string>
-    <string name="desc_radish">Острый весенний корнеплод. Возбуждает аппетит и улучшает обмен веществ. Главный ингредиент окрошки.</string>
-    <string name="desc_spinach">Листья, полные железа и витаминов. Дает силу мышцам и энергию. Добавляйте в салаты, омлеты и пасту.</string>
-
-    <!-- ОПИСАНИЯ МЯСА -->
-    <string name="desc_chicken_breast">Диетическое белое мясо. Чемпион по содержанию чистого белка при минимуме жира. Идеально для спортсменов и худеющих.</string>
-    <string name="desc_chicken_thigh">Сочное и нежное темное мясо. Содержит больше железа и цинка, чем грудка. Отлично подходит для запекания и супов.</string>
-    <string name="desc_turkey_breast">Гипоаллергенное и самое постное мясо. Содержит триптофан для хорошего сна. Подходит даже для детского питания.</string>
-    <string name="desc_beef_lean">Красное мясо, богатое железом и креатином. Дает силу и повышает гемоглобин. Тушите или варите для максимальной пользы.</string>
-    <string name="desc_beef_ribeye">Мраморное мясо с насыщенным вкусом. Источник качественного белка и жиров. Идеальный выбор для стейка на гриле.</string>
-    <string name="desc_pork_tenderloin">Самая нежная и постная часть свинины. Богата витаминами группы B. Готовится быстро, оставаясь сочной.</string>
-    <string name="desc_pork_neck">Сочное мясо с жировыми прослойками. Идеально для шашлыка: получается мягким и ароматным.</string>
-    <string name="desc_lamb">Ароматное мясо, богатое лецитином. Полезно для поджелудочной железы. Традиционный выбор для плова и харчо.</string>
-    <string name="desc_veal">Мясо молодых бычков. Нежное, легко усваивается, содержит много коллагена для суставов. Деликатес.</string>
-    <string name="desc_rabbit">Белое диетическое мясо. Усваивается организмом почти на 100%. Рекомендовано для восстановления после болезней.</string>
-    <string name="desc_duck">Жирное темное мясо с ярким вкусом. Богато витамином А и жирными кислотами. Праздничное блюдо, особенно с яблоками.</string>
-    <string name="desc_goose">Плотное и сытное мясо. Жир гуся считается лечебным. Традиционно запекается целиком на праздники.</string>
-
-    <!-- ОПИСАНИЯ РЫБЫ -->
-    <string name="desc_salmon">Красная рыба, богатая Омега-3 и витамином D. Улучшает память, кожу и настроение. Вкусна в любом виде: соленая, запеченная, на пару.</string>
-    <string name="desc_mackerel">Жирная морская рыба с насыщенным вкусом. Лидер по содержанию полезных жиров. Идеальна для копчения и запекания.</string>
-    <string name="desc_herring">Доступная и невероятно полезная рыба. Укрепляет сосуды и кости. Классика закусок и салатов.</string>
-    <string name="desc_tuna">«Морская телятина». Плотное мясо без мелких костей, богатое белком. Популярна в стейках, салатах и суши.</string>
-    <string name="desc_trout">Деликатесная рыба семейства лососевых. Нежная, диетическая, полезна для мозга. Часто запекают целиком или солят.</string>
-    <string name="desc_sardine">Маленькая рыбка с большой пользой. Источник кальция и фосфора. Удобна в консервах или на гриле.</string>
-    <string name="desc_cod">Нежирная белая рыба. Идеальный источник йода и диетического белка. Печень трески — суперфуд.</string>
-    <string name="desc_pollock">Дикая белая рыба, родственник трески. Доступный источник белка и йода. Отлично подходит для котлет и тушения.</string>
-
-    <!-- ОПИСАНИЯ ГРИБОВ -->
+    <string name="champignon">Шампиньоны</string>
     <string name="desc_champignon">Самые популярные культивируемые грибы. Богаты белком и витаминами группы B. Можно есть даже сырыми в салатах.</string>
+
+    <string name="white_mushroom">Белый гриб</string>
     <string name="desc_white_mushroom">Благородный «царь грибов». Обладает неповторимым ароматом и вкусом. Суп из белых грибов — классика кулинарии.</string>
+
+    <string name="chanterelle">Лисички</string>
     <string name="desc_chanterelle">Яркие грибы, которые никогда не бывают червивыми. Улучшают зрение и чистят печень. Очень вкусны жареными с картошкой.</string>
+
+    <string name="oyster_mushroom">Вешенки</string>
     <string name="desc_oyster_mushroom">Древесные грибы с плотной мякотью. Снижают холестерин. Отличная замена мясу в вегетарианских блюдах.</string>
+
+    <string name="shiitake">Шиитаке</string>
     <string name="desc_shiitake">Восточный гриб долголетия. Укрепляет иммунитет и борется с вирусами. Популярен в азиатских супах и воке.</string>
 
-    <!-- Грибы -->
-    <string name="champignon">Шампиньоны</string>
-    <string name="white_mushroom">Белый гриб</string>
-    <string name="chanterelle">Лисички</string>
-    <string name="oyster_mushroom">Вешенки</string>
-    <string name="shiitake">Шиитаке</string>
+    <!-- ============================================== -->
+    <!-- КАТАЛОГ РЕЦЕПТОВ / RECIPES DATA                -->
+    <!-- ============================================== -->
 
-    <!-- Рецепты -->
-    <!-- РЕЦЕПТ 1: Тост с авокадо -->
     <string name="rec_avocado_toast">Королевский тост с авокадо</string>
     <string name="rec_desc_avocado_toast">Классика полезных завтраков. Хрустящий хлеб, нежный крем из авокадо и яйцо пашот для сытости.</string>
     <string name="rec_text_avocado_toast">1. Поджарьте цельнозерновой хлеб в тостере или на сухой сковороде.\n2. Разомните спелый авокадо вилкой, добавьте лимонный сок, соль и перец.\n3. Намажьте пасту на хлеб.\n4. Сварите яйцо пашот (или пожарьте глазунью) и выложите сверху.\n5. Посыпьте кунжутом или хлопьями чили.</string>
 
-    <!-- РЕЦЕПТ 2: Греческий салат -->
     <string name="rec_greek_salad">Классический Греческий салат</string>
     <string name="rec_desc_greek_salad">Свежесть Средиземноморья в одной тарелке. Идеальный баланс овощей, феты и оливкового масла.</string>
     <string name="rec_text_greek_salad">1. Крупно нарежьте помидоры, огурцы и болгарский перец.\n2. Нарежьте красный лук полукольцами.\n3. Смешайте овощи в миске, добавьте маслины.\n4. Заправьте оливковым маслом и орегано.\n5. Сверху выложите крупный кусок сыра Фета и еще раз посыпьте травами.</string>
 
-    <!-- РЕЦЕПТ 3: Зеленый смузи -->
     <string name="rec_green_smoothie">Зеленый Детокс-смузи</string>
     <string name="rec_desc_green_smoothie">Витаминная бомба для энергии и сияющей кожи. Готовится за 5 минут.</string>
     <string name="rec_text_green_smoothie">1. Помойте шпинат и зеленое яблоко.\n2. Очистите киви и банан.\n3. Положите все ингредиенты в блендер.\n4. Добавьте стакан воды или кокосового молока.\n5. Взбейте до однородной массы. Пейте сразу!</string>
 
-    <!-- РЕЦЕПТ 4: Курица с брокколи -->
     <string name="rec_chicken_broccoli">Куриное филе с брокколи</string>
     <string name="rec_desc_chicken_broccoli">Идеальный ужин для спортсмена. Много белка, клетчатки и минимум жира.</string>
     <string name="rec_text_chicken_broccoli">1. Нарежьте куриную грудку кубиками.\n2. Разберите брокколи на соцветия.\n3. Обжарьте курицу на капле масла 5-7 минут.\n4. Добавьте брокколи, немного воды, накройте крышкой и тушите еще 5 минут.\n5. В конце добавьте измельченный чеснок, соевый соус и кунжут.</string>
 
-    <!-- РЕЦЕПТ 5: Запеченный лосось -->
     <string name="rec_baked_salmon">Лосось запеченный с лимоном</string>
     <string name="rec_desc_baked_salmon">Нежнейшая рыба, богатая Омега-3. Готовится в духовке без лишнего масла.</string>
     <string name="rec_text_baked_salmon">1. Разогрейте духовку до 200°C.\n2. Выложите филе лосося на фольгу.\n3. Сбрызните лимонным соком, посолите и поперчите.\n4. Сверху положите кружочки лимона и веточку розмарина.\n5. Запекайте 15-20 минут до готовности.</string>
 
-    <!-- РЕЦЕПТ 6: Рататуй (Овощное рагу) -->
     <string name="rec_ratatouille">Домашний Рататуй</string>
     <string name="rec_desc_ratatouille">Красочное и легкое блюдо из сезонных овощей. Французская классика.</string>
     <string name="rec_text_ratatouille">1. Нарежьте баклажаны, кабачки и помидоры кружочками.\n2. Выложите их в форму для запекания чередуя друг с другом.\n3. Сбрызните оливковым маслом, посыпьте прованскими травами и чесноком.\n4. Запекайте 30-40 минут под фольгой, затем 10 минут без нее.</string>
 
-    <!-- РЕЦЕПТ 7: Фруктовый салат -->
     <string name="rec_fruit_salad">Витаминный фруктовый салат</string>
     <string name="rec_desc_fruit_salad">Заряд энергии и витаминов. Отличная замена вредным сладостям.</string>
     <string name="rec_text_fruit_salad">1. Очистите киви, банан и мандарин.\n2. Нарежьте все фрукты (включая яблоко) кубиками одинакового размера.\n3. Смешайте в глубокой миске.\n4. Заправьте натуральным йогуртом или сбрызните лимонным соком.\n5. Можно добавить орешки для хруста.</string>
 
-    <!-- РЕЦЕПТ 8: Ягодный взрыв -->
     <string name="rec_berry_blast">Смузи «Ягодный взрыв»</string>
     <string name="rec_desc_berry_blast">Мощнейший заряд антиоксидантов. Смесь лесных ягод для молодости и иммунитета.</string>
     <string name="rec_text_berry_blast">1. Помойте клубнику, малину и чернику.\n2. Если ягоды замороженные — дайте им постоять 5 минут.\n3. Добавьте в блендер полстакана воды или йогурта.\n4. Взбейте до однородного пюре.\n5. Украсьте целыми ягодами.</string>
 
-    <!-- РЕЦЕПТ 9: Тропический рай -->
     <string name="rec_tropical_paradise">Тропический рай с манго</string>
     <string name="rec_desc_tropical_paradise">Сладкий, солнечный вкус отпуска. Манго и ананас богаты ферментами для пищеварения.</string>
     <string name="rec_text_tropical_paradise">1. Очистите манго и ананас, нарежьте кубиками.\n2. Выжмите сок из апельсина.\n3. Смешайте все фрукты в блендере.\n4. Добавьте немного льда для свежести.\n5. Взбейте на высокой скорости.</string>
 
-    <!-- РЕЦЕПТ 10: Арахисовый заряд -->
     <string name="rec_peanut_power">Сытный смузи с арахисом</string>
     <string name="rec_desc_peanut_power">Питательный коктейль с высоким содержанием белка. Идеален после тренировки или вместо завтрака.</string>
     <string name="rec_text_peanut_power">1. Очистите банан и поломайте его на кусочки.\n2. Добавьте горсть арахиса (или ложку арахисовой пасты).\n3. Влейте стакан молока (можно миндального).\n4. Взбейте до кремовой текстуры.</string>
 
-    <!-- РЕЦЕПТ 11: Витаминное сияние (Морковный) -->
     <string name="rec_vitamin_glow">Морковно-цитрусовый смузи</string>
     <string name="rec_desc_vitamin_glow">Бета-каротин и Витамин С для идеального цвета лица и зрения.</string>
     <string name="rec_text_vitamin_glow">1. Очистите и нарежьте морковь (лучше потереть или использовать мощный блендер).\n2. Очистите апельсин и удалите косточки.\n3. Добавьте кусочек яблока для сладости.\n4. Взбейте с добавлением воды до гладкости.</string>
 
-    <!-- РЕЦЕПТ 12: Свекольный Детокс -->
     <string name="rec_beet_detox">Красный Детокс</string>
     <string name="rec_desc_beet_detox">Очищающий напиток. Свекла улучшает выносливость и чистит кровь.</string>
     <string name="rec_text_beet_detox">1. Сырую свеклу очистите и нарежьте мелкими кубиками.\n2. Добавьте зеленое яблоко и немного лимонного сока.\n3. Положите ингредиенты в блендер, добавьте воду.\n4. Тщательно взбейте. Можно процедить через сито, если не любите мякоть.</string>
 
-    <!-- РЕЦЕПТ 13: Грибный крем-суп -->
     <string name="rec_mushroom_soup">Нежный грибной крем-суп</string>
     <string name="rec_desc_mushroom_soup">Согревающий и сытный суп с бархатистой текстурой. Идеален для уютного обеда.</string>
     <string name="rec_text_mushroom_soup">1. Мелко нарежьте лук и картофель.\n2. Обжарьте шампиньоны с луком до золотистого цвета.\n3. Отварите картофель до мягкости в небольшом количестве воды.\n4. Соедините все ингредиенты, добавьте немного нежирных сливок.\n5. Пюрируйте блендером до кремообразного состояния.</string>
 
-    <!-- РЕЦЕПТ 14: Стейк с овощами -->
     <string name="rec_beef_steak_veggies">Стейк Рибай с овощами</string>
     <string name="rec_desc_beef_steak_veggies">Классический ужин чемпиона. Сочное мясо и овощи для максимальной силы и энергии.</string>
     <string name="rec_text_beef_steak_veggies">1. Достаньте стейк из холодильника за 20 минут до готовки.\n2. Нарежьте болгарский перец, помидоры и лук крупными кусками.\n3. Обжарьте стейк на раскаленной сковороде по 2-3 минуты с каждой стороны.\n4. Оставьте мясо «отдыхать» на 5 минут в фольге.\n5. На той же сковороде быстро обжарьте овощи и подавайте вместе с мясом.</string>
 
-    <!-- РЕЦЕПТ 15: Ореховый микс -->
     <string name="rec_nut_energy_mix">Энергетический ореховый микс</string>
     <string name="rec_desc_nut_energy_mix">Хрустящий перекус для мозга и сердца. Спасает, когда нужна быстрая подзарядка.</string>
     <string name="rec_text_nut_energy_mix">1. Возьмите равные пропорции грецких орехов, миндаля и кешью.\n2. Слегка подсушите их на сухой сковороде без масла для раскрытия аромата (около 3-5 минут).\n3. По желанию можно добавить щепотку морской соли или корицы.\n4. Остудите и пересыпьте в удобную баночку. Носите с собой для здорового перекуса.</string>
 
-    <!-- РЕЦЕПТ 16: Запеченные яблоки -->
     <string name="rec_baked_apples">Запеченные яблоки с орехами</string>
     <string name="rec_desc_baked_apples">Идеальный полезный десерт. Натуральная сладость яблок с хрустящими орехами без грамма добавленного сахара.</string>
     <string name="rec_text_baked_apples">1. Тщательно помойте яблоки и аккуратно вырежьте сердцевину, не протыкая дно.\n2. Мелко порубите грецкие орехи ножом.\n3. Плотно начините яблоки орехами. По желанию можно добавить щепотку корицы.\n4. Запекайте в духовке при 180°C около 20–25 минут, пока яблоки не станут мягкими.\n5. Подавайте горячими, можно украсить ложкой натурального йогурта.</string>
 
-    <!-- РЕЦЕПТ 17: Тефтели из индейки с кабачком -->
     <string name="rec_turkey_meatballs">Нежные тефтели из индейки</string>
     <string name="rec_desc_turkey_meatballs">Легкое и сочное блюдо. Скрытый кабачок делает мясо невероятно нежным и добавляет клетчатку.</string>
     <string name="rec_text_turkey_meatballs">1. Измельчите грудку индейки в фарш (или возьмите готовый постный).\n2. Натрите кабачок на мелкой терке и обязательно отожмите лишнюю влагу руками.\n3. Смешайте мясо, кабачок, пропущенный через пресс чеснок, соль и перец.\n4. Сформируйте влажными руками небольшие шарики.\n5. Запекайте на пергаменте при 200°C около 25 минут или потушите в легком томатном соусе.</string>
 
-    <!-- РЕЦЕПТ 18: Омлет со шпинатом -->
     <string name="rec_spinach_omelet">Пышный омлет со шпинатом</string>
     <string name="rec_desc_spinach_omelet">Идеальное белковое начало дня. Шпинат обогатит организм железом, а томаты добавят сочности.</string>
     <string name="rec_text_spinach_omelet">1. Взбейте яйца вилкой с щепоткой соли и парой ложек молока (или воды).\n2. Нарежьте помидоры кубиками, а свежий шпинат промойте и обсушите.\n3. Слегка обжарьте помидоры на капле масла в течение 1-2 минут.\n4. Добавьте шпинат к помидорам и готовьте еще минуту, пока он не осядет.\n5. Залейте овощи яичной смесью, убавьте огонь, накройте крышкой и готовьте 5–7 минут.</string>
 
-    <!-- РЕЦЕПТ 19: Креветки в чесночном соусе -->
     <string name="rec_garlic_shrimp">Креветки в чесночном соусе</string>
     <string name="rec_desc_garlic_shrimp">Быстрый, легкий и невероятно ароматный ужин в средиземноморском стиле.</string>
     <string name="rec_text_garlic_shrimp">1. Разморозьте и очистите креветки.\n2. Мелко порубите чеснок и зелень (петрушку или кинзу).\n3. Разогрейте на сковороде оливковое масло и быстро обжарьте чеснок (30 секунд).\n4. Добавьте креветки и готовьте по 2-3 минуты с каждой стороны.\n5. В конце сбрызните лимонным соком, посыпьте зеленью и подавайте.</string>
-
-    <!-- КАТЕГОРИИ РЕЦЕПТОВ -->
-    <string name="cat_all_recipes">Все рецепты</string>
-    <string name="cat_all">Все</string>
-    <string name="cat_breakfast">Завтрак</string>
-    <string name="cat_lunch">Обед</string>
-    <string name="cat_dinner">Ужин</string>
-    <string name="cat_salad">Салаты</string>
-    <string name="cat_smoothie">Смузи</string>
-    <string name="cat_snack">Перекусы</string>
-    <string name="cat_soup">Супы</string>
-    <string name="cat_dessert">Десерты</string>
-
-    <!-- ЭКРАН РЕЦЕПТОВ -->
-    <string name="recipes_title">Рецепты</string>
-    <string name="recipes_subtitle">Вкусное и полезное на каждый день</string>
-    <string name="recipes_recommended_badge">РЕКОМЕНДУЕМ</string>
-    <string name="recipes_empty_category">В этой категории пока нет рецептов</string>
-    <string name="recipes_header_all">Все рецепты</string>
-
-    <!-- УВЕДОМЛЕНИЯ: Канал -->
-    <string name="notif_channel_name">Ежедневные советы</string>
-    <string name="notif_channel_desc">Рецепты и факты о здоровом питании</string>
-
-    <!-- УВЕДОМЛЕНИЯ: Утренние (Завтраки) -->
-    <string-array name="notif_morning_titles">
-        <item>Доброе утро! 🍳</item>
-        <item>Время проснуться ☀️</item>
-        <item>Начни день правильно 🥑</item>
-    </string-array>
-    <string-array name="notif_morning_bodies">
-        <item>Как насчет тоста с авокадо? Идеальный полезный завтрак за 10 минут.</item>
-        <item>Фруктовый салат зарядит энергией лучше, чем кофе. Смотри рецепт!</item>
-        <item>Пышный омлет со шпинатом даст нужный белок для бодрости.</item>
-    </string-array>
-
-    <!-- УВЕДОМЛЕНИЯ: Дневные (Факты и продукты) -->
-    <string-array name="notif_day_titles">
-        <item>Продукт дня: Брокколи 🥦</item>
-        <item>А ты знал? 💡</item>
-        <item>Время перекуса 🍏</item>
-    </string-array>
-    <string-array name="notif_day_bodies">
-        <item>Узнай, почему этот овощ называют главным защитником иммунитета.</item>
-        <item>В киви больше витамина С, чем в апельсине! Читай подробности в каталоге.</item>
-        <item>Горсть миндаля спасет от голода и улучшит работу мозга.</item>
-    </string-array>
-
-    <!-- УВЕДОМЛЕНИЯ: Вечерние (Ужины и восстановление) -->
-    <string-array name="notif_evening_titles">
-        <item>Легкий ужин 🐟</item>
-        <item>Сохраняем форму 🥗</item>
-        <item>Подготовка ко сну 🌙</item>
-    </string-array>
-    <string-array name="notif_evening_bodies">
-        <item>Запеченный лосось с лимоном — идеальный ужин без тяжести в желудке.</item>
-        <item>Домашний рататуй поможет пищеварению и не добавит лишних калорий.</item>
-        <item>Продукты с магнием (например, шпинат) помогут уснуть быстрее.</item>
-    </string-array>
-
-    <!-- Форматы (для подстановки чисел) -->
-    <string name="format_minutes">%1$d мин</string>
-    <string name="format_kcal">%1$d ккал</string>
 
 </resources>

@@ -48,10 +48,11 @@ import ru.plumsoftware.avocado.ui.screen.details.GlassButton
 import ru.plumsoftware.avocado.ui.screen.main.receipt.RecipesViewModel
 import ru.plumsoftware.avocado.ui.screen.onboarding.IOSGreen
 import ru.plumsoftware.avocado.ui.theme.Dimen
+import ru.plumsoftware.avocado.R
 
 private val HEADER_HEIGHT = 380.dp
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class) // Нужен для ModalBottomSheet
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ReceiptDetailScreen(
     receiptId: String,
@@ -64,7 +65,7 @@ fun ReceiptDetailScreen(
 
     if (receipt == null) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("Рецепт не найден", color = MaterialTheme.colorScheme.onBackground)
+            Text(stringResource(R.string.receipt_not_found), color = MaterialTheme.colorScheme.onBackground)
         }
         return
     }
@@ -78,7 +79,6 @@ fun ReceiptDetailScreen(
         rawInstructions.split("\n").filter { it.isNotBlank() }
     }
 
-    // Состояние для отображения режима готовки (шторки)
     var showCookingMode by remember { mutableStateOf(false) }
 
     Box(
@@ -142,9 +142,8 @@ fun ReceiptDetailScreen(
                         .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f))
                 )
 
-                Spacer(modifier = Modifier.height(60.dp))
+                Spacer(modifier = Modifier.height(Dimen.extraLarge))
 
-                // Заголовок
                 Text(
                     text = stringResource(receipt.titleRes),
                     style = MaterialTheme.typography.displaySmall.copy(
@@ -153,7 +152,6 @@ fun ReceiptDetailScreen(
                     )
                 )
 
-                // Краткое описание
                 Text(
                     text = stringResource(receipt.descRes),
                     style = MaterialTheme.typography.bodyLarge.copy(
@@ -168,19 +166,27 @@ fun ReceiptDetailScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    ReceiptMetaBig(Icons.Default.Schedule, "${receipt.timeMinutes} мин", "Время")
-                    ReceiptMetaBig(Icons.Default.LocalFireDepartment, "${receipt.calories}", "Ккал")
+                    ReceiptMetaBig(
+                        Icons.Default.Schedule,
+                        stringResource(R.string.format_minutes, receipt.timeMinutes),
+                        stringResource(R.string.meta_time)
+                    )
+                    ReceiptMetaBig(
+                        Icons.Default.LocalFireDepartment,
+                        stringResource(R.string.format_kcal, receipt.calories),
+                        stringResource(R.string.meta_kcal)
+                    )
                     val diffText = when (receipt.difficulty) {
-                        1 -> "Легко"
-                        2 -> "Средне"
-                        else -> "Сложно"
+                        1 -> stringResource(R.string.diff_easy)
+                        2 -> stringResource(R.string.diff_medium)
+                        else -> stringResource(R.string.diff_hard)
                     }
-                    ReceiptMetaBig(Icons.Default.Bolt, diffText, "Уровень")
+                    ReceiptMetaBig(Icons.Default.Bolt, diffText, stringResource(R.string.meta_level))
                 }
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                // --- КНОПКА "НАЧАТЬ ГОТОВКУ" (НОВАЯ) ---
+                // --- КНОПКА "НАЧАТЬ ГОТОВКУ" ---
                 Button(
                     onClick = { showCookingMode = true },
                     modifier = Modifier
@@ -190,7 +196,7 @@ fun ReceiptDetailScreen(
                     colors = ButtonDefaults.buttonColors(containerColor = IOSGreen, contentColor = Color.White)
                 ) {
                     Text(
-                        "Начать готовку",
+                        stringResource(R.string.btn_start_cooking),
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                     )
                 }
@@ -200,7 +206,7 @@ fun ReceiptDetailScreen(
                 // --- ИНГРЕДИЕНТЫ ---
                 if (ingredients.isNotEmpty()) {
                     Text(
-                        text = "Ингредиенты",
+                        text = stringResource(R.string.ingredients),
                         style = MaterialTheme.typography.titleLarge.copy(
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface
@@ -225,12 +231,12 @@ fun ReceiptDetailScreen(
 
                 // --- ПРИГОТОВЛЕНИЕ ---
                 Text(
-                    text = "Приготовление",
+                    text = stringResource(R.string.cooking),
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
                     ),
-                    modifier = Modifier.padding(bottom = 16.dp)
+                    modifier = Modifier.padding(bottom = Dimen.medium)
                 )
 
                 steps.forEachIndexed { index, step ->
@@ -245,21 +251,20 @@ fun ReceiptDetailScreen(
             }
         }
 
-        // --- 3. BACK BUTTON ---
+        // --- BACK BUTTON ---
         Box(
             modifier = Modifier.padding(top = 48.dp, start = 16.dp)
         ) {
             GlassButton(onClick = { navController.popBackStack() }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
+                    contentDescription = stringResource(R.string.cd_back),
                     tint = MaterialTheme.colorScheme.onSurface
                 )
             }
         }
     }
 
-    // --- МОДАЛЬНАЯ ШТОРКА ГОТОВКИ ---
     if (showCookingMode) {
         CookingModeSheet(
             title = stringResource(receipt.titleRes),
@@ -280,7 +285,6 @@ fun ReceiptMetaBig(icon: ImageVector, value: String, label: String) {
         modifier = Modifier
             .width(100.dp)
             .clip(RoundedCornerShape(16.dp))
-            // ИСПРАВЛЕНО: surfaceVariant лучше работает в Dark Mode, чем surfaceContainerLow
             .background(MaterialTheme.colorScheme.surfaceVariant)
             .padding(vertical = 12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -296,13 +300,13 @@ fun ReceiptMetaBig(icon: ImageVector, value: String, label: String) {
             text = value,
             style = MaterialTheme.typography.titleMedium.copy(
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface // ИСПРАВЛЕНО: Явный цвет
+                color = MaterialTheme.colorScheme.onSurface
             )
         )
         Text(
             text = label,
             style = MaterialTheme.typography.bodySmall.copy(
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f) // ИСПРАВЛЕНО
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
             )
         )
     }
@@ -320,12 +324,8 @@ fun IngredientItem(food: Food, onClick: () -> Unit) {
             modifier = Modifier
                 .size(70.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceVariant) // Серый кружок для контраста
-                .border(
-                    1.dp,
-                    MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-                    CircleShape
-                ),
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f), CircleShape),
             contentAlignment = Alignment.Center
         ) {
             Image(
@@ -340,7 +340,7 @@ fun IngredientItem(food: Food, onClick: () -> Unit) {
             text = stringResource(food.titleRes),
             style = MaterialTheme.typography.bodyMedium.copy(
                 fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onSurface // ИСПРАВЛЕНО: Цвет названия
+                color = MaterialTheme.colorScheme.onSurface
             ),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
@@ -374,7 +374,7 @@ fun StepItem(number: Int, text: String) {
             text = cleanText,
             style = MaterialTheme.typography.bodyLarge.copy(
                 lineHeight = 24.sp,
-                color = MaterialTheme.colorScheme.onSurface // ИСПРАВЛЕНО: Явный цвет шагов
+                color = MaterialTheme.colorScheme.onSurface
             )
         )
     }
