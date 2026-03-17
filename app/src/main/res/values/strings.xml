@@ -137,6 +137,11 @@
     <string name="water_tracker_subtitle">Цель: %1$d мл</string>
     <string name="water_add_btn">+250 мл</string>
 
+    <string name="water_tracker_icon">💧</string>
+    <string name="water_tracker_goal_format"> / %1$d мл</string>
+    <string name="cd_water_icon">Иконка воды</string>
+    <string name="cd_add_water">Добавить воду</string>
+
     <!-- ============================================== -->
     <!-- ДЕТАЛИ ЕДЫ / FOOD DETAILS                      -->
     <!-- ============================================== -->

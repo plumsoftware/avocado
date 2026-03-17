@@ -1,6 +1,7 @@
 package ru.plumsoftware.avocado.ui.screen.main.list
 
 import android.content.Context
+import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -171,41 +172,45 @@ class ListViewModel(
         }
 
         // 3. ПОДБОР ПОД ЦЕЛИ
-        goals.forEach { goal ->
-            when (goal) {
-                UserGoal.LOSE_WEIGHT -> {
-                    val list = safeFood.filter { it.kpfc_100g.kals < 50 || it.kpfc_100g.fiber > 2.5 }
-                    if (list.isNotEmpty()) sections.add(HomeSection(R.string.section_weight_loss, list.take(6)))
-                }
-                UserGoal.GAIN_MUSCLE -> {
-                    val list = safeFood.filter { it.kpfc_100g.proteins > 12.0 }
-                    if (list.isNotEmpty()) sections.add(HomeSection(R.string.section_muscle, list.take(6)))
-                }
-                UserGoal.BETTER_SKIN -> {
-                    val list = safeFood.filter { f -> f.vitamins.any { it.id == "vitamin_a" || it.id == "vitamin_c" } }
-                    if (list.isNotEmpty()) sections.add(HomeSection(R.string.section_skin, list.take(6)))
-                }
-                UserGoal.HEART_HEALTH -> {
-                    val list = safeFood.filter { f -> f.kpfc_100g.omega3 > 0.5 || f.minerals.any { it.id == "potassium" } }
-                    if (list.isNotEmpty()) sections.add(HomeSection(R.string.section_heart, list.take(6)))
-                }
-                UserGoal.ENERGY -> {
-                    val list = safeFood.filter { f -> f.vitamins.any { it.id.startsWith("vitamin_b") } || f.minerals.any { it.id == "iron" } }
-                    if (list.isNotEmpty()) sections.add(HomeSection(R.string.section_energy, list.take(6)))
-                }
-                UserGoal.DIGESTION -> {
-                    val list = safeFood.filter { it.kpfc_100g.fiber > 3.0 }
-                    if (list.isNotEmpty()) sections.add(HomeSection(R.string.section_digestion, list.take(6)))
-                }
-                UserGoal.IMMUNITY -> {
-                    val list = safeFood.filter { f -> f.vitamins.any { it.id == "vitamin_c" } || f.minerals.any { it.id == "zinc" } }
-                    if (list.isNotEmpty()) sections.add(HomeSection(R.string.section_immunity, list.take(6)))
-                }
-                UserGoal.SLEEP -> {
-                    val list = safeFood.filter { f -> f.minerals.any { it.id == "magnesium" } }
-                    if (list.isNotEmpty()) sections.add(HomeSection(R.string.section_sleep, list.take(6)))
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            goals.forEach { goal ->
+                when (goal) {
+                    UserGoal.LOSE_WEIGHT -> {
+                        val list = safeFood.filter { it.kpfc_100g.kals < 50 || it.kpfc_100g.fiber > 2.5 }
+                        if (list.isNotEmpty()) sections.add(HomeSection(R.string.section_weight_loss, list.take(6)))
+                    }
+                    UserGoal.GAIN_MUSCLE -> {
+                        val list = safeFood.filter { it.kpfc_100g.proteins > 12.0 }
+                        if (list.isNotEmpty()) sections.add(HomeSection(R.string.section_muscle, list.take(6)))
+                    }
+                    UserGoal.BETTER_SKIN -> {
+                        val list = safeFood.filter { f -> f.vitamins.any { it.id == "vitamin_a" || it.id == "vitamin_c" } }
+                        if (list.isNotEmpty()) sections.add(HomeSection(R.string.section_skin, list.take(6)))
+                    }
+                    UserGoal.HEART_HEALTH -> {
+                        val list = safeFood.filter { f -> f.kpfc_100g.omega3 > 0.5 || f.minerals.any { it.id == "potassium" } }
+                        if (list.isNotEmpty()) sections.add(HomeSection(R.string.section_heart, list.take(6)))
+                    }
+                    UserGoal.ENERGY -> {
+                        val list = safeFood.filter { f -> f.vitamins.any { it.id.startsWith("vitamin_b") } || f.minerals.any { it.id == "iron" } }
+                        if (list.isNotEmpty()) sections.add(HomeSection(R.string.section_energy, list.take(6)))
+                    }
+                    UserGoal.DIGESTION -> {
+                        val list = safeFood.filter { it.kpfc_100g.fiber > 3.0 }
+                        if (list.isNotEmpty()) sections.add(HomeSection(R.string.section_digestion, list.take(6)))
+                    }
+                    UserGoal.IMMUNITY -> {
+                        val list = safeFood.filter { f -> f.vitamins.any { it.id == "vitamin_c" } || f.minerals.any { it.id == "zinc" } }
+                        if (list.isNotEmpty()) sections.add(HomeSection(R.string.section_immunity, list.take(6)))
+                    }
+                    UserGoal.SLEEP -> {
+                        val list = safeFood.filter { f -> f.minerals.any { it.id == "magnesium" } }
+                        if (list.isNotEmpty()) sections.add(HomeSection(R.string.section_sleep, list.take(6)))
+                    }
                 }
             }
+        } else {
+
         }
 
         // 4. ЗАПАСНОЙ ВАРИАНТ (Если ничего не подобралось)
@@ -214,6 +219,20 @@ class ListViewModel(
         }
 
         return sections.distinctBy { it.titleRes }
+    }
+
+    // --- ВОДА ---
+    val waterIntake: StateFlow<Int> = userPreferencesRepository.waterIntake
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = 0
+        )
+
+    fun addWater(amountMl: Int) {
+        viewModelScope.launch {
+            userPreferencesRepository.addWater(amountMl)
+        }
     }
 
     companion object {

@@ -18,6 +18,9 @@ message UserPreferences {
 
     // Онбординг завершен
     bool is_onboarding_completed = 5;
+
+    int32 water_amount_ml = 6;
+    int64 last_water_update_timestamp = 7;
 }
 
 

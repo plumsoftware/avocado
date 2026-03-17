@@ -8,6 +8,7 @@ import ru.plumsoftware.avocado.data.onboarding.UserRestriction
 import ru.plumsoftware.avocado.data.user_preferences.util.AppTheme
 import ru.plumsoftware.avocado.snippets.proto.AppThemeProto
 import ru.plumsoftware.avocado.snippets.proto.UserPreferences
+import java.util.Calendar
 
 class UserPreferencesRepository(
     private val dataStore: DataStore<UserPreferences>
@@ -40,8 +41,46 @@ class UserPreferencesRepository(
 
     val userRestrictions: Flow<List<UserRestriction>> = dataStore.data.map { prefs ->
         prefs.userRestrictionsList.mapNotNull { restName ->
-            try { UserRestriction.valueOf(restName) } catch (e: Exception) { null }
+            try {
+                UserRestriction.valueOf(restName)
+            } catch (e: Exception) {
+                null
+            }
         }
+    }
+
+    // --- ТРЕКЕР ВОДЫ ---
+
+    // Чтение: возвращаем 0, если наступил новый день
+    val waterIntake: Flow<Int> = dataStore.data.map { prefs ->
+        if (isToday(prefs.lastWaterUpdateTimestamp)) {
+            prefs.waterAmountMl
+        } else {
+            0 // Новый день - новая вода
+        }
+    }
+
+    // Запись: добавляем миллилитры и обновляем время
+    suspend fun addWater(amountMl: Int) {
+        dataStore.updateData { prefs ->
+            val currentAmount =
+                if (isToday(prefs.lastWaterUpdateTimestamp)) prefs.waterAmountMl else 0
+
+            prefs.toBuilder()
+                .setWaterAmountMl(currentAmount + amountMl)
+                .setLastWaterUpdateTimestamp(System.currentTimeMillis())
+                .build()
+        }
+    }
+
+    // Вспомогательная функция проверки даты
+    private fun isToday(timestamp: Long): Boolean {
+        if (timestamp == 0L) return false
+        val now = Calendar.getInstance()
+        val saved = Calendar.getInstance().apply { timeInMillis = timestamp }
+
+        return now.get(Calendar.YEAR) == saved.get(Calendar.YEAR) &&
+                now.get(Calendar.DAY_OF_YEAR) == saved.get(Calendar.DAY_OF_YEAR)
     }
 
 

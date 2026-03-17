@@ -41,6 +41,7 @@ import ru.plumsoftware.avocado.data.favorite.FavoritesRepository
 import ru.plumsoftware.avocado.data.user_preferences.UserPreferencesRepository
 import ru.plumsoftware.avocado.ui.screen.AppDestination
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.IOSTopBar
+import ru.plumsoftware.avocado.ui.screen.main.list.elements.WaterTrackerCard
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.filter.FilterItem
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.food.FoodCard
 import ru.plumsoftware.avocado.ui.theme.Dimen
@@ -72,6 +73,9 @@ fun MainListScreen(
     val searchQuery by viewModel.searchQuery.collectAsState()
     val searchResults by viewModel.searchResults.collectAsState()
 
+    // ВОДА
+    val waterIntake by viewModel.waterIntake.collectAsState()
+
     // Состояние фокуса поиска (для анимации кнопки "Отмена")
     var isSearchFocused by remember { mutableStateOf(false) }
 
@@ -98,6 +102,17 @@ fun MainListScreen(
                 // Отступ сверху
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     Spacer(modifier = Modifier.height(84.dp))
+                }
+
+                // 🔥 2. ТРЕКЕР ВОДЫ
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    WaterTrackerCard(
+                        currentWaterMl = waterIntake,
+                        goalWaterMl = 2000,
+                        onAddWater = { amount ->
+                            viewModel.addWater(amount)
+                        }
+                    )
                 }
 
                 // --- ЛОГИКА ОТОБРАЖЕНИЯ ---

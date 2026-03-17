@@ -110,7 +110,7 @@ fun BottomNavBar(
                     if (item.iconRes != null) {
                         Image(
                             modifier = Modifier
-                                .size(28.dp),
+                                .size(22.dp),
                             painter = painterResource(item.iconRes),
                             contentDescription = stringResource(item.title),
                             colorFilter = if (isSelected) {
