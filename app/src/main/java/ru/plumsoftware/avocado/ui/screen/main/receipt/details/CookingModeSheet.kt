@@ -134,7 +134,11 @@ fun CookingModeSheet(
                     val progressText = if (pagerState.currentPage == 0) {
                         stringResource(R.string.ingredients)
                     } else {
-                        stringResource(R.string.cooking_step_progress, pagerState.currentPage, steps.size)
+                        stringResource(
+                            R.string.cooking_step_progress,
+                            pagerState.currentPage,
+                            steps.size
+                        )
                     }
 
                     Text(
@@ -209,7 +213,11 @@ fun CookingModeSheet(
                         disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
                     )
                 ) {
-                    Text(stringResource(R.string.back), fontSize = 17.sp, fontWeight = FontWeight.Bold)
+                    Text(
+                        stringResource(R.string.back),
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
 
                 val isLast = pagerState.currentPage == steps.size
@@ -234,7 +242,9 @@ fun CookingModeSheet(
                     )
                 ) {
                     Text(
-                        text = if (isLast) stringResource(R.string.good_eating) else stringResource(R.string.dalee),
+                        text = if (isLast) stringResource(R.string.good_eating) else stringResource(
+                            R.string.dalee
+                        ),
                         fontSize = 17.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -262,11 +272,13 @@ fun CookingIngredientsSlide(
             .fillMaxSize()
             .padding(Dimen.large)
     ) {
-        // ИСПРАВЛЕНО: Кнопка озвучки и текст теперь на одной строке корректно
-        Row(
+        Column(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.spacedBy(
+                space = Dimen.mediumHalf,
+                alignment = Alignment.CenterVertically
+            )
         ) {
             Text(
                 text = stringResource(R.string.cooking_ingredients_check),
