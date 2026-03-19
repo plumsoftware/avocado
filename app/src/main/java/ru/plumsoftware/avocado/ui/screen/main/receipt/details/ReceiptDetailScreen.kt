@@ -1,5 +1,6 @@
 package ru.plumsoftware.avocado.ui.screen.main.receipt.details
 
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -76,7 +77,10 @@ fun ReceiptDetailScreen(
 
     if (receipt == null) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(stringResource(R.string.receipt_not_found), color = MaterialTheme.colorScheme.onBackground)
+            Text(
+                stringResource(R.string.receipt_not_found),
+                color = MaterialTheme.colorScheme.onBackground
+            )
         }
         return
     }
@@ -98,20 +102,23 @@ fun ReceiptDetailScreen(
         interstitialAdLoader = InterstitialAdLoader(context).apply {
             setAdLoadListener(object : InterstitialAdLoadListener {
                 override fun onAdLoaded(interstitialAd: InterstitialAd) {
-                    ru.plumsoftware.avocado.ui.screen.main.receipt.details.interstitialAd = interstitialAd
+                    ru.plumsoftware.avocado.ui.screen.main.receipt.details.interstitialAd =
+                        interstitialAd
 
                     interstitialAd.apply {
                         setAdEventListener(object : InterstitialAdEventListener {
                             override fun onAdShown() {}
                             override fun onAdFailedToShow(adError: AdError) {
                                 interstitialAd.setAdEventListener(null)
-                                ru.plumsoftware.avocado.ui.screen.main.receipt.details.interstitialAd = null
+                                ru.plumsoftware.avocado.ui.screen.main.receipt.details.interstitialAd =
+                                    null
                                 navController.popBackStack()
                             }
 
                             override fun onAdDismissed() {
                                 interstitialAd.setAdEventListener(null)
-                                ru.plumsoftware.avocado.ui.screen.main.receipt.details.interstitialAd = null
+                                ru.plumsoftware.avocado.ui.screen.main.receipt.details.interstitialAd =
+                                    null
                                 navController.popBackStack()
                             }
 
@@ -128,6 +135,14 @@ fun ReceiptDetailScreen(
         val adRequestConfiguration =
             AdRequestConfiguration.Builder(AdsConfig.INTERSTITIAL_ADS_ID).build()
         interstitialAdLoader?.loadAd(adRequestConfiguration)
+    }
+
+    BackHandler(enabled = true) {
+        if (interstitialAd != null && activity != null) {
+            interstitialAd?.show(activity = activity)
+        } else {
+            navController.popBackStack()
+        }
     }
 
     Box(
@@ -229,7 +244,11 @@ fun ReceiptDetailScreen(
                         2 -> stringResource(R.string.diff_medium)
                         else -> stringResource(R.string.diff_hard)
                     }
-                    ReceiptMetaBig(Icons.Default.Bolt, diffText, stringResource(R.string.meta_level))
+                    ReceiptMetaBig(
+                        Icons.Default.Bolt,
+                        diffText,
+                        stringResource(R.string.meta_level)
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(32.dp))
@@ -241,7 +260,10 @@ fun ReceiptDetailScreen(
                         .fillMaxWidth()
                         .height(Dimen.buttonHeight),
                     shape = MaterialTheme.shapes.medium,
-                    colors = ButtonDefaults.buttonColors(containerColor = IOSGreen, contentColor = Color.White)
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = IOSGreen,
+                        contentColor = Color.White
+                    )
                 ) {
                     Text(
                         stringResource(R.string.btn_start_cooking),
@@ -378,7 +400,11 @@ fun IngredientItem(food: Food, onClick: () -> Unit) {
                 .size(70.dp)
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.surfaceVariant)
-                .border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f), CircleShape),
+                .border(
+                    1.dp,
+                    MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+                    CircleShape
+                ),
             contentAlignment = Alignment.Center
         ) {
             Image(

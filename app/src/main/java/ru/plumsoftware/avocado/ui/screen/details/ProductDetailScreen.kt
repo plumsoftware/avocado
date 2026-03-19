@@ -1,6 +1,7 @@
 package ru.plumsoftware.avocado.ui.screen.details
 
 import android.content.Context
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
@@ -123,6 +124,14 @@ fun ProductDetailScreen(
         val adRequestConfiguration =
             AdRequestConfiguration.Builder(AdsConfig.INTERSTITIAL_ADS_ID).build()
         interstitialAdLoader?.loadAd(adRequestConfiguration)
+    }
+
+    BackHandler(enabled = true) {
+        if (interstitialAd != null && activity != null) {
+            interstitialAd?.show(activity = activity)
+        } else {
+            onBackClick()
+        }
     }
 
     Box(
