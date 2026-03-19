@@ -36,6 +36,12 @@ roomRuntime = "2.8.4"
 # Ads
 mobileads = "7.18.3"
 
+# Firebase
+googleGmsGoogleServices = "4.4.4"
+firebaseMessaging = "25.0.1"
+firebaseInappmessagingDisplay = "22.0.2"
+firebaseConfig = "23.0.1"
+
 [libraries]
 androidx-compose-foundation-layout = { module = "androidx.compose.foundation:foundation-layout", version.ref = "foundationLayout" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -85,9 +91,15 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 # Ads
 mobileads = { module = "com.yandex.android:mobileads", version.ref = "mobileads" }
 
+# Firebase
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebaseMessaging" }
+firebase-inappmessaging-display = { group = "com.google.firebase", name = "firebase-inappmessaging-display", version.ref = "firebaseInappmessagingDisplay" }
+firebase-config = { group = "com.google.firebase", name = "firebase-config", version.ref = "firebaseConfig" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinSerialization"}
+google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
 

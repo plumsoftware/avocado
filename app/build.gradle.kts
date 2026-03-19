@@ -6,7 +6,12 @@ plugins {
     // Serialization
     alias(libs.plugins.jetbrains.kotlin.serialization)
     id("com.google.protobuf") version "0.9.6"
+
+    // KSP
     id("com.google.devtools.ksp")
+
+    // Google services
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -121,4 +126,9 @@ dependencies {
 
     // Worker
     implementation(libs.androidx.work.runtime.ktx)
+
+    // Firebase
+    implementation(libs.firebase.messaging)
+    implementation(libs.firebase.inappmessaging.display)
+    implementation(libs.firebase.config)
 }
