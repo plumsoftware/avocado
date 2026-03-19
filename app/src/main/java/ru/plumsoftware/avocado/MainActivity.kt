@@ -62,6 +62,7 @@ import ru.plumsoftware.avocado.ui.screen.main.list.ListViewModel
 import ru.plumsoftware.avocado.ui.screen.main.receipt.details.ReceiptDetailScreen
 import ru.plumsoftware.avocado.ui.screen.main.settings.SettingsViewModel
 import ru.plumsoftware.avocado.ui.screen.onboarding.OnboardingScreen
+import ru.plumsoftware.avocado.ui.screen.privacy_policy.PrivacyPolicyScreen
 import ru.plumsoftware.avocado.ui.theme.AvocadoTheme
 import ru.plumsoftware.avocado.ui.theme.Dimen
 
@@ -195,6 +196,9 @@ class MainActivity : ComponentActivity() {
                         OnboardingScreen(
                             onFinish = { goals, restrictions ->
                                 mainViewModel.finishOnboarding(goals, restrictions)
+                            },
+                            onPrivacyClick = {
+                                navController.navigate(AppDestination.PrivacyPolicy)
                             }
                         )
                     }
@@ -225,6 +229,12 @@ class MainActivity : ComponentActivity() {
                                     settingsViewModel = settingsViewModel,
                                     navController = navController,
                                     favoritesRepository = favRepo
+                                )
+                            }
+
+                            composable<AppDestination.PrivacyPolicy> {
+                                PrivacyPolicyScreen(
+                                    onBackClick = { navController.popBackStack() }
                                 )
                             }
 
@@ -261,6 +271,9 @@ class MainActivity : ComponentActivity() {
                                     onFinish = { goals, restrictions ->
                                         mainViewModel.finishOnboarding(goals, restrictions)
                                         navController.popBackStack()
+                                    },
+                                    onPrivacyClick = {
+                                        navController.navigate(AppDestination.PrivacyPolicy)
                                     }
                                 )
                             }

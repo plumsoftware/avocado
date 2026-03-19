@@ -54,7 +54,8 @@ val IOSLightGray = Color(0xFFE5E5EA)
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun OnboardingScreen(
-    onFinish: (List<UserGoal>, List<UserRestriction>) -> Unit
+    onFinish: (List<UserGoal>, List<UserRestriction>) -> Unit,
+    onPrivacyClick: () -> Unit
 ) {
     val selectedGoals = remember { mutableStateListOf<UserGoal>() }
     val selectedRestrictions = remember { mutableStateListOf<UserRestriction>() }
@@ -92,7 +93,7 @@ fun OnboardingScreen(
                 userScrollEnabled = pagerState.currentPage > 0
             ) { page ->
                 when (page) {
-                    0 -> WelcomePage()
+                    0 -> WelcomePage(onPrivacyClick = onPrivacyClick)
                     1 -> GoalsPage(selectedGoals)
                     2 -> RestrictionsPage(selectedRestrictions)
                     3 -> NotificationsPage()
@@ -273,7 +274,7 @@ fun NotificationsPage() {
 }
 
 @Composable
-fun WelcomePage() {
+fun WelcomePage(onPrivacyClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -321,6 +322,25 @@ fun WelcomePage() {
         // --- ВСТАВЛЯЕМ ПЛАШКУ ЗДЕСЬ ---
         Spacer(modifier = Modifier.height(32.dp))
         OnboardingDisclaimer()
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // --- ССЫЛКА НА ПОЛИТИКУ КОНФИДЕНЦИАЛЬНОСТИ ---
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = stringResource(R.string.onboarding_terms_prefix),
+                style = MaterialTheme.typography.labelSmall,
+                color = Color.Gray
+            )
+            Text(
+                text = stringResource(R.string.onboarding_terms_link),
+                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                color = Color(0xFF007AFF), // iOS Blue
+                modifier = Modifier
+                    .padding(top = 2.dp)
+                    .iosClickable { onPrivacyClick() }
+            )
+        }
     }
 }
 

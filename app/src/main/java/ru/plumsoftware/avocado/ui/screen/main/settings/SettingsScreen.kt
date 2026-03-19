@@ -29,6 +29,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.RestaurantMenu
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -277,6 +278,31 @@ fun SettingsScreen(
                     title = stringResource(R.string.settings_theme_dark),
                     isSelected = currentTheme == AppTheme.Dark,
                     onClick = { viewModel.updateTheme(AppTheme.Dark) },
+                    showDivider = false
+                )
+            }
+
+            Spacer(modifier = Modifier.height(Dimen.large))
+
+            // --- НОВАЯ СЕКЦИЯ: О ПРИЛОЖЕНИИ ---
+            Text(
+                text = stringResource(R.string.settings_section_about),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(start = Dimen.medium, bottom = Dimen.mediumHalf)
+            )
+
+            Column(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(Dimen.large))
+                    .background(MaterialTheme.colorScheme.surface)
+            ) {
+                IOSSettingsNavigationItem(
+                    title = stringResource(R.string.privacy_policy_title),
+                    icon = Icons.Default.Info, // Либо любая другая иконка (document)
+                    onClick = {
+                        navController.navigate(AppDestination.PrivacyPolicy)
+                    },
                     showDivider = false
                 )
             }

@@ -20,4 +20,7 @@ object AppDestination {
 
     @Serializable
     data class ReceiptDetailRoute(val receiptId: String)
+
+    @Serializable
+    data object PrivacyPolicy
 }
