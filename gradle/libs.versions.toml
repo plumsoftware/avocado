@@ -30,6 +30,12 @@ protobufKotlinLite = "4.33.5"
 paletteKtx = "1.0.0"
 workRuntimeKtx = "2.11.1"
 
+# Room
+roomRuntime = "2.8.4"
+
+# Ads
+mobileads = "7.18.3"
+
 [libraries]
 androidx-compose-foundation-layout = { module = "androidx.compose.foundation:foundation-layout", version.ref = "foundationLayout" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -70,6 +76,14 @@ androidx-palette-ktx = { module = "androidx.palette:palette-ktx", version.ref = 
 
 # Worker
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
+
+# Room
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
+
+# Ads
+mobileads = { module = "com.yandex.android:mobileads", version.ref = "mobileads" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

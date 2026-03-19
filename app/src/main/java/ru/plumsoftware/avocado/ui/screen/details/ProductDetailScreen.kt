@@ -1,6 +1,7 @@
 package ru.plumsoftware.avocado.ui.screen.details
 
 import android.content.Context
+import androidx.activity.compose.LocalActivity
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -40,6 +41,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.yandex.mobile.ads.common.AdError
+import com.yandex.mobile.ads.common.AdRequestConfiguration
+import com.yandex.mobile.ads.common.AdRequestError
+import com.yandex.mobile.ads.common.ImpressionData
+import com.yandex.mobile.ads.interstitial.InterstitialAd
+import com.yandex.mobile.ads.interstitial.InterstitialAdEventListener
+import com.yandex.mobile.ads.interstitial.InterstitialAdLoadListener
+import com.yandex.mobile.ads.interstitial.InterstitialAdLoader
 import ru.plumsoftware.avocado.data.base.model.food.Food
 import ru.plumsoftware.avocado.data.base.model.healthy.Kpfc
 import ru.plumsoftware.avocado.ui.modifier.iosClickable
@@ -48,11 +57,14 @@ import ru.plumsoftware.avocado.data.base.model.food.TimeForFood
 import ru.plumsoftware.avocado.ui.screen.details.elements.IOSPopup
 import ru.plumsoftware.avocado.ui.theme.Dimen
 import ru.plumsoftware.avocado.R
+import ru.plumsoftware.avocado.data.ads.AdsConfig
 import ru.plumsoftware.avocado.data.base.model.receipt.getReceiptsByIds
 import ru.plumsoftware.avocado.ui.screen.main.receipt.elements.SmallReceiptCard
 
 // Высота шапки с картинкой
 private val HEADER_HEIGHT = 400.dp
+private var interstitialAd: InterstitialAd? = null
+private var interstitialAdLoader: InterstitialAdLoader? = null
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -65,6 +77,7 @@ fun ProductDetailScreen(
     onReceiptClick: (String) -> Unit
 ) {
     val context = LocalContext.current
+    val activity = LocalActivity.current
     val scrollState = rememberScrollState()
 
     // Генерация цветов для градиента
@@ -74,6 +87,42 @@ fun ProductDetailScreen(
     val dominantColor = Color(baseColorInt)
     val relatedReceipts = remember(item.relatedReceipts) {
         getReceiptsByIds(item.relatedReceipts)
+    }
+
+    LaunchedEffect(key1 = Unit) {
+        interstitialAdLoader = InterstitialAdLoader(context).apply {
+            setAdLoadListener(object : InterstitialAdLoadListener {
+                override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                    ru.plumsoftware.avocado.ui.screen.details.interstitialAd = interstitialAd
+
+                    interstitialAd.apply {
+                        setAdEventListener(object : InterstitialAdEventListener {
+                            override fun onAdShown() {}
+                            override fun onAdFailedToShow(adError: AdError) {
+                                interstitialAd.setAdEventListener(null)
+                                ru.plumsoftware.avocado.ui.screen.details.interstitialAd = null
+                                onBackClick()
+                            }
+
+                            override fun onAdDismissed() {
+                                interstitialAd.setAdEventListener(null)
+                                ru.plumsoftware.avocado.ui.screen.details.interstitialAd = null
+                                onBackClick()
+                            }
+
+                            override fun onAdClicked() {}
+
+                            override fun onAdImpression(impressionData: ImpressionData?) {}
+                        })
+                    }
+                }
+
+                override fun onAdFailedToLoad(error: AdRequestError) {}
+            })
+        }
+        val adRequestConfiguration =
+            AdRequestConfiguration.Builder(AdsConfig.INTERSTITIAL_ADS_ID).build()
+        interstitialAdLoader?.loadAd(adRequestConfiguration)
     }
 
     Box(
@@ -260,15 +309,12 @@ fun ProductDetailScreen(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         DetailSectionTitle("Готовим с этим")
-
-                        // Кнопка "См. все" (опционально)
-                        // Text(text = "Все", color = IOSGreen, ...)
                     }
 
                     // Горизонтальный список
                     LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        contentPadding = PaddingValues(horizontal = 4.dp) // Небольшой отступ
+                        horizontalArrangement = Arrangement.spacedBy(Dimen.medium),
+                        contentPadding = PaddingValues(horizontal = Dimen.extraSmall)
                     ) {
                         items(relatedReceipts) { receipt ->
                             SmallReceiptCard(
@@ -284,7 +330,7 @@ fun ProductDetailScreen(
                 // --- DISCLAIMER ---
                 DisclaimerCard()
 
-                Spacer(modifier = Modifier.height(100.dp)) // Отступ снизу
+                Spacer(modifier = Modifier.height(120.dp)) // Отступ снизу
             }
         }
 
@@ -292,10 +338,19 @@ fun ProductDetailScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 48.dp, start = Dimen.medium, end = Dimen.medium), // Увеличил top padding под статус бар
+                .padding(
+                    top = 48.dp,
+                    start = Dimen.medium,
+                    end = Dimen.medium
+                ),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            GlassButton(onClick = onBackClick) {
+            GlassButton(onClick = {
+                if (interstitialAd != null && activity != null)
+                    interstitialAd?.show(activity = activity)
+                else
+                    onBackClick()
+            }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back",
@@ -440,7 +495,10 @@ fun VitaminChip(text: String, @StringRes healthyForRes: Int) {
             }
         }
         if (hasInfo) {
-            IOSPopup(text = stringResource(healthyForRes), isVisible = showTooltip, onDismiss = { showTooltip = false })
+            IOSPopup(
+                text = stringResource(healthyForRes),
+                isVisible = showTooltip,
+                onDismiss = { showTooltip = false })
         }
     }
 }
@@ -453,7 +511,10 @@ fun MineralChip(text: String, @StringRes healthyForRes: Int) {
     Box {
         Row(
             modifier = Modifier
-                .background(MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f), RoundedCornerShape(12.dp))
+                .background(
+                    MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f),
+                    RoundedCornerShape(12.dp)
+                )
                 .clip(RoundedCornerShape(12.dp))
                 .then(if (hasInfo) Modifier.iosClickable { showTooltip = true } else Modifier)
                 .padding(horizontal = 12.dp, vertical = 8.dp),
@@ -474,7 +535,10 @@ fun MineralChip(text: String, @StringRes healthyForRes: Int) {
             }
         }
         if (hasInfo) {
-            IOSPopup(text = stringResource(healthyForRes), isVisible = showTooltip, onDismiss = { showTooltip = false })
+            IOSPopup(
+                text = stringResource(healthyForRes),
+                isVisible = showTooltip,
+                onDismiss = { showTooltip = false })
         }
     }
 }
@@ -502,7 +566,10 @@ fun DisclaimerCard() {
         Column {
             Text(
                 text = stringResource(R.string.disclaimer_title),
-                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold, color = contentColor)
+                style = MaterialTheme.typography.labelMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = contentColor
+                )
             )
             Spacer(modifier = Modifier.height(2.dp))
             Text(
@@ -553,8 +620,17 @@ fun SpecialChip(title: String, value: String, backgroundColor: Color, contentCol
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column {
-            Text(text = title, style = MaterialTheme.typography.labelSmall.copy(color = contentColor.copy(alpha = 0.8f)))
-            Text(text = value, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, color = contentColor))
+            Text(
+                text = title,
+                style = MaterialTheme.typography.labelSmall.copy(color = contentColor.copy(alpha = 0.8f))
+            )
+            Text(
+                text = value,
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = contentColor
+                )
+            )
         }
     }
 }
@@ -563,9 +639,24 @@ fun SpecialChip(title: String, value: String, backgroundColor: Color, contentCol
 @Composable
 fun getTimeForFoodResources(time: TimeForFood): Triple<Int, ImageVector, Color> {
     return when (time) {
-        TimeForFood.BREAKFAST -> Triple(R.string.time_breakfast, Icons.Default.WbSunny, Color(0xFFFF9F0A))
-        TimeForFood.LUNCH -> Triple(R.string.time_lunch, Icons.Default.Restaurant, Color(0xFF34C759))
-        TimeForFood.DINNER -> Triple(R.string.time_dinner, Icons.Default.NightsStay, Color(0xFF5E5CE6))
+        TimeForFood.BREAKFAST -> Triple(
+            R.string.time_breakfast,
+            Icons.Default.WbSunny,
+            Color(0xFFFF9F0A)
+        )
+
+        TimeForFood.LUNCH -> Triple(
+            R.string.time_lunch,
+            Icons.Default.Restaurant,
+            Color(0xFF34C759)
+        )
+
+        TimeForFood.DINNER -> Triple(
+            R.string.time_dinner,
+            Icons.Default.NightsStay,
+            Color(0xFF5E5CE6)
+        )
+
         TimeForFood.SNACK -> Triple(R.string.time_snack, Icons.Default.Eco, Color(0xFF30B0C7))
         TimeForFood.ANY -> Triple(R.string.time_any, Icons.Default.Schedule, Color(0xFF8E8E93))
     }

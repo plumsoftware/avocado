@@ -1,6 +1,6 @@
 package ru.plumsoftware.avocado.ui.screen.main.receipt.details
 
-import android.content.Context
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -15,9 +15,9 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Schedule
-import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,6 +39,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.yandex.mobile.ads.common.AdError
+import com.yandex.mobile.ads.common.AdRequestConfiguration
+import com.yandex.mobile.ads.common.AdRequestError
+import com.yandex.mobile.ads.common.ImpressionData
+import com.yandex.mobile.ads.interstitial.InterstitialAd
+import com.yandex.mobile.ads.interstitial.InterstitialAdEventListener
+import com.yandex.mobile.ads.interstitial.InterstitialAdLoadListener
+import com.yandex.mobile.ads.interstitial.InterstitialAdLoader
 import ru.plumsoftware.avocado.data.base.model.food.Food
 import ru.plumsoftware.avocado.data.user_preferences.UserPreferencesRepository
 import ru.plumsoftware.avocado.ui.modifier.iosClickable
@@ -49,8 +57,11 @@ import ru.plumsoftware.avocado.ui.screen.main.receipt.RecipesViewModel
 import ru.plumsoftware.avocado.ui.screen.onboarding.IOSGreen
 import ru.plumsoftware.avocado.ui.theme.Dimen
 import ru.plumsoftware.avocado.R
+import ru.plumsoftware.avocado.data.ads.AdsConfig
 
 private val HEADER_HEIGHT = 380.dp
+private var interstitialAd: InterstitialAd? = null
+private var interstitialAdLoader: InterstitialAdLoader? = null
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -81,13 +92,50 @@ fun ReceiptDetailScreen(
 
     var showCookingMode by remember { mutableStateOf(false) }
 
+    val activity = LocalActivity.current
+
+    LaunchedEffect(key1 = Unit) {
+        interstitialAdLoader = InterstitialAdLoader(context).apply {
+            setAdLoadListener(object : InterstitialAdLoadListener {
+                override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                    ru.plumsoftware.avocado.ui.screen.main.receipt.details.interstitialAd = interstitialAd
+
+                    interstitialAd.apply {
+                        setAdEventListener(object : InterstitialAdEventListener {
+                            override fun onAdShown() {}
+                            override fun onAdFailedToShow(adError: AdError) {
+                                interstitialAd.setAdEventListener(null)
+                                ru.plumsoftware.avocado.ui.screen.main.receipt.details.interstitialAd = null
+                                navController.popBackStack()
+                            }
+
+                            override fun onAdDismissed() {
+                                interstitialAd.setAdEventListener(null)
+                                ru.plumsoftware.avocado.ui.screen.main.receipt.details.interstitialAd = null
+                                navController.popBackStack()
+                            }
+
+                            override fun onAdClicked() {}
+
+                            override fun onAdImpression(impressionData: ImpressionData?) {}
+                        })
+                    }
+                }
+
+                override fun onAdFailedToLoad(error: AdRequestError) {}
+            })
+        }
+        val adRequestConfiguration =
+            AdRequestConfiguration.Builder(AdsConfig.INTERSTITIAL_ADS_ID).build()
+        interstitialAdLoader?.loadAd(adRequestConfiguration)
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        // --- 1. PARALLAX HEADER ---
-        // ... (Код хедера остается без изменений) ...
+        // --- PARALLAX HEADER ---
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -255,7 +303,12 @@ fun ReceiptDetailScreen(
         Box(
             modifier = Modifier.padding(top = 48.dp, start = 16.dp)
         ) {
-            GlassButton(onClick = { navController.popBackStack() }) {
+            GlassButton(onClick = {
+                if (interstitialAd != null && activity != null)
+                    interstitialAd?.show(activity = activity)
+                else
+                    navController.popBackStack()
+            }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = stringResource(R.string.cd_back),

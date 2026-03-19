@@ -7,9 +7,7 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -24,8 +22,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -39,6 +35,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.yandex.mobile.ads.appopenad.AppOpenAd
+import com.yandex.mobile.ads.appopenad.AppOpenAdEventListener
+import com.yandex.mobile.ads.appopenad.AppOpenAdLoadListener
+import com.yandex.mobile.ads.appopenad.AppOpenAdLoader
+import com.yandex.mobile.ads.common.AdError
+import com.yandex.mobile.ads.common.AdRequestConfiguration
+import com.yandex.mobile.ads.common.AdRequestError
+import com.yandex.mobile.ads.common.ImpressionData
+import com.yandex.mobile.ads.common.MobileAds
+import ru.plumsoftware.avocado.data.ads.AdsConfig
 import ru.plumsoftware.avocado.data.database.AvocadoDatabase
 import ru.plumsoftware.avocado.data.favorite.FavoritesRepository
 import ru.plumsoftware.avocado.data.notification.NotificationArgs
@@ -60,23 +66,25 @@ import ru.plumsoftware.avocado.ui.theme.AvocadoTheme
 import ru.plumsoftware.avocado.ui.theme.Dimen
 
 class MainActivity : ComponentActivity() {
+    private var hasSeenOnboardingThisSession = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 🟢 Запускаем планировщик
+        // Notifications
         NotificationScheduler.scheduleDailyNotification(applicationContext)
 
         if (BuildConfig.DEBUG) {
             DebugNotificationSender.sendTestNotifications(applicationContext)
         }
 
-        // 1. Создаем БД
+        // Variables
         val db = AvocadoDatabase.getDatabase(this)
-        // 2. Создаем Репозиторий
         val favRepo = FavoritesRepository(db.favoriteDao())
         val userRepo = UserPreferencesRepository(this.userPreferencesDataStore)
         val destinationRoute = intent.getStringExtra(NotificationArgs.DESTINATION_ROUTE)
 
+        // Edge to edge
         enableEdgeToEdge(
             navigationBarStyle = SystemBarStyle.auto(
                 lightScrim = TRANSPARENT,
@@ -84,34 +92,32 @@ class MainActivity : ComponentActivity() {
             )
         )
 
+        // Inserts
         ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { view, windowInsets ->
             val insets = windowInsets.getInsets(
                 WindowInsetsCompat.Type.systemGestures()
             )
-            view.updatePadding(
-                0,
-                0,
-                0,
-                0
-            )
+            view.updatePadding(0, 0, 0, 0)
             WindowInsetsCompat.CONSUMED
         }
 
+        // Content
         setContent {
-
+            // Navigation
             val navController = rememberNavController()
             val settingsViewModel: SettingsViewModel = viewModel(
                 factory = SettingsViewModel.Factory(repo = userRepo)
             )
 
+            // Theme
             val themeState by settingsViewModel.currentTheme.collectAsState()
-
             val isDark = when (themeState) {
                 AppTheme.Light -> false
                 AppTheme.Dark -> true
                 AppTheme.System -> isSystemInDarkTheme()
             }
 
+            // MainViewModel
             val mainViewModel = ViewModelProvider(
                 this,
                 MainViewModel.Companion.MainViewModelFactory(userPreferencesRepository = userRepo)
@@ -122,29 +128,63 @@ class MainActivity : ComponentActivity() {
             ) {
                 val startState by mainViewModel.startDestination.collectAsState()
 
+                // Отслеживаем, проходил ли юзер онбординг сейчас
+                if (startState == MainViewModel.StartDestination.Onboarding) {
+                    hasSeenOnboardingThisSession = true
+                }
+
+                // Инициализируем рекламу ТОЛЬКО для 2+ запуска
+                LaunchedEffect(startState) {
+                    if (startState == MainViewModel.StartDestination.Main && !hasSeenOnboardingThisSession) {
+                        // Попали на Main, и онбординга не было = это второй запуск!
+                        MobileAds.initialize(this@MainActivity) {
+                            val appOpenAdLoader = AppOpenAdLoader(this@MainActivity)
+                            val adRequestConfiguration = AdRequestConfiguration.Builder(AdsConfig.APP_OPEN_ADS_ID).build()
+
+                            val appOpenAdLoadListener = object : AppOpenAdLoadListener {
+                                override fun onAdLoaded(appOpenAd: AppOpenAd) {
+                                    // The ad was loaded successfully. Now you can show loaded ad.
+                                    appOpenAd.setAdEventListener(object : AppOpenAdEventListener {
+                                        override fun onAdClicked() {}
+
+                                        override fun onAdDismissed() {}
+
+                                        override fun onAdFailedToShow(adError: AdError) {}
+
+                                        override fun onAdImpression(impressionData: ImpressionData?) {}
+
+                                        override fun onAdShown() {}
+                                    })
+                                    appOpenAd.show(this@MainActivity)
+                                }
+
+                                override fun onAdFailedToLoad(error: AdRequestError) {
+                                    // Ad failed to load with AdRequestError.
+                                    // Attempting to load a new ad from the onAdFailedToLoad() method is strongly discouraged.
+                                }
+                            }
+                            appOpenAdLoader.setAdLoadListener(appOpenAdLoadListener)
+                            appOpenAdLoader.loadAd(adRequestConfiguration)
+                        }
+                    }
+                }
+
                 when (startState) {
                     MainViewModel.StartDestination.Loading -> {
                         Box(
-                            modifier = Modifier
-                                .fillMaxSize(),
+                            modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
                         ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Image(
-                                    painter = painterResource(R.drawable.loading),
+                                    painter = painterResource(R.drawable.loading), // Проверь ресурс
                                     contentDescription = null,
                                     modifier = Modifier.size(200.dp)
                                 )
-
                                 Spacer(modifier = Modifier.height(Dimen.medium))
-
                                 Text(
                                     text = stringResource(R.string.loading),
-                                    style = MaterialTheme.typography.titleMedium.copy(
-                                        fontWeight = FontWeight.Bold
-                                    ),
+                                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
                             }
@@ -164,16 +204,12 @@ class MainActivity : ComponentActivity() {
                             if (destinationRoute != null) {
                                 val parts = destinationRoute.split("/")
                                 if (parts.size == 2) {
-                                    val type = parts[0] // "food" или "receipt"
-                                    val id = parts[1]   // "broccoli" или "avocado_toast"
+                                    val type = parts[0]
+                                    val id = parts[1]
 
                                     when (type) {
-                                        "food" -> {
-                                            navController.navigate(AppDestination.DetailedScreen(foodId = id))
-                                        }
-                                        "receipt" -> {
-                                            navController.navigate(AppDestination.ReceiptDetailRoute(receiptId = id))
-                                        }
+                                        "food" -> navController.navigate(AppDestination.DetailedScreen(foodId = id))
+                                        "receipt" -> navController.navigate(AppDestination.ReceiptDetailRoute(receiptId = id))
                                     }
                                 }
                             }
@@ -212,15 +248,8 @@ class MainActivity : ComponentActivity() {
                                         isFavorite = favorites.contains(foodItem.id),
                                         onBackClick = { navController.popBackStack() },
                                         onLikeClick = { viewModel.onLikeClick(foodItem.id) },
-                                        onGetColor = { res, ctx ->
-                                            viewModel.getBackgroundColorForFood(
-                                                res,
-                                                ctx
-                                            )
-                                        },
-                                        onReceiptClick = { receiptId ->
-                                            navController.navigate(AppDestination.ReceiptDetailRoute(receiptId))
-                                        }
+                                        onGetColor = { res, ctx -> viewModel.getBackgroundColorForFood(res, ctx) },
+                                        onReceiptClick = { receiptId -> navController.navigate(AppDestination.ReceiptDetailRoute(receiptId)) }
                                     )
                                 } else {
                                     Text("Продукт не найден")
@@ -230,10 +259,7 @@ class MainActivity : ComponentActivity() {
                             composable<AppDestination.Onboarding> {
                                 OnboardingScreen(
                                     onFinish = { goals, restrictions ->
-                                        // Сохраняем новые настройки
                                         mainViewModel.finishOnboarding(goals, restrictions)
-
-                                        // Возвращаемся назад в настройки (закрываем онбординг)
                                         navController.popBackStack()
                                     }
                                 )

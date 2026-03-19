@@ -23,6 +23,8 @@ android {
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("int", "PLATFORM", "1")
     }
 
     buildTypes {
@@ -48,6 +50,9 @@ android {
     kotlinOptions {
         jvmTarget = "11"
         freeCompilerArgs = listOf("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
+    }
+    lintOptions {
+        disable += "MobileAdsSdkOutdatedVersion"
     }
 }
 
@@ -107,9 +112,12 @@ dependencies {
     implementation(libs.androidx.palette.ktx)
 
     // Room
-    implementation("androidx.room:room-runtime:2.8.4")
-    ksp("androidx.room:room-compiler:2.8.4")
-    implementation("androidx.room:room-ktx:2.8.4")
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
+
+    // Ads
+    implementation(libs.mobileads)
 
     // Worker
     implementation(libs.androidx.work.runtime.ktx)
