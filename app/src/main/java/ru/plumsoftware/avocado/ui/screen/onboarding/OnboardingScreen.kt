@@ -41,6 +41,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Arrangement
 import androidx.core.content.ContextCompat
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.rounded.CheckCircle
@@ -323,7 +324,7 @@ fun WelcomePage(onPrivacyClick: () -> Unit) {
         Spacer(modifier = Modifier.height(32.dp))
         OnboardingDisclaimer()
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(Dimen.medium))
 
         // --- ССЫЛКА НА ПОЛИТИКУ КОНФИДЕНЦИАЛЬНОСТИ ---
         Column(horizontalAlignment = Alignment.CenterHorizontally) {

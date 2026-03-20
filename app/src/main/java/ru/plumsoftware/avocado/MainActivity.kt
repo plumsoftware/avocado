@@ -140,7 +140,8 @@ class MainActivity : ComponentActivity() {
                         // Попали на Main, и онбординга не было = это второй запуск!
                         MobileAds.initialize(this@MainActivity) {
                             val appOpenAdLoader = AppOpenAdLoader(this@MainActivity)
-                            val adRequestConfiguration = AdRequestConfiguration.Builder(AdsConfig.APP_OPEN_ADS_ID).build()
+                            val adRequestConfiguration =
+                                AdRequestConfiguration.Builder(AdsConfig.APP_OPEN_ADS_ID).build()
 
                             val appOpenAdLoadListener = object : AppOpenAdLoadListener {
                                 override fun onAdLoaded(appOpenAd: AppOpenAd) {
@@ -170,130 +171,155 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                when (startState) {
-                    MainViewModel.StartDestination.Loading -> {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Image(
-                                    painter = painterResource(R.drawable.loading), // Проверь ресурс
-                                    contentDescription = null,
-                                    modifier = Modifier.size(200.dp)
-                                )
-                                Spacer(modifier = Modifier.height(Dimen.medium))
-                                Text(
-                                    text = stringResource(R.string.loading),
-                                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
+                // Логика загрузки (оставляем снаружи навигации, чтобы не дергать граф)
+                if (startState == MainViewModel.StartDestination.Loading) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Image(
+                                painter = painterResource(R.drawable.loading),
+                                contentDescription = null,
+                                modifier = Modifier.size(200.dp)
+                            )
+                            Spacer(modifier = Modifier.height(Dimen.medium))
+                            Text(
+                                text = stringResource(R.string.loading),
+                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                    }
+                } else {
+                    // 🔥 РЕШЕНИЕ: Динамически определяем стартовый экран для NavHost
+                    val startRoute: Any =
+                        if (startState == MainViewModel.StartDestination.Onboarding) {
+                            AppDestination.Onboarding
+                        } else {
+                            AppDestination.MainScreen
+                        }
+
+                    // Обработка диплинков
+                    LaunchedEffect(destinationRoute) {
+                        if (destinationRoute != null && startState == MainViewModel.StartDestination.Main) {
+                            val parts = destinationRoute.split("/")
+                            if (parts.size == 2) {
+                                val type = parts[0]
+                                val id = parts[1]
+
+                                when (type) {
+                                    "food" -> navController.navigate(
+                                        AppDestination.DetailedScreen(
+                                            foodId = id
+                                        )
+                                    )
+
+                                    "receipt" -> navController.navigate(
+                                        AppDestination.ReceiptDetailRoute(
+                                            receiptId = id
+                                        )
+                                    )
+                                }
                             }
                         }
                     }
 
-                    MainViewModel.StartDestination.Onboarding -> {
-                        OnboardingScreen(
-                            onFinish = { goals, restrictions ->
-                                mainViewModel.finishOnboarding(goals, restrictions)
-                            },
-                            onPrivacyClick = {
-                                navController.navigate(AppDestination.PrivacyPolicy)
-                            }
-                        )
-                    }
-
-                    MainViewModel.StartDestination.Main -> {
-                        LaunchedEffect(destinationRoute) {
-                            if (destinationRoute != null) {
-                                val parts = destinationRoute.split("/")
-                                if (parts.size == 2) {
-                                    val type = parts[0]
-                                    val id = parts[1]
-
-                                    when (type) {
-                                        "food" -> navController.navigate(AppDestination.DetailedScreen(foodId = id))
-                                        "receipt" -> navController.navigate(AppDestination.ReceiptDetailRoute(receiptId = id))
+                    // 🔥 ЕДИНЫЙ NAVHOST ДЛЯ ВСЕГО ПРИЛОЖЕНИЯ
+                    NavHost(
+                        navController = navController,
+                        startDestination = startRoute
+                    ) {
+                        // 1. ОНБОРДИНГ ТЕПЕРЬ ВНУТРИ NAVHOST!
+                        composable<AppDestination.Onboarding> {
+                            OnboardingScreen(
+                                onFinish = { goals, restrictions ->
+                                    // Сохраняем в память
+                                    mainViewModel.finishOnboarding(goals, restrictions)
+                                    // Переключаемся на главный экран и очищаем стек, чтобы нельзя было вернуться назад кнопкой "Назад"
+                                    navController.navigate(AppDestination.MainScreen) {
+                                        popUpTo(AppDestination.Onboarding) { inclusive = true }
                                     }
+                                },
+                                onPrivacyClick = {
+                                    // Теперь navController знает про этот экран и не упадет!
+                                    navController.navigate(AppDestination.PrivacyPolicy)
                                 }
-                            }
+                            )
                         }
 
-                        NavHost(
-                            navController = navController,
-                            startDestination = AppDestination.MainScreen
-                        ) {
-                            composable<AppDestination.MainScreen> {
-                                MainScreen(
-                                    userPreferencesRepository = userRepo,
-                                    settingsViewModel = settingsViewModel,
-                                    navController = navController,
-                                    favoritesRepository = favRepo
-                                )
-                            }
+                        // 2. ГЛАВНЫЙ ЭКРАН
+                        composable<AppDestination.MainScreen> {
+                            MainScreen(
+                                userPreferencesRepository = userRepo,
+                                settingsViewModel = settingsViewModel,
+                                navController = navController,
+                                favoritesRepository = favRepo
+                            )
+                        }
 
-                            composable<AppDestination.PrivacyPolicy> {
-                                PrivacyPolicyScreen(
-                                    onBackClick = { navController.popBackStack() }
-                                )
-                            }
+                        // 3. ПОЛИТИКА КОНФИДЕНЦИАЛЬНОСТИ
+                        composable<AppDestination.PrivacyPolicy> {
+                            PrivacyPolicyScreen(
+                                onBackClick = { navController.popBackStack() }
+                            )
+                        }
 
-                            composable<AppDestination.DetailedScreen> { backStackEntry ->
-                                val args = backStackEntry.toRoute<AppDestination.DetailedScreen>()
+                        // 4. ДЕТАЛИ ПРОДУКТА
+                        composable<AppDestination.DetailedScreen> { backStackEntry ->
+                            val args = backStackEntry.toRoute<AppDestination.DetailedScreen>()
 
-                                val viewModel: ListViewModel = viewModel(
-                                    factory = ListViewModel.Companion.ListViewModelFactory(
-                                        favoritesRepository = favRepo,
-                                        userPreferencesRepository = userRepo,
-                                        context = this@MainActivity
-                                    )
-                                )
-
-                                val foodItem = remember { viewModel.getFoodById(args.foodId) }
-                                val favorites by viewModel.favoriteIds.collectAsState()
-
-                                if (foodItem != null) {
-                                    ProductDetailScreen(
-                                        item = foodItem,
-                                        isFavorite = favorites.contains(foodItem.id),
-                                        onBackClick = { navController.popBackStack() },
-                                        onLikeClick = { viewModel.onLikeClick(foodItem.id) },
-                                        onGetColor = { res, ctx -> viewModel.getBackgroundColorForFood(res, ctx) },
-                                        onReceiptClick = { receiptId -> navController.navigate(AppDestination.ReceiptDetailRoute(receiptId)) }
-                                    )
-                                } else {
-                                    Text("Продукт не найден")
-                                }
-                            }
-
-                            composable<AppDestination.Onboarding> {
-                                OnboardingScreen(
-                                    onFinish = { goals, restrictions ->
-                                        mainViewModel.finishOnboarding(goals, restrictions)
-                                        navController.popBackStack()
-                                    },
-                                    onPrivacyClick = {
-                                        navController.navigate(AppDestination.PrivacyPolicy)
-                                    }
-                                )
-                            }
-
-                            composable<AppDestination.Favorite> {
-                                FavoriteScreen(
+                            val viewModel: ListViewModel = viewModel(
+                                factory = ListViewModel.Companion.ListViewModelFactory(
                                     favoritesRepository = favRepo,
-                                    navController = navController
+                                    userPreferencesRepository = userRepo,
+                                    context = this@MainActivity
                                 )
-                            }
+                            )
 
-                            composable<AppDestination.ReceiptDetailRoute> { backStackEntry ->
-                                val args = backStackEntry.toRoute<AppDestination.ReceiptDetailRoute>()
+                            val foodItem = remember { viewModel.getFoodById(args.foodId) }
+                            val favorites by viewModel.favoriteIds.collectAsState()
 
-                                ReceiptDetailScreen(
-                                    receiptId = args.receiptId,
-                                    navController = navController,
-                                    userPreferencesRepository = userRepo
+                            if (foodItem != null) {
+                                ProductDetailScreen(
+                                    item = foodItem,
+                                    isFavorite = favorites.contains(foodItem.id),
+                                    onBackClick = { navController.popBackStack() },
+                                    onLikeClick = { viewModel.onLikeClick(foodItem.id) },
+                                    onGetColor = { res, ctx ->
+                                        viewModel.getBackgroundColorForFood(
+                                            res,
+                                            ctx
+                                        )
+                                    },
+                                    onReceiptClick = { receiptId ->
+                                        navController.navigate(
+                                            AppDestination.ReceiptDetailRoute(receiptId)
+                                        )
+                                    }
                                 )
+                            } else {
+                                Text("Продукт не найден")
                             }
+                        }
+
+                        // 5. ИЗБРАННОЕ
+                        composable<AppDestination.Favorite> {
+                            FavoriteScreen(
+                                favoritesRepository = favRepo,
+                                navController = navController
+                            )
+                        }
+
+                        // 6. ДЕТАЛИ РЕЦЕПТА
+                        composable<AppDestination.ReceiptDetailRoute> { backStackEntry ->
+                            val args = backStackEntry.toRoute<AppDestination.ReceiptDetailRoute>()
+
+                            ReceiptDetailScreen(
+                                receiptId = args.receiptId,
+                                navController = navController,
+                                userPreferencesRepository = userRepo
+                            )
                         }
                     }
                 }
