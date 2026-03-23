@@ -107,7 +107,7 @@ fun FavoriteScreen(
                             } else {
                                 // 2. Избранное есть, но поиск ничего не нашел
                                 Text(
-                                    text = "Ничего не найдено",
+                                    text = stringResource(R.string.search_no_results),
                                     style = MaterialTheme.typography.bodyLarge,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -172,6 +172,10 @@ fun FavoriteScreen(
                     isSearchFocused = isSearchFocused,
                     onFocusChange = { isSearchFocused = it },
                     onFilterClick = {}, // Фильтр тут не нужен
+                    onCartClick = {
+                        // Предполагается, что ты добавил объект ShoppingList в AppDestination
+                        navController.navigate(AppDestination.ShoppingList)
+                    },
                 )
             }
         }

@@ -18,11 +18,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -35,8 +37,10 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ru.plumsoftware.avocado.R
 import ru.plumsoftware.avocado.ui.modifier.iosClickable
 import ru.plumsoftware.avocado.ui.theme.Dimen
 
@@ -47,6 +51,7 @@ fun IOSTopBar(
     isSearchFocused: Boolean,
     onFocusChange: (Boolean) -> Unit,
     onFilterClick: () -> Unit,
+    onCartClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val searchBarColor = MaterialTheme.colorScheme.surfaceVariant
@@ -59,9 +64,10 @@ fun IOSTopBar(
             .padding(horizontal = Dimen.medium),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        // --- 1. СТРОКА ПОИСКА ---
         Box(
             modifier = Modifier
-                .weight(1f)
+                .weight(1f) // Занимает всё свободное место
                 .height(36.dp)
                 .clip(RoundedCornerShape(10.dp))
                 .background(searchBarColor)
@@ -96,7 +102,7 @@ fun IOSTopBar(
                         Box(modifier = Modifier.weight(1f)) {
                             if (searchQuery.isEmpty()) {
                                 Text(
-                                    text = "Поиск",
+                                    text = stringResource(R.string.search_placeholder),
                                     style = MaterialTheme.typography.bodyLarge,
                                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
                                 )
@@ -107,7 +113,7 @@ fun IOSTopBar(
                         if (searchQuery.isNotEmpty()) {
                             Icon(
                                 imageVector = Icons.Default.Cancel,
-                                contentDescription = "Очистить",
+                                contentDescription = stringResource(R.string.search_clear),
                                 tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
                                 modifier = Modifier
                                     .size(16.dp)
@@ -119,8 +125,7 @@ fun IOSTopBar(
             )
         }
 
-        // 4. КНОПКА "ОТМЕНА"
-        // Используем expandHorizontally, чтобы она "расталкивала" место для себя
+        // --- 2. КНОПКА "ОТМЕНА" (Показывается при поиске) ---
         AnimatedVisibility(
             visible = isSearchFocused,
             enter = expandHorizontally(expandFrom = Alignment.Start) + fadeIn(),
@@ -128,10 +133,10 @@ fun IOSTopBar(
         ) {
             Box(
                 modifier = Modifier
-                    .padding(start = 12.dp)
+                    .padding(start = Dimen.mediumAboveHalf)
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
-                        indication = null // Убираем ripple эффект как в iOS
+                        indication = null
                     ) {
                         onSearchQueryChange("")
                         onFocusChange(false)
@@ -140,10 +145,32 @@ fun IOSTopBar(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Отмена",
+                    text = stringResource(R.string.search_cancel),
                     color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(vertical = 4.dp) // Увеличиваем высоту клика
+                    modifier = Modifier.padding(vertical = 4.dp)
+                )
+            }
+        }
+
+        // --- 3. ИКОНКА КОРЗИНЫ (Показывается, когда поиск не активен) ---
+        AnimatedVisibility(
+            visible = !isSearchFocused,
+            enter = fadeIn() + expandHorizontally(),
+            exit = fadeOut() + shrinkHorizontally()
+        ) {
+            Box(
+                modifier = Modifier
+                    .padding(start = Dimen.mediumHalf)
+                    .size(36.dp)
+                    .clip(CircleShape)
+                    .iosClickable { onCartClick() }, // Клик по корзине
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.ShoppingCart,
+                    contentDescription = stringResource(R.string.cd_shopping_cart), // ИЗМЕНЕНО
+                    tint = MaterialTheme.colorScheme.onSurface // Цвет под тему
                 )
             }
         }

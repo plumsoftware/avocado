@@ -32,6 +32,7 @@
 
     <string name="favorites_empty_title">Пока пусто</string>
     <string name="favorites_empty_desc">Добавляйте любимые продукты и рецепты, чтобы они всегда были под рукой.</string>
+    <string name="cd_shopping_cart">Список покупок</string>
 
     <!-- ============================================== -->
     <!-- ОНБОРДИНГ / ONBOARDING                         -->
@@ -648,4 +649,11 @@
         <p>Если у вас есть вопросы или предложения, вы можете связаться с Поставщиком услуг по email:<br><b>plumsoftwareofficial@gmail.com</b></p>
         <br><br>
     ]]></string>
+
+    <!-- СПИСОК ПОКУПОК -->
+    <string name="shopping_add_to_cart">Добавить в покупки</string>
+    <string name="shopping_cart_title">Список покупок</string>
+    <string name="shopping_cart_empty">Ваша корзина пуста</string>
+    <string name="shopping_btn_clear">Очистить</string>
+    <string name="cd_delete">Удалить</string>
 </resources>

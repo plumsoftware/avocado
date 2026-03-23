@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import ru.plumsoftware.avocado.data.favorite.FavoritesRepository
+import ru.plumsoftware.avocado.data.shopping.ShoppingRepository
 import ru.plumsoftware.avocado.data.user_preferences.UserPreferencesRepository
 import ru.plumsoftware.avocado.ui.screen.main.elements.BottomNavBar
 import ru.plumsoftware.avocado.ui.screen.main.favorite.FavoriteScreen
@@ -34,6 +35,7 @@ fun MainScreen(
     userPreferencesRepository: UserPreferencesRepository,
     favoritesRepository: FavoritesRepository,
     settingsViewModel: SettingsViewModel,
+    shoppingRepository: ShoppingRepository,
     navController: NavHostController
 ) {
 
@@ -66,7 +68,8 @@ fun MainScreen(
                 MainScreenStates.Rec -> {
                     RecipesScreen(
                         navController = navController,
-                        userPreferencesRepository = userPreferencesRepository
+                        userPreferencesRepository = userPreferencesRepository,
+                        shoppingRepository = shoppingRepository
                     )
                 }
                 MainScreenStates.Settings -> {

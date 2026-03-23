@@ -43,16 +43,18 @@ import ru.plumsoftware.avocado.ui.screen.onboarding.IOSGreen
 import ru.plumsoftware.avocado.ui.theme.Dimen
 import ru.plumsoftware.avocado.R
 import ru.plumsoftware.avocado.data.onboarding.UserGoal
+import ru.plumsoftware.avocado.data.shopping.ShoppingRepository
 import ru.plumsoftware.avocado.data.user_preferences.UserPreferencesRepository
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun RecipesScreen(
     navController: NavHostController,
-    userPreferencesRepository: UserPreferencesRepository
+    userPreferencesRepository: UserPreferencesRepository,
+    shoppingRepository: ShoppingRepository
 ) {
     val viewModel: RecipesViewModel =
-        viewModel(factory = RecipesViewModel.Factory(userPrefsRepo = userPreferencesRepository))
+        viewModel(factory = RecipesViewModel.Factory(userPrefsRepo = userPreferencesRepository, shoppingRepository = shoppingRepository))
 
     val featuredReceipts by viewModel.featuredReceipts.collectAsState()
     val recipeList by viewModel.recipeList.collectAsState()

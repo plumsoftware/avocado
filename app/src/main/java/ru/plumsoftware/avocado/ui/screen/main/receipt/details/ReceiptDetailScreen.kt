@@ -16,6 +16,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.rounded.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -59,6 +60,7 @@ import ru.plumsoftware.avocado.ui.screen.onboarding.IOSGreen
 import ru.plumsoftware.avocado.ui.theme.Dimen
 import ru.plumsoftware.avocado.R
 import ru.plumsoftware.avocado.data.ads.AdsConfig
+import ru.plumsoftware.avocado.data.shopping.ShoppingRepository
 
 private val HEADER_HEIGHT = 380.dp
 private var interstitialAd: InterstitialAd? = null
@@ -69,10 +71,11 @@ private var interstitialAdLoader: InterstitialAdLoader? = null
 fun ReceiptDetailScreen(
     receiptId: String,
     navController: NavController,
-    userPreferencesRepository: UserPreferencesRepository
+    userPreferencesRepository: UserPreferencesRepository,
+    shoppingRepository: ShoppingRepository
 ) {
     val viewModel: RecipesViewModel =
-        viewModel(factory = RecipesViewModel.Factory(userPrefsRepo = userPreferencesRepository))
+        viewModel(factory = RecipesViewModel.Factory(userPrefsRepo = userPreferencesRepository, shoppingRepository = shoppingRepository))
     val receipt = remember { viewModel.getReceiptById(receiptId) }
 
     if (receipt == null) {
@@ -296,6 +299,37 @@ fun ReceiptDetailScreen(
                             }
                         }
                     }
+
+                    Spacer(modifier = Modifier.height(Dimen.medium))
+
+                    // 🛒 КНОПКА ДОБАВИТЬ В КОРЗИНУ
+                    Box(
+                        modifier = Modifier
+                            .clip(MaterialTheme.shapes.medium)
+                            .background(MaterialTheme.colorScheme.surfaceVariant)
+                            .iosClickable {
+                                viewModel.addIngredientsToCart(ingredients)
+                            }
+                            .padding(horizontal = Dimen.medium, vertical = Dimen.mediumHalf)
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Rounded.ShoppingCart,
+                                contentDescription = null,
+                                tint = IOSGreen,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Spacer(modifier = Modifier.width(Dimen.mediumHalf))
+                            Text(
+                                text = stringResource(R.string.shopping_add_to_cart), // ИЗМЕНЕНО
+                                style = MaterialTheme.typography.labelLarge.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    color = IOSGreen
+                                )
+                            )
+                        }
+                    }
+
                     Spacer(modifier = Modifier.height(32.dp))
                 }
 

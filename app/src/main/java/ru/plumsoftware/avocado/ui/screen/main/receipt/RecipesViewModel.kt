@@ -10,15 +10,19 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import ru.plumsoftware.avocado.data.base.model.food.Food
 import ru.plumsoftware.avocado.data.base.model.receipt.RecipeCategory
 import ru.plumsoftware.avocado.data.base.model.receipt.TypicalReceipt
 import ru.plumsoftware.avocado.data.onboarding.UserGoal
+import ru.plumsoftware.avocado.data.shopping.ShoppingItemEntity
+import ru.plumsoftware.avocado.data.shopping.ShoppingRepository
 import ru.plumsoftware.avocado.data.user_preferences.UserPreferencesRepository
 import kotlin.collections.take
 
 class RecipesViewModel(
-    userPreferencesRepository: UserPreferencesRepository
+    userPreferencesRepository: UserPreferencesRepository,
+    private val shoppingRepository: ShoppingRepository
 ) : ViewModel() {
 
     // --- ДАННЫЕ (MOCK DATA) ---
@@ -77,11 +81,25 @@ class RecipesViewModel(
         return ru.plumsoftware.avocado.data.base.model.food.allFood.filter { it.id in ids }
     }
 
+    fun addIngredientsToCart(foods: List<Food>) {
+        viewModelScope.launch {
+            val entities = foods.map {
+                ShoppingItemEntity(
+                    foodId = it.id,
+                    titleRes = it.titleRes,
+                    foodType = it.foodType,
+                    imageRes = it.imageRes
+                )
+            }
+            shoppingRepository.addItems(entities)
+        }
+    }
+
     // Фабрика
-    class Factory(private val userPrefsRepo: UserPreferencesRepository) : ViewModelProvider.Factory {
+    class Factory(private val userPrefsRepo: UserPreferencesRepository, private val shoppingRepository: ShoppingRepository) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return RecipesViewModel(userPrefsRepo) as T
+            return RecipesViewModel(userPreferencesRepository = userPrefsRepo, shoppingRepository = shoppingRepository) as T
         }
     }
 }

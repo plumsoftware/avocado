@@ -50,6 +50,7 @@ import ru.plumsoftware.avocado.data.favorite.FavoritesRepository
 import ru.plumsoftware.avocado.data.notification.NotificationArgs
 import ru.plumsoftware.avocado.data.notification.worker.DebugNotificationSender
 import ru.plumsoftware.avocado.data.notification.worker.NotificationScheduler
+import ru.plumsoftware.avocado.data.shopping.ShoppingRepository
 import ru.plumsoftware.avocado.data.user_preferences.UserPreferencesRepository
 import ru.plumsoftware.avocado.data.user_preferences.util.AppTheme
 import ru.plumsoftware.avocado.data.user_preferences.util.userPreferencesDataStore
@@ -61,6 +62,7 @@ import ru.plumsoftware.avocado.ui.screen.main.favorite.FavoriteScreen
 import ru.plumsoftware.avocado.ui.screen.main.list.ListViewModel
 import ru.plumsoftware.avocado.ui.screen.main.receipt.details.ReceiptDetailScreen
 import ru.plumsoftware.avocado.ui.screen.main.settings.SettingsViewModel
+import ru.plumsoftware.avocado.ui.screen.main.shopping.ShoppingScreen
 import ru.plumsoftware.avocado.ui.screen.onboarding.OnboardingScreen
 import ru.plumsoftware.avocado.ui.screen.privacy_policy.PrivacyPolicyScreen
 import ru.plumsoftware.avocado.ui.theme.AvocadoTheme
@@ -83,6 +85,7 @@ class MainActivity : ComponentActivity() {
         val db = AvocadoDatabase.getDatabase(this)
         val favRepo = FavoritesRepository(db.favoriteDao())
         val userRepo = UserPreferencesRepository(this.userPreferencesDataStore)
+        val shoppingRepo = ShoppingRepository(db.shoppingDao())
         val destinationRoute = intent.getStringExtra(NotificationArgs.DESTINATION_ROUTE)
 
         // Edge to edge
@@ -253,6 +256,7 @@ class MainActivity : ComponentActivity() {
                             MainScreen(
                                 userPreferencesRepository = userRepo,
                                 settingsViewModel = settingsViewModel,
+                                shoppingRepository = shoppingRepo,
                                 navController = navController,
                                 favoritesRepository = favRepo
                             )
@@ -318,7 +322,15 @@ class MainActivity : ComponentActivity() {
                             ReceiptDetailScreen(
                                 receiptId = args.receiptId,
                                 navController = navController,
-                                userPreferencesRepository = userRepo
+                                userPreferencesRepository = userRepo,
+                                shoppingRepository = shoppingRepo
+                            )
+                        }
+
+                        composable<AppDestination.ShoppingList> { backStackEntry ->
+                            ShoppingScreen(
+                                navController = navController,
+                                shoppingRepository = shoppingRepo
                             )
                         }
                     }

@@ -23,4 +23,7 @@ object AppDestination {
 
     @Serializable
     data object PrivacyPolicy
+
+    @Serializable
+    data object ShoppingList
 }

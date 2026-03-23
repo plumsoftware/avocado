@@ -236,6 +236,10 @@ fun MainListScreen(
                     isSearchFocused = isSearchFocused,
                     onFocusChange = { isSearchFocused = it },
                     onFilterClick = {},
+                    onCartClick = {
+                        // Предполагается, что ты добавил объект ShoppingList в AppDestination
+                        navController.navigate(AppDestination.ShoppingList)
+                    },
                 )
             }
         }
