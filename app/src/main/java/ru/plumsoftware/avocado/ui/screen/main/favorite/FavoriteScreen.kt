@@ -49,23 +49,30 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.plumsoftware.avocado.R
 import ru.plumsoftware.avocado.data.base.model.food.Food
+import ru.plumsoftware.avocado.data.shopping.ShoppingRepository
 import ru.plumsoftware.avocado.ui.screen.AppDestination
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.food.FoodCard
 
 @Composable
 fun FavoriteScreen(
     favoritesRepository: FavoritesRepository,
-    navController: NavHostController
+    navController: NavHostController,
+    shoppingRepository: ShoppingRepository
 ) {
     val context = LocalContext.current
 
     // Передаем Context в фабрику
     val viewModel: FavoriteViewModel = viewModel(
-        factory = FavoriteViewModel.Companion.Factory(favoritesRepository, context.applicationContext)
+        factory = FavoriteViewModel.Companion.Factory(
+            favoritesRepository,
+            context = context.applicationContext,
+            shoppingRepository = shoppingRepository
+        )
     )
 
     val favoriteItems by viewModel.favoriteFood.collectAsState()
     val isDatabaseEmpty by viewModel.isDatabaseEmpty.collectAsState()
+    val cartItemsCount by viewModel.cartItemsCount.collectAsState()
 
     // Состояния поиска
     val searchQuery by viewModel.searchQuery.collectAsState()
@@ -133,9 +140,20 @@ fun FavoriteScreen(
                             item = item,
                             isFavorite = true,
                             modifier = Modifier.fillMaxWidth(),
-                            onGetColor = { res, ctx -> viewModel.getBackgroundColorForFood(res, ctx) },
+                            onGetColor = { res, ctx ->
+                                viewModel.getBackgroundColorForFood(
+                                    res,
+                                    ctx
+                                )
+                            },
                             onLikeClick = { viewModel.onLikeClick(item.id) },
-                            onFoodClick = { navController.navigate(AppDestination.DetailedScreen(foodId = item.id)) }
+                            onFoodClick = {
+                                navController.navigate(
+                                    AppDestination.DetailedScreen(
+                                        foodId = item.id
+                                    )
+                                )
+                            }
                         )
                     }
                 }
@@ -171,7 +189,8 @@ fun FavoriteScreen(
                     onSearchQueryChange = { viewModel.onSearchQueryChange(it) },
                     isSearchFocused = isSearchFocused,
                     onFocusChange = { isSearchFocused = it },
-                    onFilterClick = {}, // Фильтр тут не нужен
+                    onFilterClick = {},
+                    cartItemsCount = cartItemsCount,
                     onCartClick = {
                         // Предполагается, что ты добавил объект ShoppingList в AppDestination
                         navController.navigate(AppDestination.ShoppingList)
@@ -181,6 +200,7 @@ fun FavoriteScreen(
         }
     }
 }
+
 // Красивая заглушка, если пусто
 @Composable
 fun EmptyFavoritesState(modifier: Modifier = Modifier) {

@@ -14,6 +14,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Bolt
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.rounded.ShoppingCart
@@ -61,6 +62,7 @@ import ru.plumsoftware.avocado.ui.theme.Dimen
 import ru.plumsoftware.avocado.R
 import ru.plumsoftware.avocado.data.ads.AdsConfig
 import ru.plumsoftware.avocado.data.shopping.ShoppingRepository
+import ru.plumsoftware.avocado.ui.screen.main.elements.IOSAlertDialog
 
 private val HEADER_HEIGHT = 380.dp
 private var interstitialAd: InterstitialAd? = null
@@ -91,6 +93,10 @@ fun ReceiptDetailScreen(
     val ingredients = remember { viewModel.getIngredients(receipt.relatedFood) }
     val scrollState = rememberScrollState()
     val context = LocalContext.current
+
+    // СОСТОЯНИЯ ДЛЯ КОРЗИНЫ
+    var isAddedToCart by remember { mutableStateOf(false) }
+    var showSuccessDialog by remember { mutableStateOf(false) }
 
     val rawInstructions = stringResource(receipt.receiptText)
     val steps = remember(rawInstructions) {
@@ -306,25 +312,41 @@ fun ReceiptDetailScreen(
                     Box(
                         modifier = Modifier
                             .clip(MaterialTheme.shapes.medium)
-                            .background(MaterialTheme.colorScheme.surfaceVariant)
-                            .iosClickable {
-                                viewModel.addIngredientsToCart(ingredients)
-                            }
+                            // Если добавлено - серый цвет, если нет - светло-зеленый (или как у тебя было)
+                            .background(
+                                if (isAddedToCart) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                                else MaterialTheme.colorScheme.surfaceVariant
+                            )
+                            // Клик работает только если еще НЕ добавлено
+                            .then(
+                                if (!isAddedToCart) {
+                                    Modifier.iosClickable {
+                                        // 1. Вызываем метод ViewModel для сохранения в БД
+                                        viewModel.addIngredientsToCart(ingredients)
+                                        // 2. Меняем состояния для UI
+                                        isAddedToCart = true
+                                        showSuccessDialog = true
+                                    }
+                                } else Modifier
+                            )
                             .padding(horizontal = Dimen.medium, vertical = Dimen.mediumHalf)
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
-                                imageVector = Icons.Rounded.ShoppingCart,
+                                // Иконка меняется с Корзины на Галочку
+                                imageVector = if (isAddedToCart) Icons.Default.Check else Icons.Rounded.ShoppingCart,
                                 contentDescription = null,
-                                tint = IOSGreen,
+                                tint = if (isAddedToCart) MaterialTheme.colorScheme.onSurfaceVariant else IOSGreen,
                                 modifier = Modifier.size(18.dp)
                             )
                             Spacer(modifier = Modifier.width(Dimen.mediumHalf))
                             Text(
-                                text = stringResource(R.string.shopping_add_to_cart), // ИЗМЕНЕНО
+                                // Текст меняется
+                                text = if (isAddedToCart) stringResource(R.string.shopping_added_btn)
+                                else stringResource(R.string.shopping_add_to_cart),
                                 style = MaterialTheme.typography.labelLarge.copy(
                                     fontWeight = FontWeight.Bold,
-                                    color = IOSGreen
+                                    color = if (isAddedToCart) MaterialTheme.colorScheme.onSurfaceVariant else IOSGreen
                                 )
                             )
                         }
@@ -380,6 +402,15 @@ fun ReceiptDetailScreen(
             ingredients = ingredients,
             steps = steps,
             onDismiss = { showCookingMode = false }
+        )
+    }
+
+    if (showSuccessDialog) {
+        IOSAlertDialog(
+            title = stringResource(R.string.dialog_added_title),
+            message = stringResource(R.string.dialog_added_msg),
+            buttonText = stringResource(R.string.dialog_btn_ok),
+            onDismiss = { showSuccessDialog = false }
         )
     }
 }

@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -24,6 +25,7 @@ import ru.plumsoftware.avocado.data.database.AvocadoDatabase
 import ru.plumsoftware.avocado.data.favorite.FavoritesRepository
 import ru.plumsoftware.avocado.data.onboarding.UserGoal
 import ru.plumsoftware.avocado.data.onboarding.UserRestriction
+import ru.plumsoftware.avocado.data.shopping.ShoppingRepository
 import ru.plumsoftware.avocado.data.user_preferences.UserPreferencesRepository
 import ru.plumsoftware.avocado.ui.log
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.filter.Filter
@@ -32,30 +34,40 @@ import ru.plumsoftware.avocado.ui.screen.main.list.elements.food.FoodColorCache
 class ListViewModel(
     private val favoritesRepository: FavoritesRepository,
     private val userPreferencesRepository: UserPreferencesRepository,
+    private val shoppingRepository: ShoppingRepository,
     private val context: Context
 ) : ViewModel() {
 
-    private val filters_ = MutableStateFlow(ru.plumsoftware.avocado.ui.screen.main.list.elements.filter.filters.toMutableList())
+    private val filters_ =
+        MutableStateFlow(ru.plumsoftware.avocado.ui.screen.main.list.elements.filter.filters.toMutableList())
     val filters = filters_.asStateFlow()
 
     private val selectedFilter_ = MutableStateFlow(Filter.empty())
     val selectedFilter = selectedFilter_.asStateFlow()
 
     // Списки продуктов (как было)
-    private val recomendedOnBreakfast_ = MutableStateFlow(ru.plumsoftware.avocado.ui.screen.main.list.elements.food.recomendedOnBreakfast.toMutableList())
+    private val recomendedOnBreakfast_ =
+        MutableStateFlow(ru.plumsoftware.avocado.ui.screen.main.list.elements.food.recomendedOnBreakfast.toMutableList())
     val recomendedOnBreakfast = recomendedOnBreakfast_.asStateFlow()
 
-    private val withFiber_ = MutableStateFlow(ru.plumsoftware.avocado.ui.screen.main.list.elements.food.withFiber.toMutableList())
+    private val withFiber_ =
+        MutableStateFlow(ru.plumsoftware.avocado.ui.screen.main.list.elements.food.withFiber.toMutableList())
     val withFiber = withFiber_.asStateFlow()
 
-    val heavyProtein_ = MutableStateFlow(ru.plumsoftware.avocado.ui.screen.main.list.elements.food.top7HighProteinFoods.toMutableList())
+    val heavyProtein_ =
+        MutableStateFlow(ru.plumsoftware.avocado.ui.screen.main.list.elements.food.top7HighProteinFoods.toMutableList())
     val heavyProtein = heavyProtein_.asStateFlow()
 
-    val healthyFatsItems_ = MutableStateFlow(ru.plumsoftware.avocado.ui.screen.main.list.elements.food.topOmega3.toMutableList())
+    val healthyFatsItems_ =
+        MutableStateFlow(ru.plumsoftware.avocado.ui.screen.main.list.elements.food.topOmega3.toMutableList())
     val healthyFatsItems = healthyFatsItems_.asStateFlow()
 
     val allFood_ = MutableStateFlow(ru.plumsoftware.avocado.data.base.model.food.allFood)
     val allFood = allFood_.asStateFlow()
+
+    val cartItemsCount: StateFlow<Int> = shoppingRepository.shoppingList
+        .map { list -> list.count { !it.isChecked } }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
 
     // --- ПОИСК ---
     private val _searchQuery = MutableStateFlow("")
@@ -71,7 +83,9 @@ class ListViewModel(
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    fun onSearchQueryChange(newQuery: String) { _searchQuery.value = newQuery }
+    fun onSearchQueryChange(newQuery: String) {
+        _searchQuery.value = newQuery
+    }
 
     val favoriteIds: StateFlow<Set<String>> = favoritesRepository.favoriteIds
         .stateIn(
@@ -144,7 +158,8 @@ class ListViewModel(
         var safeFood = allFood
 
         if (restrictions.contains(UserRestriction.VEGETARIAN)) {
-            safeFood = safeFood.filter { it.foodType != FoodType.MEAT && it.foodType != FoodType.FISH }
+            safeFood =
+                safeFood.filter { it.foodType != FoodType.MEAT && it.foodType != FoodType.FISH }
         }
         if (restrictions.contains(UserRestriction.VEGAN)) {
             safeFood = safeFood.filter {
@@ -166,8 +181,18 @@ class ListViewModel(
 
         // 2. ЕСЛИ ЦЕЛЕЙ НЕТ -> Дефолтные секции
         if (goals.isEmpty()) {
-            sections.add(HomeSection(R.string.for_breakfast, safeFood.filter { it.timeForFood == TimeForFood.BREAKFAST }.take(10)))
-            sections.add(HomeSection(R.string.healthy_fats, safeFood.filter { it.kpfc_100g.omega3 > 1.0 }.take(10)))
+            sections.add(
+                HomeSection(
+                    R.string.for_breakfast,
+                    safeFood.filter { it.timeForFood == TimeForFood.BREAKFAST }.take(10)
+                )
+            )
+            sections.add(
+                HomeSection(
+                    R.string.healthy_fats,
+                    safeFood.filter { it.kpfc_100g.omega3 > 1.0 }.take(10)
+                )
+            )
             return sections
         }
 
@@ -176,36 +201,88 @@ class ListViewModel(
             goals.forEach { goal ->
                 when (goal) {
                     UserGoal.LOSE_WEIGHT -> {
-                        val list = safeFood.filter { it.kpfc_100g.kals < 50 || it.kpfc_100g.fiber > 2.5 }
-                        if (list.isNotEmpty()) sections.add(HomeSection(R.string.section_weight_loss, list.take(6)))
+                        val list =
+                            safeFood.filter { it.kpfc_100g.kals < 50 || it.kpfc_100g.fiber > 2.5 }
+                        if (list.isNotEmpty()) sections.add(
+                            HomeSection(
+                                R.string.section_weight_loss,
+                                list.take(6)
+                            )
+                        )
                     }
+
                     UserGoal.GAIN_MUSCLE -> {
                         val list = safeFood.filter { it.kpfc_100g.proteins > 12.0 }
-                        if (list.isNotEmpty()) sections.add(HomeSection(R.string.section_muscle, list.take(6)))
+                        if (list.isNotEmpty()) sections.add(
+                            HomeSection(
+                                R.string.section_muscle,
+                                list.take(6)
+                            )
+                        )
                     }
+
                     UserGoal.BETTER_SKIN -> {
-                        val list = safeFood.filter { f -> f.vitamins.any { it.id == "vitamin_a" || it.id == "vitamin_c" } }
-                        if (list.isNotEmpty()) sections.add(HomeSection(R.string.section_skin, list.take(6)))
+                        val list =
+                            safeFood.filter { f -> f.vitamins.any { it.id == "vitamin_a" || it.id == "vitamin_c" } }
+                        if (list.isNotEmpty()) sections.add(
+                            HomeSection(
+                                R.string.section_skin,
+                                list.take(6)
+                            )
+                        )
                     }
+
                     UserGoal.HEART_HEALTH -> {
-                        val list = safeFood.filter { f -> f.kpfc_100g.omega3 > 0.5 || f.minerals.any { it.id == "potassium" } }
-                        if (list.isNotEmpty()) sections.add(HomeSection(R.string.section_heart, list.take(6)))
+                        val list =
+                            safeFood.filter { f -> f.kpfc_100g.omega3 > 0.5 || f.minerals.any { it.id == "potassium" } }
+                        if (list.isNotEmpty()) sections.add(
+                            HomeSection(
+                                R.string.section_heart,
+                                list.take(6)
+                            )
+                        )
                     }
+
                     UserGoal.ENERGY -> {
-                        val list = safeFood.filter { f -> f.vitamins.any { it.id.startsWith("vitamin_b") } || f.minerals.any { it.id == "iron" } }
-                        if (list.isNotEmpty()) sections.add(HomeSection(R.string.section_energy, list.take(6)))
+                        val list =
+                            safeFood.filter { f -> f.vitamins.any { it.id.startsWith("vitamin_b") } || f.minerals.any { it.id == "iron" } }
+                        if (list.isNotEmpty()) sections.add(
+                            HomeSection(
+                                R.string.section_energy,
+                                list.take(6)
+                            )
+                        )
                     }
+
                     UserGoal.DIGESTION -> {
                         val list = safeFood.filter { it.kpfc_100g.fiber > 3.0 }
-                        if (list.isNotEmpty()) sections.add(HomeSection(R.string.section_digestion, list.take(6)))
+                        if (list.isNotEmpty()) sections.add(
+                            HomeSection(
+                                R.string.section_digestion,
+                                list.take(6)
+                            )
+                        )
                     }
+
                     UserGoal.IMMUNITY -> {
-                        val list = safeFood.filter { f -> f.vitamins.any { it.id == "vitamin_c" } || f.minerals.any { it.id == "zinc" } }
-                        if (list.isNotEmpty()) sections.add(HomeSection(R.string.section_immunity, list.take(6)))
+                        val list =
+                            safeFood.filter { f -> f.vitamins.any { it.id == "vitamin_c" } || f.minerals.any { it.id == "zinc" } }
+                        if (list.isNotEmpty()) sections.add(
+                            HomeSection(
+                                R.string.section_immunity,
+                                list.take(6)
+                            )
+                        )
                     }
+
                     UserGoal.SLEEP -> {
                         val list = safeFood.filter { f -> f.minerals.any { it.id == "magnesium" } }
-                        if (list.isNotEmpty()) sections.add(HomeSection(R.string.section_sleep, list.take(6)))
+                        if (list.isNotEmpty()) sections.add(
+                            HomeSection(
+                                R.string.section_sleep,
+                                list.take(6)
+                            )
+                        )
                     }
                 }
             }
@@ -215,7 +292,12 @@ class ListViewModel(
 
         // 4. ЗАПАСНОЙ ВАРИАНТ (Если ничего не подобралось)
         if (sections.isEmpty()) {
-            sections.add(HomeSection(R.string.for_breakfast, safeFood.filter { it.timeForFood == TimeForFood.BREAKFAST }.take(10)))
+            sections.add(
+                HomeSection(
+                    R.string.for_breakfast,
+                    safeFood.filter { it.timeForFood == TimeForFood.BREAKFAST }.take(10)
+                )
+            )
         }
 
         return sections.distinctBy { it.titleRes }
@@ -239,12 +321,18 @@ class ListViewModel(
         class ListViewModelFactory(
             private val favoritesRepository: FavoritesRepository,
             private val userPreferencesRepository: UserPreferencesRepository,
+            private val shoppingRepo: ShoppingRepository,
             private val context: Context
         ) : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(ListViewModel::class.java)) {
                     @Suppress("UNCHECKED_CAST")
-                    return ListViewModel(favoritesRepository = favoritesRepository, userPreferencesRepository = userPreferencesRepository, context = context) as T
+                    return ListViewModel(
+                        favoritesRepository = favoritesRepository,
+                        userPreferencesRepository = userPreferencesRepository,
+                        shoppingRepository = shoppingRepo,
+                        context = context
+                    ) as T
                 }
                 throw IllegalArgumentException("Unknown ViewModel class")
             }
@@ -254,11 +342,17 @@ class ListViewModel(
         class Factory(
             private val context: Context,
             private val favoritesRepo: FavoritesRepository,
-            private val userPrefsRepo: UserPreferencesRepository
+            private val userPrefsRepo: UserPreferencesRepository,
+            private val shoppingRepo: ShoppingRepository
         ) : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 @Suppress("UNCHECKED_CAST")
-                return ListViewModel(favoritesRepo, userPrefsRepo, context) as T
+                return ListViewModel(
+                    favoritesRepository = favoritesRepo,
+                    userPreferencesRepository = userPrefsRepo,
+                    shoppingRepository = shoppingRepo,
+                    context = context
+                ) as T
             }
         }
     }

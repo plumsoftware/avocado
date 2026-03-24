@@ -38,6 +38,7 @@ import androidx.navigation.NavHostController
 import ru.plumsoftware.avocado.R
 import ru.plumsoftware.avocado.data.base.model.food.Food
 import ru.plumsoftware.avocado.data.favorite.FavoritesRepository
+import ru.plumsoftware.avocado.data.shopping.ShoppingRepository
 import ru.plumsoftware.avocado.data.user_preferences.UserPreferencesRepository
 import ru.plumsoftware.avocado.ui.screen.AppDestination
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.IOSTopBar
@@ -50,7 +51,8 @@ import ru.plumsoftware.avocado.ui.theme.Dimen
 fun MainListScreen(
     navController: NavHostController,
     favoritesRepository: FavoritesRepository,
-    userPreferencesRepository: UserPreferencesRepository
+    userPreferencesRepository: UserPreferencesRepository,
+    shoppingRepository: ShoppingRepository
 ) {
     val context = LocalContext.current
 
@@ -59,7 +61,8 @@ fun MainListScreen(
         factory = ListViewModel.Companion.Factory(
             context = context.applicationContext,
             favoritesRepo = favoritesRepository,
-            userPrefsRepo = userPreferencesRepository
+            userPrefsRepo = userPreferencesRepository,
+            shoppingRepo = shoppingRepository
         )
     )
 
@@ -68,6 +71,7 @@ fun MainListScreen(
     val selectedFilter by viewModel.selectedFilter.collectAsState()
     val favorites by viewModel.favoriteIds.collectAsState()
     val sections by viewModel.homeSections.collectAsState()
+    val cartItemsCount by viewModel.cartItemsCount.collectAsState()
 
     // ПОИСК
     val searchQuery by viewModel.searchQuery.collectAsState()
@@ -236,6 +240,7 @@ fun MainListScreen(
                     isSearchFocused = isSearchFocused,
                     onFocusChange = { isSearchFocused = it },
                     onFilterClick = {},
+                    cartItemsCount = cartItemsCount,
                     onCartClick = {
                         // Предполагается, что ты добавил объект ShoppingList в AppDestination
                         navController.navigate(AppDestination.ShoppingList)

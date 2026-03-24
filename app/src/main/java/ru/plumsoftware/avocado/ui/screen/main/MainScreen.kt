@@ -55,14 +55,16 @@ fun MainScreen(
                     MainListScreen(
                         navController = navController,
                         favoritesRepository = favoritesRepository,
-                        userPreferencesRepository = userPreferencesRepository
+                        userPreferencesRepository = userPreferencesRepository,
+                        shoppingRepository = shoppingRepository
                     )
                 }
 
                 MainScreenStates.Fav -> {
                     FavoriteScreen(
                         favoritesRepository = favoritesRepository,
-                        navController = navController
+                        navController = navController,
+                        shoppingRepository = shoppingRepository
                     )
                 }
                 MainScreenStates.Rec -> {

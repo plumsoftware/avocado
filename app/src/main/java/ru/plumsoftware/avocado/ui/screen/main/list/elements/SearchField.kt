@@ -7,14 +7,17 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -35,9 +38,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.plumsoftware.avocado.R
@@ -51,6 +59,7 @@ fun IOSTopBar(
     isSearchFocused: Boolean,
     onFocusChange: (Boolean) -> Unit,
     onFilterClick: () -> Unit,
+    cartItemsCount: Int,
     onCartClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -153,7 +162,6 @@ fun IOSTopBar(
             }
         }
 
-        // --- 3. ИКОНКА КОРЗИНЫ (Показывается, когда поиск не активен) ---
         AnimatedVisibility(
             visible = !isSearchFocused,
             enter = fadeIn() + expandHorizontally(),
@@ -162,16 +170,51 @@ fun IOSTopBar(
             Box(
                 modifier = Modifier
                     .padding(start = Dimen.mediumHalf)
-                    .size(36.dp)
-                    .clip(CircleShape)
-                    .iosClickable { onCartClick() }, // Клик по корзине
+                    .size(36.dp) // Размер кликабельной зоны
+                    .iosClickable { onCartClick() },
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = Icons.Outlined.ShoppingCart,
-                    contentDescription = stringResource(R.string.cd_shopping_cart), // ИЗМЕНЕНО
-                    tint = MaterialTheme.colorScheme.onSurface // Цвет под тему
-                )
+                // Контейнер для иконки и бейджа
+                Box {
+                    Icon(
+                        imageVector = Icons.Outlined.ShoppingCart,
+                        contentDescription = stringResource(R.string.cd_shopping_cart),
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+
+                    // 🔥 IOS BADGE
+                    if (cartItemsCount > 0) {
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .offset(x = 6.dp, y = (-4).dp)
+                                // 🔥 1. Вместо жесткого size используем defaultMinSize,
+                                // чтобы бейдж мог растягиваться для "99+"
+                                .defaultMinSize(minWidth = 16.dp, minHeight = 16.dp)
+                                .background(Color(0xFFFF3B30), CircleShape)
+                                // 🔥 2. Отступы по бокам, чтобы текст не прилипал к краям
+                                .padding(horizontal = 4.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = if (cartItemsCount > 99) "99+" else cartItemsCount.toString(),
+                                color = Color.White,
+                                // 7.sp слишком мелко даже для iOS, 9.sp читается идеально
+                                fontSize = 9.sp,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center,
+                                // 🔥 3. МАГИЯ ЗДЕСЬ: отключаем системные отступы шрифта
+                                style = TextStyle(
+                                    platformStyle = PlatformTextStyle(includeFontPadding = false),
+                                    lineHeight = 9.sp
+                                ),
+                                // 🔥 4. Оптическая корректировка (иногда Android все равно смещает текст шрифта Roboto на 1 пиксель вниз)
+                                modifier = Modifier.offset(y = (-0.5).dp)
+                            )
+                        }
+                    }
+                }
             }
         }
     }

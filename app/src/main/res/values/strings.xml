@@ -656,4 +656,10 @@
     <string name="shopping_cart_empty">Ваша корзина пуста</string>
     <string name="shopping_btn_clear">Очистить</string>
     <string name="cd_delete">Удалить</string>
+
+    <!-- Добавление в корзину -->
+    <string name="shopping_added_btn">Уже в покупках</string>
+    <string name="dialog_added_title">Добавлено</string>
+    <string name="dialog_added_msg">Ингредиенты успешно добавлены в ваш список покупок.</string>
+    <string name="dialog_btn_ok">Понятно</string>
 </resources>

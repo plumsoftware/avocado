@@ -18,18 +18,24 @@ import kotlinx.coroutines.launch
 import ru.plumsoftware.avocado.data.base.model.food.Food
 import ru.plumsoftware.avocado.data.base.model.food.allFood
 import ru.plumsoftware.avocado.data.favorite.FavoritesRepository
+import ru.plumsoftware.avocado.data.shopping.ShoppingRepository
 import ru.plumsoftware.avocado.data.user_preferences.UserPreferencesRepository
 import ru.plumsoftware.avocado.ui.screen.main.list.HarmoniousColors
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.food.FoodColorCache
 
 class FavoriteViewModel(
     private val favoritesRepository: FavoritesRepository,
+    private val shoppingRepository: ShoppingRepository,
     private val context: Context // Добавляем контекст для поиска строк
 ) : ViewModel() {
 
     // --- ПОИСК ---
     private val _searchQuery = MutableStateFlow("")
     val searchQuery = _searchQuery.asStateFlow()
+
+    val cartItemsCount: StateFlow<Int> = shoppingRepository.shoppingList
+        .map { list -> list.count { !it.isChecked } }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
 
     fun onSearchQueryChange(newQuery: String) {
         _searchQuery.value = newQuery
@@ -88,12 +94,17 @@ class FavoriteViewModel(
     companion object {
         class Factory(
             private val favoritesRepository: FavoritesRepository,
+            private val shoppingRepository: ShoppingRepository,
             private val context: Context // Передаем контекст в фабрику
         ) : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(FavoriteViewModel::class.java)) {
                     @Suppress("UNCHECKED_CAST")
-                    return FavoriteViewModel(favoritesRepository, context) as T
+                    return FavoriteViewModel(
+                        favoritesRepository = favoritesRepository,
+                        shoppingRepository = shoppingRepository,
+                        context = context
+                    ) as T
                 }
                 throw IllegalArgumentException("Unknown ViewModel class")
             }

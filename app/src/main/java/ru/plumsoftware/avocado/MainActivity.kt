@@ -277,7 +277,8 @@ class MainActivity : ComponentActivity() {
                                 factory = ListViewModel.Companion.ListViewModelFactory(
                                     favoritesRepository = favRepo,
                                     userPreferencesRepository = userRepo,
-                                    context = this@MainActivity
+                                    context = this@MainActivity,
+                                    shoppingRepo = shoppingRepo
                                 )
                             )
 
@@ -311,7 +312,8 @@ class MainActivity : ComponentActivity() {
                         composable<AppDestination.Favorite> {
                             FavoriteScreen(
                                 favoritesRepository = favRepo,
-                                navController = navController
+                                navController = navController,
+                                shoppingRepository = shoppingRepo
                             )
                         }
 
