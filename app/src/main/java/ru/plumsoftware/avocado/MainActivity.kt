@@ -19,7 +19,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -58,6 +60,7 @@ import ru.plumsoftware.avocado.ui.screen.AppDestination
 import ru.plumsoftware.avocado.ui.screen.details.ProductDetailScreen
 import ru.plumsoftware.avocado.ui.screen.main.MainScreen
 import ru.plumsoftware.avocado.ui.screen.main.MainViewModel
+import ru.plumsoftware.avocado.ui.screen.main.elements.IOSLoadingDialog
 import ru.plumsoftware.avocado.ui.screen.main.favorite.FavoriteScreen
 import ru.plumsoftware.avocado.ui.screen.main.list.ListViewModel
 import ru.plumsoftware.avocado.ui.screen.main.receipt.details.ReceiptDetailScreen
@@ -131,6 +134,7 @@ class MainActivity : ComponentActivity() {
                 darkTheme = isDark
             ) {
                 val startState by mainViewModel.startDestination.collectAsState()
+                var isAdLoading by remember { mutableStateOf(false) }
 
                 // Отслеживаем, проходил ли юзер онбординг сейчас
                 if (startState == MainViewModel.StartDestination.Onboarding) {
@@ -140,6 +144,7 @@ class MainActivity : ComponentActivity() {
                 // Инициализируем рекламу ТОЛЬКО для 2+ запуска
                 LaunchedEffect(startState) {
                     if (startState == MainViewModel.StartDestination.Main && !hasSeenOnboardingThisSession) {
+                        isAdLoading = true
                         // Попали на Main, и онбординга не было = это второй запуск!
                         MobileAds.initialize(this@MainActivity) {
                             val appOpenAdLoader = AppOpenAdLoader(this@MainActivity)
@@ -148,6 +153,7 @@ class MainActivity : ComponentActivity() {
 
                             val appOpenAdLoadListener = object : AppOpenAdLoadListener {
                                 override fun onAdLoaded(appOpenAd: AppOpenAd) {
+                                    isAdLoading = false
                                     // The ad was loaded successfully. Now you can show loaded ad.
                                     appOpenAd.setAdEventListener(object : AppOpenAdEventListener {
                                         override fun onAdClicked() {}
@@ -164,6 +170,7 @@ class MainActivity : ComponentActivity() {
                                 }
 
                                 override fun onAdFailedToLoad(error: AdRequestError) {
+                                    isAdLoading = false
                                     // Ad failed to load with AdRequestError.
                                     // Attempting to load a new ad from the onAdFailedToLoad() method is strongly discouraged.
                                 }
@@ -336,6 +343,9 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                     }
+                }
+                if (isAdLoading) {
+                    IOSLoadingDialog()
                 }
             }
         }

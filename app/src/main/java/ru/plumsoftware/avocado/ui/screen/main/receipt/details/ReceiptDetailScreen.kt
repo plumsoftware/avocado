@@ -63,6 +63,7 @@ import ru.plumsoftware.avocado.R
 import ru.plumsoftware.avocado.data.ads.AdsConfig
 import ru.plumsoftware.avocado.data.shopping.ShoppingRepository
 import ru.plumsoftware.avocado.ui.screen.main.elements.IOSAlertDialog
+import ru.plumsoftware.avocado.ui.screen.main.elements.IOSLoadingDialog
 
 private val HEADER_HEIGHT = 380.dp
 private var interstitialAd: InterstitialAd? = null
@@ -99,6 +100,7 @@ fun ReceiptDetailScreen(
     var showSuccessDialog by remember { mutableStateOf(false) }
 
     val rawInstructions = stringResource(receipt.receiptText)
+    var isAdLoading by remember { mutableStateOf(false) }
     val steps = remember(rawInstructions) {
         rawInstructions.split("\n").filter { it.isNotBlank() }
     }
@@ -108,9 +110,11 @@ fun ReceiptDetailScreen(
     val activity = LocalActivity.current
 
     LaunchedEffect(key1 = Unit) {
+        isAdLoading = true
         interstitialAdLoader = InterstitialAdLoader(context).apply {
             setAdLoadListener(object : InterstitialAdLoadListener {
                 override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                    isAdLoading = false
                     ru.plumsoftware.avocado.ui.screen.main.receipt.details.interstitialAd =
                         interstitialAd
 
@@ -138,7 +142,9 @@ fun ReceiptDetailScreen(
                     }
                 }
 
-                override fun onAdFailedToLoad(error: AdRequestError) {}
+                override fun onAdFailedToLoad(error: AdRequestError) {
+                    isAdLoading = false
+                }
             })
         }
         val adRequestConfiguration =
@@ -412,6 +418,11 @@ fun ReceiptDetailScreen(
             buttonText = stringResource(R.string.dialog_btn_ok),
             onDismiss = { showSuccessDialog = false }
         )
+    }
+
+    if (isAdLoading) {
+        // Рисуем наш полупрозрачный лоадер поверх всего экрана
+        IOSLoadingDialog()
     }
 }
 

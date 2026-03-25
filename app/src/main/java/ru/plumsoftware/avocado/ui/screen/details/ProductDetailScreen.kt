@@ -60,6 +60,7 @@ import ru.plumsoftware.avocado.ui.theme.Dimen
 import ru.plumsoftware.avocado.R
 import ru.plumsoftware.avocado.data.ads.AdsConfig
 import ru.plumsoftware.avocado.data.base.model.receipt.getReceiptsByIds
+import ru.plumsoftware.avocado.ui.screen.main.elements.IOSLoadingDialog
 import ru.plumsoftware.avocado.ui.screen.main.receipt.elements.SmallReceiptCard
 
 // Высота шапки с картинкой
@@ -85,15 +86,18 @@ fun ProductDetailScreen(
     val baseColorInt = remember(item.imageRes) { onGetColor(item.imageRes, context) }
     val colorStart = remember(baseColorInt) { Color(getLightenedColor(baseColorInt, 0.6f)) }
     val colorEnd = remember(baseColorInt) { Color(getLightenedColor(baseColorInt, 0.2f)) }
+    var isAdLoading by remember { mutableStateOf(false) }
     val dominantColor = Color(baseColorInt)
     val relatedReceipts = remember(item.relatedReceipts) {
         getReceiptsByIds(item.relatedReceipts)
     }
 
     LaunchedEffect(key1 = Unit) {
+        isAdLoading = true
         interstitialAdLoader = InterstitialAdLoader(context).apply {
             setAdLoadListener(object : InterstitialAdLoadListener {
                 override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                    isAdLoading = false
                     ru.plumsoftware.avocado.ui.screen.details.interstitialAd = interstitialAd
 
                     interstitialAd.apply {
@@ -118,7 +122,9 @@ fun ProductDetailScreen(
                     }
                 }
 
-                override fun onAdFailedToLoad(error: AdRequestError) {}
+                override fun onAdFailedToLoad(error: AdRequestError) {
+                    isAdLoading = false
+                }
             })
         }
         val adRequestConfiguration =
@@ -375,6 +381,11 @@ fun ProductDetailScreen(
                 )
             }
         }
+    }
+
+    if (isAdLoading) {
+        // Рисуем наш полупрозрачный лоадер поверх всего экрана
+        IOSLoadingDialog()
     }
 }
 
