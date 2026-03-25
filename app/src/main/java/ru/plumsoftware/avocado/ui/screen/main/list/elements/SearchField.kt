@@ -191,7 +191,7 @@ fun IOSTopBar(
                                 .offset(x = 6.dp, y = (-4).dp)
                                 // 🔥 1. Вместо жесткого size используем defaultMinSize,
                                 // чтобы бейдж мог растягиваться для "99+"
-                                .defaultMinSize(minWidth = 16.dp, minHeight = 16.dp)
+                                .defaultMinSize(minWidth = 14.dp, minHeight = 14.dp)
                                 .background(Color(0xFFFF3B30), CircleShape)
                                 // 🔥 2. Отступы по бокам, чтобы текст не прилипал к краям
                                 .padding(horizontal = 4.dp),
@@ -201,13 +201,13 @@ fun IOSTopBar(
                                 text = if (cartItemsCount > 99) "99+" else cartItemsCount.toString(),
                                 color = Color.White,
                                 // 7.sp слишком мелко даже для iOS, 9.sp читается идеально
-                                fontSize = 9.sp,
+                                fontSize = 7.sp,
                                 fontWeight = FontWeight.Bold,
                                 textAlign = TextAlign.Center,
                                 // 🔥 3. МАГИЯ ЗДЕСЬ: отключаем системные отступы шрифта
                                 style = TextStyle(
                                     platformStyle = PlatformTextStyle(includeFontPadding = false),
-                                    lineHeight = 9.sp
+                                    lineHeight = 7.sp
                                 ),
                                 // 🔥 4. Оптическая корректировка (иногда Android все равно смещает текст шрифта Roboto на 1 пиксель вниз)
                                 modifier = Modifier.offset(y = (-0.5).dp)

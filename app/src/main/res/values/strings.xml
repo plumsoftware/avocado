@@ -662,4 +662,5 @@
     <string name="dialog_added_title">Добавлено</string>
     <string name="dialog_added_msg">Ингредиенты успешно добавлены в ваш список покупок.</string>
     <string name="dialog_btn_ok">Понятно</string>
+    <string name="shopping_swipe_hint">Смахните влево, чтобы удалить продукт</string>
 </resources>
