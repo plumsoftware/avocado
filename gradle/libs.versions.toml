@@ -34,13 +34,16 @@ workRuntimeKtx = "2.11.1"
 roomRuntime = "2.8.4"
 
 # Ads
-mobileads = "7.18.3"
+mobileads = "7.18.4"
 
 # Firebase
 googleGmsGoogleServices = "4.4.4"
 firebaseMessaging = "25.0.1"
 firebaseInappmessagingDisplay = "22.0.2"
 firebaseConfig = "23.0.1"
+
+# RuStore
+bom = "2025.02.01"
 
 [libraries]
 androidx-compose-foundation-layout = { module = "androidx.compose.foundation:foundation-layout", version.ref = "foundationLayout" }
@@ -95,6 +98,10 @@ mobileads = { module = "com.yandex.android:mobileads", version.ref = "mobileads"
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebaseMessaging" }
 firebase-inappmessaging-display = { group = "com.google.firebase", name = "firebase-inappmessaging-display", version.ref = "firebaseInappmessagingDisplay" }
 firebase-config = { group = "com.google.firebase", name = "firebase-config", version.ref = "firebaseConfig" }
+
+# RuStore
+bom = { module = "ru.rustore.sdk:bom", version.ref = "bom" }
+remoteconfig = { module = "ru.rustore.sdk:remoteconfig" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

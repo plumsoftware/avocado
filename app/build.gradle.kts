@@ -131,6 +131,10 @@ dependencies {
     implementation(libs.firebase.messaging)
     implementation(libs.firebase.inappmessaging.display)
     implementation(libs.firebase.config)
+
+    // RuStore
+    implementation(platform(libs.bom))
+    implementation(libs.remoteconfig)
 }
 
 configurations.all {
