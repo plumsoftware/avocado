@@ -4,6 +4,9 @@ import android.app.Application
 import ru.plumsoftware.avocado.data.ads.RuStoreConfig
 import ru.plumsoftware.avocado.data.rustore.LanguageParameterProvider
 import ru.plumsoftware.avocado.data.rustore.RemoteConfigClientEventListenerImpl
+import ru.plumsoftware.avocado.data.season_products.SeasonProductsRepository
+import ru.plumsoftware.avocado.data.season_products.util.seasonProductsStore
+import ru.plumsoftware.avocado.data.user_preferences.util.userPreferencesDataStore
 import ru.rustore.sdk.remoteconfig.AppId
 import ru.rustore.sdk.remoteconfig.AppVersion
 import ru.rustore.sdk.remoteconfig.DeviceModel
@@ -15,6 +18,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
+        Companion.seasonProductsRepository = SeasonProductsRepository(this.seasonProductsStore)
         val listener = RemoteConfigClientEventListenerImpl()
 
         val remoteConfigClient = RemoteConfigClientBuilder(
@@ -43,5 +47,6 @@ class App : Application() {
 
     companion object {
         lateinit var remoteConfigClient: RemoteConfigClient
+        lateinit var seasonProductsRepository: SeasonProductsRepository
     }
 }

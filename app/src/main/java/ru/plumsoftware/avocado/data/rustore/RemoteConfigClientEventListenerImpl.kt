@@ -2,11 +2,13 @@ package ru.plumsoftware.avocado.data.rustore
 
 import ru.plumsoftware.avocado.App
 import ru.plumsoftware.avocado.BuildConfig
+import ru.plumsoftware.avocado.data.ads.RuStoreConfig
+import ru.plumsoftware.avocado.data.season_products.SeasonProductsRepository
 import ru.plumsoftware.avocado.ui.log
 import ru.rustore.sdk.remoteconfig.RemoteConfigClientEventListener
 import ru.rustore.sdk.remoteconfig.RemoteConfigException
 
-class RemoteConfigClientEventListenerImpl : RemoteConfigClientEventListener {
+class RemoteConfigClientEventListenerImpl(private val seasonProductsRepository: SeasonProductsRepository) : RemoteConfigClientEventListener {
     override fun backgroundJobErrors(exception: RemoteConfigException.BackgroundConfigUpdateError) {
         //Возвращает ошибку фоновой работы
     }
@@ -23,6 +25,13 @@ class RemoteConfigClientEventListenerImpl : RemoteConfigClientEventListener {
                     log(remoteConfig.getString("test"))
                 }
             }
+
+        App.remoteConfigClient.getRemoteConfig().addOnSuccessListener { remoteConfig ->
+            if (remoteConfig.containsKey(RuStoreConfig.SEASON_PRODUCTS))
+                seasonProductsRepository.addSeasonProducts(
+                    seasonProducts = remoteConfig.
+                )
+        }
     }
 
     override fun memoryCacheUpdated() {

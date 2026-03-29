@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+option java_package = "ru.plumsoftware.avocado.snippets.proto";
+option java_multiple_files = true;
+
+message SeasonProducts {
+    string date_start = 1;
+    string date_end = 2;
+    repeated string products = 3;
+    string title = 4;
+    string promo = 5;
+}
