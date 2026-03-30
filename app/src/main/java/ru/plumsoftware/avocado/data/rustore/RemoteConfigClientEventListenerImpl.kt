@@ -40,6 +40,8 @@ class RemoteConfigClientEventListenerImpl(private val seasonProductsRepository: 
             if (remoteConfig.containsKey("season_products")) {
                 try {
                     val jsonString = remoteConfig.getString("season_products")
+
+                    log("Received season products: $jsonString")
                     // Парсим JSON в наш Data Class
                     val seasonData = json.decodeFromString<SeasonProductsResponse>(jsonString)
 
