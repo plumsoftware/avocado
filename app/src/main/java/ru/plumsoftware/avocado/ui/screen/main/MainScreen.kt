@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import ru.plumsoftware.avocado.data.favorite.FavoritesRepository
+import ru.plumsoftware.avocado.data.meal.MealPlanRepository
 import ru.plumsoftware.avocado.data.shopping.ShoppingRepository
 import ru.plumsoftware.avocado.data.user_preferences.UserPreferencesRepository
 import ru.plumsoftware.avocado.ui.screen.main.elements.BottomNavBar
@@ -29,6 +30,7 @@ import ru.plumsoftware.avocado.ui.screen.main.list.MainListScreen
 import ru.plumsoftware.avocado.ui.screen.main.receipt.RecipesScreen
 import ru.plumsoftware.avocado.ui.screen.main.settings.SettingsScreen
 import ru.plumsoftware.avocado.ui.screen.main.settings.SettingsViewModel
+import ru.plumsoftware.avocado.ui.screen.meal.MealPlannerScreen
 
 @Composable
 fun MainScreen(
@@ -36,6 +38,7 @@ fun MainScreen(
     favoritesRepository: FavoritesRepository,
     settingsViewModel: SettingsViewModel,
     shoppingRepository: ShoppingRepository,
+    mealPlanRepository: MealPlanRepository,
     navController: NavHostController
 ) {
 
@@ -82,6 +85,14 @@ fun MainScreen(
                 }
 
                 MainScreenStates.Empty -> {}
+                MainScreenStates.MealPlanner -> {
+                    MealPlannerScreen(
+                        navController = navController,
+                        userPreferencesRepository = userPreferencesRepository,
+                        shoppingRepository = shoppingRepository,
+                        mealPlanRepository = mealPlanRepository
+                    )
+                }
             }
         }
 

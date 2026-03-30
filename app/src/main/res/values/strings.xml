@@ -663,4 +663,40 @@
     <string name="dialog_added_msg">Ингредиенты успешно добавлены в ваш список покупок.</string>
     <string name="dialog_btn_ok">Понятно</string>
     <string name="shopping_swipe_hint">Смахните влево, чтобы удалить продукт</string>
+
+    <!-- ПЛАН ПИТАНИЯ (MEAL PLANNER) -->
+    <string name="racion">Рацион</string>
+    <string name="planner_title">План питания</string>
+    <string name="planner_subtitle">Составьте рацион на неделю</string>
+
+    <string name="meal_breakfast">Завтрак</string>
+    <string name="meal_lunch">Обед</string>
+    <string name="meal_dinner">Ужин</string>
+    <string name="meal_snack">Перекус</string>
+
+    <string name="planner_add_recipe">+ Добавить блюдо</string>
+    <string name="planner_empty_slot">Пока ничего не запланировано</string>
+
+    <!-- План питания -->
+    <string name="planner_swipe_hint">Смахните влево, чтобы удалить блюдо</string>
+
+    <!-- План питания -->
+    <string name="planner_choose_recipe">Выберите рецепт</string>
+
+    <!-- Сводка КБЖУ в Планировщике -->
+    <string name="planner_daily_summary">Итого за день</string>
+    <string name="planner_empty_summary">Добавьте блюда, чтобы увидеть расчет</string>
+    <string name="macro_proteins">Белки</string>
+    <string name="macro_fats">Жиры</string>
+    <string name="macro_carbs">Углев.</string>
+
+    <!-- Дни недели (Кратко) -->
+    <string name="day_mon">Пн</string>
+    <string name="day_tue">Вт</string>
+    <string name="day_wed">Ср</string>
+    <string name="day_thu">Чт</string>
+    <string name="day_fri">Пт</string>
+    <string name="day_sat">Сб</string>
+    <string name="day_sun">Вс</string>
+
 </resources>

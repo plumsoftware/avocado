@@ -26,7 +26,8 @@ class SeasonProductsRepository(
                 .setDateEnd(seasonProducts.dateEnd)
                 .setPromo(seasonProducts.promo)
                 .setTitle(seasonProducts.title)
-                .addAllProducts(seasonProducts.products.toMutableList())
+                .clearProducts()
+                .addAllProducts(seasonProducts.products.toList())
                 .build()
         }
     }

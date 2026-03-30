@@ -9,31 +9,35 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import ru.plumsoftware.avocado.data.favorite.FavoriteDao
 import ru.plumsoftware.avocado.data.favorite.FavoriteEntity
+import ru.plumsoftware.avocado.data.meal.MealPlanDao
+import ru.plumsoftware.avocado.data.meal.MealPlanEntity
 import ru.plumsoftware.avocado.data.shopping.ShoppingConverters
 import ru.plumsoftware.avocado.data.shopping.ShoppingDao
 import ru.plumsoftware.avocado.data.shopping.ShoppingItemEntity
 
 @Database(
-    entities = [FavoriteEntity::class, ShoppingItemEntity::class],
-    version = 2,
+    entities =[
+        FavoriteEntity::class,
+        ShoppingItemEntity::class,
+        MealPlanEntity::class
+    ],
+    version = 3,
     exportSchema = false
 )
-@TypeConverters(ShoppingConverters::class)
+@TypeConverters(ShoppingConverters::class) // Оставляем твои конвертеры
 abstract class AvocadoDatabase : RoomDatabase() {
+
     abstract fun favoriteDao(): FavoriteDao
     abstract fun shoppingDao(): ShoppingDao
+    abstract fun mealPlanDao(): MealPlanDao
 
     companion object {
         @Volatile
         private var INSTANCE: AvocadoDatabase? = null
 
-        // 2. ПИШЕМ МИГРАЦИЮ (Что делать при переходе с v1 на v2)
-        // Нам нужно просто создать новую таблицу. Старая (favorites) останется нетронутой.
+        // Старая миграция (v1 -> v2)
         private val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(db: SupportSQLiteDatabase) {
-                // SQLite синтаксис для создания таблицы.
-                // Boolean в SQLite хранится как INTEGER (0 - false, 1 - true).
-                // Enum (FoodType) Room по умолчанию сохраняет как TEXT (строку с названием).
                 db.execSQL(
                     """
                     CREATE TABLE IF NOT EXISTS `shopping_list` (
@@ -49,6 +53,22 @@ abstract class AvocadoDatabase : RoomDatabase() {
             }
         }
 
+        // 🔥 НОВАЯ МИГРАЦИЯ (v2 -> v3)
+        private val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `meal_plan` (
+                        `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+                        `dateString` TEXT NOT NULL, 
+                        `mealType` TEXT NOT NULL, 
+                        `recipeId` TEXT NOT NULL
+                    )
+                    """.trimIndent()
+                )
+            }
+        }
+
         fun getDatabase(context: Context): AvocadoDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
@@ -56,7 +76,8 @@ abstract class AvocadoDatabase : RoomDatabase() {
                     AvocadoDatabase::class.java,
                     "avocado_database"
                 )
-                    .addMigrations(MIGRATION_1_2)
+                    // ПЕРЕДАЕМ ОБЕ МИГРАЦИИ В БИЛДЕР
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                     .build()
 
                 INSTANCE = instance

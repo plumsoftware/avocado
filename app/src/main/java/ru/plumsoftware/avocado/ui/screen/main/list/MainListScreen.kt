@@ -42,6 +42,7 @@ import ru.plumsoftware.avocado.data.shopping.ShoppingRepository
 import ru.plumsoftware.avocado.data.user_preferences.UserPreferencesRepository
 import ru.plumsoftware.avocado.ui.screen.AppDestination
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.IOSTopBar
+import ru.plumsoftware.avocado.ui.screen.main.list.elements.SeasonalPromoWidget
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.WaterTrackerCard
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.filter.FilterItem
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.food.FoodCard
@@ -72,6 +73,7 @@ fun MainListScreen(
     val favorites by viewModel.favoriteIds.collectAsState()
     val sections by viewModel.homeSections.collectAsState()
     val cartItemsCount by viewModel.cartItemsCount.collectAsState()
+    val activeSeasonPromo by viewModel.activeSeasonPromo.collectAsState()
 
     // ПОИСК
     val searchQuery by viewModel.searchQuery.collectAsState()
@@ -117,6 +119,24 @@ fun MainListScreen(
                             viewModel.addWater(amount)
                         }
                     )
+                }
+
+                // 🔥 3. СЕЗОННЫЙ ВИДЖЕТ (Показываем только если есть промо и нет поиска)
+                if (!isSearching && activeSeasonPromo != null) {
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        val promo = activeSeasonPromo!!
+                        val promoFoods = remember(promo.products) {
+                            viewModel.getFoodsByIds(promo.products)
+                        }
+
+                        SeasonalPromoWidget(
+                            promo = promo,
+                            foods = promoFoods,
+                            onFoodClick = { foodId ->
+                                navController.navigate(AppDestination.DetailedScreen(foodId = foodId))
+                            }
+                        )
+                    }
                 }
 
                 // --- ЛОГИКА ОТОБРАЖЕНИЯ ---

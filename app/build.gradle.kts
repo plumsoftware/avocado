@@ -105,6 +105,7 @@ dependencies {
     // Serialization
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.protobuf.kotlin.lite)
+    implementation(libs.kotlinx.serialization.json)
 
     // Icons
     implementation(libs.androidx.compose.material.icons.extended)

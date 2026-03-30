@@ -49,6 +49,7 @@ import com.yandex.mobile.ads.common.MobileAds
 import ru.plumsoftware.avocado.data.ads.AdsConfig
 import ru.plumsoftware.avocado.data.database.AvocadoDatabase
 import ru.plumsoftware.avocado.data.favorite.FavoritesRepository
+import ru.plumsoftware.avocado.data.meal.MealPlanRepository
 import ru.plumsoftware.avocado.data.notification.NotificationArgs
 import ru.plumsoftware.avocado.data.notification.worker.DebugNotificationSender
 import ru.plumsoftware.avocado.data.notification.worker.NotificationScheduler
@@ -88,6 +89,7 @@ class MainActivity : ComponentActivity() {
         val db = AvocadoDatabase.getDatabase(this)
         val favRepo = FavoritesRepository(db.favoriteDao())
         val userRepo = UserPreferencesRepository(this.userPreferencesDataStore)
+        val mealPlanRepository = MealPlanRepository(db.mealPlanDao())
         val shoppingRepo = ShoppingRepository(db.shoppingDao())
         val destinationRoute = intent.getStringExtra(NotificationArgs.DESTINATION_ROUTE)
 
@@ -265,7 +267,8 @@ class MainActivity : ComponentActivity() {
                                 settingsViewModel = settingsViewModel,
                                 shoppingRepository = shoppingRepo,
                                 navController = navController,
-                                favoritesRepository = favRepo
+                                favoritesRepository = favRepo,
+                                mealPlanRepository = mealPlanRepository
                             )
                         }
 

@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessAlarm
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -51,6 +53,10 @@ fun BottomNavBar(
             iconRes = R.drawable.chef,
         ),
         BottomBarItem(
+            title = R.string.racion,
+            iconRes = R.drawable.racion
+        ),
+        BottomBarItem(
             title = R.string.fav,
             iconRes = R.drawable.fav,
         ),
@@ -64,8 +70,10 @@ fun BottomNavBar(
         val item = when (selected) {
             0 -> MainScreenStates.List
             1 -> MainScreenStates.Rec
-            2 -> MainScreenStates.Fav
-            else -> MainScreenStates.Settings
+            2 -> MainScreenStates.MealPlanner
+            3 -> MainScreenStates.Fav
+            4 -> MainScreenStates.Settings
+            else -> MainScreenStates.Empty
         }
         onItemSelected(item)
     }

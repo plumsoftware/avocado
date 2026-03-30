@@ -7,4 +7,6 @@ sealed class MainScreenStates() {
     data object Settings : MainScreenStates()
 
     data object Empty : MainScreenStates()
+
+    data object MealPlanner : MainScreenStates()
 }

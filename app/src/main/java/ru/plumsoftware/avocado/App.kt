@@ -19,7 +19,7 @@ class App : Application() {
         super.onCreate()
 
         Companion.seasonProductsRepository = SeasonProductsRepository(this.seasonProductsStore)
-        val listener = RemoteConfigClientEventListenerImpl()
+        val listener = RemoteConfigClientEventListenerImpl(seasonProductsRepository = seasonProductsRepository)
 
         val remoteConfigClient = RemoteConfigClientBuilder(
             appId = AppId(RuStoreConfig.APP_ID),

@@ -236,7 +236,7 @@ fun ReceiptDetailScreen(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         lineHeight = 22.sp
                     ),
-                    modifier = Modifier.padding(top = 8.dp, bottom = 24.dp)
+                    modifier = Modifier.padding(top = Dimen.medium, bottom = 24.dp)
                 )
 
                 // --- МЕТА ДАННЫЕ ---

@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ru.plumsoftware.avocado.App
 import ru.plumsoftware.avocado.R
 import ru.plumsoftware.avocado.data.base.model.food.Food
 import ru.plumsoftware.avocado.data.base.model.food.FoodType
@@ -25,8 +26,10 @@ import ru.plumsoftware.avocado.data.database.AvocadoDatabase
 import ru.plumsoftware.avocado.data.favorite.FavoritesRepository
 import ru.plumsoftware.avocado.data.onboarding.UserGoal
 import ru.plumsoftware.avocado.data.onboarding.UserRestriction
+import ru.plumsoftware.avocado.data.rustore.SeasonProductsResponse
 import ru.plumsoftware.avocado.data.shopping.ShoppingRepository
 import ru.plumsoftware.avocado.data.user_preferences.UserPreferencesRepository
+import ru.plumsoftware.avocado.ui.isPromoActive
 import ru.plumsoftware.avocado.ui.log
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.filter.Filter
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.food.FoodColorCache
@@ -37,6 +40,20 @@ class ListViewModel(
     private val shoppingRepository: ShoppingRepository,
     private val context: Context
 ) : ViewModel() {
+    private val seasonProductsRepo = App.seasonProductsRepository
+
+    val activeSeasonPromo: StateFlow<SeasonProductsResponse?> = seasonProductsRepo.seasonProducts
+        .map { promo ->
+            // Проверяем: если сейчас нужные даты и есть заголовок
+            if (promo.title.isNotBlank() && isPromoActive(promo.dateStart, promo.dateEnd)) {
+                promo
+            } else null
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = null
+        )
 
     private val filters_ =
         MutableStateFlow(ru.plumsoftware.avocado.ui.screen.main.list.elements.filter.filters.toMutableList())
@@ -301,6 +318,10 @@ class ListViewModel(
         }
 
         return sections.distinctBy { it.titleRes }
+    }
+
+    fun getFoodsByIds(ids: Array<String>): List<Food> {
+        return allFood.value.filter { it.id in ids }
     }
 
     // --- ВОДА ---
