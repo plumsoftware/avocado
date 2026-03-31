@@ -115,51 +115,59 @@ fun ReceiptDetailScreen(
     val activity = LocalActivity.current
 
     LaunchedEffect(key1 = Unit) {
-        isAdLoading = true
-        interstitialAdLoader = InterstitialAdLoader(context).apply {
-            setAdLoadListener(object : InterstitialAdLoadListener {
-                override fun onAdLoaded(interstitialAd: InterstitialAd) {
-                    isAdLoading = false
-                    ru.plumsoftware.avocado.ui.screen.main.receipt.details.interstitialAd =
-                        interstitialAd
+        if (AdsConfig.canShowAd()) {
+            isAdLoading = true
+            interstitialAdLoader = InterstitialAdLoader(context).apply {
+                setAdLoadListener(object : InterstitialAdLoadListener {
+                    override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                        AdsConfig.registerAdShown()
+                        isAdLoading = false
+                        ru.plumsoftware.avocado.ui.screen.main.receipt.details.interstitialAd =
+                            interstitialAd
 
-                    interstitialAd.apply {
-                        setAdEventListener(object : InterstitialAdEventListener {
-                            override fun onAdShown() {}
-                            override fun onAdFailedToShow(adError: AdError) {
-                                interstitialAd.setAdEventListener(null)
-                                ru.plumsoftware.avocado.ui.screen.main.receipt.details.interstitialAd =
-                                    null
-                                navController.popBackStack()
-                            }
+                        interstitialAd.apply {
+                            setAdEventListener(object : InterstitialAdEventListener {
+                                override fun onAdShown() {}
 
-                            override fun onAdDismissed() {
-                                interstitialAd.setAdEventListener(null)
-                                ru.plumsoftware.avocado.ui.screen.main.receipt.details.interstitialAd =
-                                    null
-                                navController.popBackStack()
-                            }
+                                override fun onAdFailedToShow(adError: AdError) {
+                                    interstitialAd.setAdEventListener(null)
+                                    ru.plumsoftware.avocado.ui.screen.main.receipt.details.interstitialAd =
+                                        null
+                                    navController.popBackStack()
+                                }
 
-                            override fun onAdClicked() {}
+                                override fun onAdDismissed() {
+                                    interstitialAd.setAdEventListener(null)
+                                    ru.plumsoftware.avocado.ui.screen.main.receipt.details.interstitialAd =
+                                        null
+                                    navController.popBackStack()
+                                }
 
-                            override fun onAdImpression(impressionData: ImpressionData?) {}
-                        })
+                                override fun onAdClicked() {}
+
+                                override fun onAdImpression(impressionData: ImpressionData?) {}
+                            })
+                        }
                     }
-                }
 
-                override fun onAdFailedToLoad(error: AdRequestError) {
-                    isAdLoading = false
-                }
-            })
+                    override fun onAdFailedToLoad(error: AdRequestError) {
+                        isAdLoading = false
+                    }
+                })
+            }
+            val adRequestConfiguration =
+                AdRequestConfiguration.Builder(AdsConfig.INTERSTITIAL_ADS_ID).build()
+            interstitialAdLoader?.loadAd(adRequestConfiguration)
         }
-        val adRequestConfiguration =
-            AdRequestConfiguration.Builder(AdsConfig.INTERSTITIAL_ADS_ID).build()
-        interstitialAdLoader?.loadAd(adRequestConfiguration)
     }
 
     BackHandler(enabled = true) {
-        if (interstitialAd != null && activity != null) {
-            interstitialAd?.show(activity = activity)
+        if (AdsConfig.canShowAd()) {
+            if (interstitialAd != null && activity != null) {
+                interstitialAd?.show(activity = activity)
+            } else {
+                navController.popBackStack()
+            }
         } else {
             navController.popBackStack()
         }
