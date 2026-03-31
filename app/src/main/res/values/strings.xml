@@ -674,7 +674,7 @@
     <string name="meal_dinner">Ужин</string>
     <string name="meal_snack">Перекус</string>
 
-    <string name="planner_add_recipe">+ Добавить блюдо</string>
+    <string name="planner_add_recipe">Добавить блюдо</string>
     <string name="planner_empty_slot">Пока ничего не запланировано</string>
 
     <!-- План питания -->

@@ -35,22 +35,43 @@ class RemoteConfigClientEventListenerImpl(private val seasonProductsRepository: 
                 }
             }
 
-        App.remoteConfigClient.getRemoteConfig().addOnSuccessListener { remoteConfig ->
-            // Проверяем, есть ли наш конфиг
-            if (remoteConfig.containsKey("season_products")) {
-                try {
-                    val jsonString = remoteConfig.getString("season_products")
+        if (BuildConfig.DEBUG) {
+            App.remoteConfigClient.getRemoteConfig().addOnSuccessListener { remoteConfig ->
+                if (remoteConfig.containsKey("season_products_test")) {
+                    try {
+                        val jsonString = remoteConfig.getString("season_products_test")
 
-                    log("Received season products: $jsonString")
-                    // Парсим JSON в наш Data Class
-                    val seasonData = json.decodeFromString<SeasonProductsResponse>(jsonString)
+                        log("Received season products: $jsonString")
+                        // Парсим JSON в наш Data Class
+                        val seasonData = json.decodeFromString<SeasonProductsResponse>(jsonString)
 
-                    // Сохраняем в DataStore
-                    scope.launch {
-                        seasonProductsRepository.addSeasonProducts(seasonData)
+                        // Сохраняем в DataStore
+                        scope.launch {
+                            seasonProductsRepository.addSeasonProducts(seasonData)
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace() // Ошибка парсинга
                     }
-                } catch (e: Exception) {
-                    e.printStackTrace() // Ошибка парсинга
+                }
+            }
+        } else {
+            App.remoteConfigClient.getRemoteConfig().addOnSuccessListener { remoteConfig ->
+                // Проверяем, есть ли наш конфиг
+                if (remoteConfig.containsKey("season_products")) {
+                    try {
+                        val jsonString = remoteConfig.getString("season_products")
+
+                        log("Received season products: $jsonString")
+                        // Парсим JSON в наш Data Class
+                        val seasonData = json.decodeFromString<SeasonProductsResponse>(jsonString)
+
+                        // Сохраняем в DataStore
+                        scope.launch {
+                            seasonProductsRepository.addSeasonProducts(seasonData)
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace() // Ошибка парсинга
+                    }
                 }
             }
         }

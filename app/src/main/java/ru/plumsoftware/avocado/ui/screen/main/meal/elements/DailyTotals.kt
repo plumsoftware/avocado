@@ -1,4 +1,4 @@
-package ru.plumsoftware.avocado.ui.screen.meal.elements
+package ru.plumsoftware.avocado.ui.screen.main.meal.elements
 
 data class DailyTotals(
     val kals: Int = 0,

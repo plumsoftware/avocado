@@ -57,6 +57,7 @@ import ru.plumsoftware.avocado.data.shopping.ShoppingRepository
 import ru.plumsoftware.avocado.data.user_preferences.UserPreferencesRepository
 import ru.plumsoftware.avocado.data.user_preferences.util.AppTheme
 import ru.plumsoftware.avocado.data.user_preferences.util.userPreferencesDataStore
+import ru.plumsoftware.avocado.data.water.WaterRepository
 import ru.plumsoftware.avocado.ui.screen.AppDestination
 import ru.plumsoftware.avocado.ui.screen.details.ProductDetailScreen
 import ru.plumsoftware.avocado.ui.screen.main.MainScreen
@@ -91,6 +92,7 @@ class MainActivity : ComponentActivity() {
         val userRepo = UserPreferencesRepository(this.userPreferencesDataStore)
         val mealPlanRepository = MealPlanRepository(db.mealPlanDao())
         val shoppingRepo = ShoppingRepository(db.shoppingDao())
+        val waterRepo = WaterRepository(db.waterIntakeDao())
         val destinationRoute = intent.getStringExtra(NotificationArgs.DESTINATION_ROUTE)
 
         // Edge to edge
@@ -268,7 +270,8 @@ class MainActivity : ComponentActivity() {
                                 shoppingRepository = shoppingRepo,
                                 navController = navController,
                                 favoritesRepository = favRepo,
-                                mealPlanRepository = mealPlanRepository
+                                mealPlanRepository = mealPlanRepository,
+                                waterRepository = waterRepo
                             )
                         }
 

@@ -164,12 +164,13 @@ fun FavoriteScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.TopCenter)
-                    .height(90.dp)
+                    .height(80.dp)
                     .background(
                         brush = Brush.verticalGradient(
                             colors = listOf(
                                 MaterialTheme.colorScheme.background.copy(alpha = 0.95f),
                                 MaterialTheme.colorScheme.background.copy(alpha = 0.8f),
+                                Color.Transparent,
                                 Color.Transparent
                             )
                         )

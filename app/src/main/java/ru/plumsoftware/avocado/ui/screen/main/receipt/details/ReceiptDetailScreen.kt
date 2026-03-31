@@ -78,7 +78,12 @@ fun ReceiptDetailScreen(
     shoppingRepository: ShoppingRepository
 ) {
     val viewModel: RecipesViewModel =
-        viewModel(factory = RecipesViewModel.Factory(userPrefsRepo = userPreferencesRepository, shoppingRepository = shoppingRepository))
+        viewModel(
+            factory = RecipesViewModel.Factory(
+                userPrefsRepo = userPreferencesRepository,
+                shoppingRepository = shoppingRepository
+            )
+        )
     val receipt = remember { viewModel.getReceiptById(receiptId) }
 
     if (receipt == null) {
@@ -306,9 +311,10 @@ fun ReceiptDetailScreen(
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         ingredients.forEach { food ->
-                            IngredientItem(food) {
+                            IngredientItem(food = food, onClick = {
                                 navController.navigate(AppDestination.DetailedScreen(foodId = food.id))
                             }
+                            )
                         }
                     }
 
@@ -320,7 +326,9 @@ fun ReceiptDetailScreen(
                             .clip(MaterialTheme.shapes.medium)
                             // Если добавлено - серый цвет, если нет - светло-зеленый (или как у тебя было)
                             .background(
-                                if (isAddedToCart) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                                if (isAddedToCart) MaterialTheme.colorScheme.surfaceVariant.copy(
+                                    alpha = 0.5f
+                                )
                                 else MaterialTheme.colorScheme.surfaceVariant
                             )
                             // Клик работает только если еще НЕ добавлено
@@ -464,10 +472,10 @@ fun ReceiptMetaBig(icon: ImageVector, value: String, label: String) {
 }
 
 @Composable
-fun IngredientItem(food: Food, onClick: () -> Unit) {
+fun IngredientItem(food: Food, onClick: () -> Unit, isShort: Boolean = false) {
     Column(
         modifier = Modifier
-            .width(80.dp)
+            .wrapContentSize()
             .iosClickable { onClick() },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -490,16 +498,20 @@ fun IngredientItem(food: Food, onClick: () -> Unit) {
                 modifier = Modifier.size(50.dp)
             )
         }
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = stringResource(food.titleRes),
-            style = MaterialTheme.typography.bodyMedium.copy(
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onSurface
-            ),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
+
+        if (!isShort) {
+            Spacer(modifier = Modifier.height(Dimen.mediumHalf))
+
+            Text(
+                text = stringResource(food.titleRes),
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurface
+                ),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
     }
 }
 

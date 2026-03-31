@@ -79,9 +79,6 @@ fun MainListScreen(
     val searchQuery by viewModel.searchQuery.collectAsState()
     val searchResults by viewModel.searchResults.collectAsState()
 
-    // ВОДА
-    val waterIntake by viewModel.waterIntake.collectAsState()
-
     // Состояние фокуса поиска (для анимации кнопки "Отмена")
     var isSearchFocused by remember { mutableStateOf(false) }
 
@@ -108,17 +105,6 @@ fun MainListScreen(
                 // Отступ сверху
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     Spacer(modifier = Modifier.height(84.dp))
-                }
-
-                // 🔥 2. ТРЕКЕР ВОДЫ
-                item(span = { GridItemSpan(maxLineSpan) }) {
-                    WaterTrackerCard(
-                        currentWaterMl = waterIntake,
-                        goalWaterMl = 2000,
-                        onAddWater = { amount ->
-                            viewModel.addWater(amount)
-                        }
-                    )
                 }
 
                 // 🔥 3. СЕЗОННЫЙ ВИДЖЕТ (Показываем только если есть промо и нет поиска)

@@ -14,22 +14,26 @@ import ru.plumsoftware.avocado.data.meal.MealPlanEntity
 import ru.plumsoftware.avocado.data.shopping.ShoppingConverters
 import ru.plumsoftware.avocado.data.shopping.ShoppingDao
 import ru.plumsoftware.avocado.data.shopping.ShoppingItemEntity
+import ru.plumsoftware.avocado.data.water.WaterIntakeDao
+import ru.plumsoftware.avocado.data.water.WaterIntakeEntity
 
 @Database(
     entities =[
         FavoriteEntity::class,
         ShoppingItemEntity::class,
-        MealPlanEntity::class
+        MealPlanEntity::class,
+        WaterIntakeEntity::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
-@TypeConverters(ShoppingConverters::class) // Оставляем твои конвертеры
+@TypeConverters(ShoppingConverters::class)
 abstract class AvocadoDatabase : RoomDatabase() {
 
     abstract fun favoriteDao(): FavoriteDao
     abstract fun shoppingDao(): ShoppingDao
     abstract fun mealPlanDao(): MealPlanDao
+    abstract fun waterIntakeDao(): WaterIntakeDao
 
     companion object {
         @Volatile
@@ -69,6 +73,20 @@ abstract class AvocadoDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `water_intake` (
+                        `dateString` TEXT NOT NULL, 
+                        `amountMl` INTEGER NOT NULL, 
+                        PRIMARY KEY(`dateString`)
+                    )
+                    """.trimIndent()
+                )
+            }
+        }
+
         fun getDatabase(context: Context): AvocadoDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
@@ -77,7 +95,7 @@ abstract class AvocadoDatabase : RoomDatabase() {
                     "avocado_database"
                 )
                     // ПЕРЕДАЕМ ОБЕ МИГРАЦИИ В БИЛДЕР
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
                     .build()
 
                 INSTANCE = instance

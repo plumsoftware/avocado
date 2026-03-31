@@ -1,6 +1,9 @@
-package ru.plumsoftware.avocado.ui.screen.meal
+package ru.plumsoftware.avocado.ui.screen.main.meal
 
-import android.os.Build
+import android.graphics.Color.TRANSPARENT
+import androidx.activity.SystemBarStyle
+import androidx.activity.compose.LocalActivity
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.expandVertically
@@ -9,10 +12,10 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -30,16 +33,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat.enableEdgeToEdge
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import ru.plumsoftware.avocado.R
@@ -48,17 +58,17 @@ import ru.plumsoftware.avocado.data.meal.MealPlanRepository
 import ru.plumsoftware.avocado.data.meal.MealType
 import ru.plumsoftware.avocado.data.shopping.ShoppingRepository
 import ru.plumsoftware.avocado.data.user_preferences.UserPreferencesRepository
+import ru.plumsoftware.avocado.data.water.WaterRepository
 import ru.plumsoftware.avocado.ui.modifier.iosClickable
 import ru.plumsoftware.avocado.ui.screen.AppDestination
-import ru.plumsoftware.avocado.ui.screen.main.MainViewModel
+import ru.plumsoftware.avocado.ui.screen.main.list.ListViewModel
+import ru.plumsoftware.avocado.ui.screen.main.list.elements.WaterTrackerCard
 import ru.plumsoftware.avocado.ui.screen.main.receipt.RecipesViewModel
-import ru.plumsoftware.avocado.ui.screen.meal.elements.DailySummaryCard
-import ru.plumsoftware.avocado.ui.screen.meal.elements.DailyTotals
+import ru.plumsoftware.avocado.ui.screen.main.meal.elements.DailySummaryCard
+import ru.plumsoftware.avocado.ui.screen.main.meal.elements.DailyTotals
 import ru.plumsoftware.avocado.ui.screen.onboarding.IOSGreen
 import ru.plumsoftware.avocado.ui.theme.Dimen
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.format.TextStyle
 import java.util.Date
 import java.util.Locale
 
@@ -67,11 +77,23 @@ fun MealPlannerScreen(
     navController: NavHostController,
     userPreferencesRepository: UserPreferencesRepository,
     shoppingRepository: ShoppingRepository,
-    mealPlanRepository: MealPlanRepository
+    mealPlanRepository: MealPlanRepository,
+    waterRepository: WaterRepository
 ) {
-    val viewModel: MealPlannerViewModel = viewModel(factory = MealPlannerViewModel.Factory(repo = mealPlanRepository))
+
+    val viewModel: MealPlannerViewModel = viewModel(
+        factory = MealPlannerViewModel.Factory(
+            repo = mealPlanRepository,
+            waterRepository = waterRepository
+        )
+    )
     val recipesViewModel: RecipesViewModel =
-        viewModel(factory = RecipesViewModel.Factory(userPrefsRepo = userPreferencesRepository, shoppingRepository = shoppingRepository))
+        viewModel(
+            factory = RecipesViewModel.Factory(
+                userPrefsRepo = userPreferencesRepository,
+                shoppingRepository = shoppingRepository
+            )
+        )
 
     val selectedDate by viewModel.selectedDate.collectAsState()
     val weekDays by viewModel.weekDays.collectAsState()
@@ -80,6 +102,9 @@ fun MealPlannerScreen(
     var showRecipeSelector by remember { mutableStateOf(false) }
     var selectedMealTypeForAdd by remember { mutableStateOf<MealType?>(null) }
     var showSwipeHint by rememberSaveable { mutableStateOf(true) }
+
+    // ВОДА
+    val waterIntake by viewModel.waterIntake.collectAsState()
 
     val dailyTotals = remember(dailyPlan) {
         var kals = 0
@@ -111,149 +136,197 @@ fun MealPlannerScreen(
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
+        topBar = {}
     ) { padding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(horizontal = Dimen.medium),
-            contentPadding = PaddingValues(bottom = 100.dp)
-        ) {
-            // --- 1. ЗАГОЛОВОК ---
-            item {
-                Spacer(modifier = Modifier.height(Dimen.medium))
-                Text(
-                    text = stringResource(R.string.planner_title),
-                    style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold),
-                    color = MaterialTheme.colorScheme.onBackground
+        Box(modifier = Modifier.fillMaxSize()) {
+
+            // --- 1. САМ СПИСОК (Должен быть первым в Box, чтобы быть на заднем плане) ---
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = Dimen.medium),
+                contentPadding = PaddingValues(
+                    top = Dimen.extraLarge,
+                    bottom = Dimen.bottomNavPadding
                 )
-                Text(
-                    text = stringResource(R.string.planner_subtitle),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(bottom = Dimen.large)
-                )
-            }
-
-            // --- 2. КАЛЕНДАРЬ ---
-            item {
-                // Создаем форматтер для сравнения дат
-                val sdf = remember { java.text.SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()) }
-
-                LazyRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    items(weekDays) { date ->
-                        CalendarDayItem(
-                            date = date,
-                            isSelected = sdf.format(date) == sdf.format(selectedDate),
-                            onClick = { viewModel.selectDate(date) }
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.height(Dimen.extraLarge))
-            }
-
-            if (showSwipeHint && dailyPlan.isNotEmpty()) {
+            ) {
+                // --- 1. ЗАГОЛОВОК ---
                 item {
-                    AnimatedVisibility(
-                        visible = showSwipeHint,
-                        enter = expandVertically() + fadeIn(),
-                        exit = shrinkVertically() + fadeOut()
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = Dimen.large) // Отступ до слотов питания
-                                .clip(RoundedCornerShape(Dimen.mediumHalf))
-                                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f))
-                                .padding(horizontal = Dimen.medium, vertical = Dimen.mediumHalf),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowLeft,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = stringResource(R.string.planner_swipe_hint),
-                                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium),
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-
-                            Icon(
-                                imageVector = Icons.Rounded.Close,
-                                contentDescription = stringResource(R.string.cd_close),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier
-                                    .size(16.dp)
-                                    .iosClickable { showSwipeHint = false }
-                            )
-                        }
-                    }
-                }
-            } else if (dailyPlan.isEmpty()) {
-                // Если план пуст и баннера нет, просто добавим отступ, чтобы верстка не прыгала
-                item { Spacer(modifier = Modifier.height(Dimen.medium)) }
-            }
-
-            item {
-                DailySummaryCard(totals = dailyTotals)
-                Spacer(modifier = Modifier.height(Dimen.extraLarge))
-            }
-
-            // --- 3. СЛОТЫ ПИТАНИЯ ---
-            val mealTypes = listOf(
-                MealType.BREAKFAST to R.string.meal_breakfast,
-                MealType.LUNCH to R.string.meal_lunch,
-                MealType.DINNER to R.string.meal_dinner,
-                MealType.SNACK to R.string.meal_snack
-            )
-
-            mealTypes.forEach { (type, titleRes) ->
-                item {
+                    Spacer(modifier = Modifier.height(Dimen.medium))
                     Text(
-                        text = stringResource(titleRes),
-                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.padding(bottom = Dimen.mediumHalf)
+                        text = stringResource(R.string.planner_title),
+                        style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    Text(
+                        text = stringResource(R.string.planner_subtitle),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(bottom = Dimen.large)
                     )
                 }
 
-                val mealsForType = dailyPlan.filter { it.mealType == type.name }
+                // --- 2. КАЛЕНДАРЬ ---
+                item {
+                    // Создаем форматтер для сравнения дат
+                    val sdf = remember { SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()) }
 
-                if (mealsForType.isEmpty()) {
-                    item {
-                        EmptyMealSlot(onClick = {
-                            selectedMealTypeForAdd = type
-                            showRecipeSelector = true
-                        })
-                        Spacer(modifier = Modifier.height(Dimen.large))
-                    }
-                } else {
-                    items(
-                        items = mealsForType,
-                        key = { it.id }
-                    ) { mealPlan ->
-                        val receipt = recipesViewModel.getReceiptById(mealPlan.recipeId)
-
-                        if (receipt != null) {
-                            MealPlanReceiptCard(
-                                receipt = receipt,
-                                onDelete = { viewModel.removeMeal(mealPlan.id) },
-                                onClick = { navController.navigate(AppDestination.ReceiptDetailRoute(receipt.id)) }
+                    LazyRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        items(weekDays) { date ->
+                            CalendarDayItem(
+                                date = date,
+                                isSelected = sdf.format(date) == sdf.format(selectedDate),
+                                onClick = { viewModel.selectDate(date) }
                             )
                         }
                     }
-                    item { Spacer(modifier = Modifier.height(Dimen.large)) }
+                    Spacer(modifier = Modifier.height(Dimen.extraLarge))
+                }
+
+                // 🔥 2. ТРЕКЕР ВОДЫ
+                item {
+                    WaterTrackerCard(
+                        currentWaterMl = waterIntake,
+                        goalWaterMl = 2000,
+                        onAddWater = { amount ->
+                            viewModel.addWater(amount)
+                        }
+                    )
+                }
+
+                item { Spacer(modifier = Modifier.height(Dimen.medium)) }
+
+                item {
+                    DailySummaryCard(totals = dailyTotals)
+                    Spacer(modifier = Modifier.height(Dimen.extraLarge))
+                }
+
+                if (showSwipeHint && dailyPlan.isNotEmpty()) {
+                    item {
+                        AnimatedVisibility(
+                            visible = showSwipeHint,
+                            enter = expandVertically() + fadeIn(),
+                            exit = shrinkVertically() + fadeOut()
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = Dimen.large) // Отступ до слотов питания
+                                    .clip(RoundedCornerShape(Dimen.mediumHalf))
+                                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f))
+                                    .padding(
+                                        horizontal = Dimen.medium,
+                                        vertical = Dimen.mediumHalf
+                                    ),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowLeft,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = stringResource(R.string.planner_swipe_hint),
+                                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium),
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+
+                                Icon(
+                                    imageVector = Icons.Rounded.Close,
+                                    contentDescription = stringResource(R.string.cd_close),
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier
+                                        .size(16.dp)
+                                        .iosClickable { showSwipeHint = false }
+                                )
+                            }
+                        }
+                    }
+                } else if (dailyPlan.isEmpty()) {
+                    // Если план пуст и баннера нет, просто добавим отступ, чтобы верстка не прыгала
+                    item { Spacer(modifier = Modifier.height(Dimen.medium)) }
+                }
+
+                // --- 3. СЛОТЫ ПИТАНИЯ ---
+                val mealTypes = listOf(
+                    MealType.BREAKFAST to R.string.meal_breakfast,
+                    MealType.LUNCH to R.string.meal_lunch,
+                    MealType.DINNER to R.string.meal_dinner,
+                    MealType.SNACK to R.string.meal_snack
+                )
+
+                mealTypes.forEach { (type, titleRes) ->
+                    item {
+                        Text(
+                            text = stringResource(titleRes),
+                            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.padding(bottom = Dimen.mediumHalf)
+                        )
+                    }
+
+                    val mealsForType = dailyPlan.filter { it.mealType == type.name }
+
+                    if (mealsForType.isEmpty()) {
+                        item {
+                            EmptyMealSlot(onClick = {
+                                selectedMealTypeForAdd = type
+                                showRecipeSelector = true
+                            })
+                            Spacer(modifier = Modifier.height(Dimen.large))
+                        }
+                    } else {
+                        items(
+                            items = mealsForType,
+                            key = { it.id }
+                        ) { mealPlan ->
+                            val receipt = recipesViewModel.getReceiptById(mealPlan.recipeId)
+
+                            if (receipt != null) {
+                                MealPlanReceiptCard(
+                                    receipt = receipt,
+                                    onDelete = { viewModel.removeMeal(mealPlan.id) },
+                                    onClick = {
+                                        navController.navigate(
+                                            AppDestination.ReceiptDetailRoute(
+                                                receipt.id
+                                            )
+                                        )
+                                    }
+                                )
+                            }
+                        }
+                        item { Spacer(modifier = Modifier.height(Dimen.large)) }
+                    }
                 }
             }
+
+            // --- 2. ВЕРХНИЙ ГРАДИЕНТ (IOS Style Blur) ---
+            // Рисуется ПОВЕРХ списка (вторым в Box), создает эффект матового стекла под статус-баром
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.TopCenter)
+                    .height(80.dp)
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(
+                                MaterialTheme.colorScheme.background.copy(alpha = 0.95f),
+                                MaterialTheme.colorScheme.background.copy(alpha = 0.8f),
+                                Color.Transparent,
+                                Color.Transparent
+                            )
+                        )
+                    )
+            )
         }
 
         // --- 4. ШТОРКА ВЫБОРА РЕЦЕПТА ---
@@ -280,8 +353,14 @@ fun MealPlannerScreen(
 
 @Composable
 fun CalendarDayItem(date: Date, isSelected: Boolean, onClick: () -> Unit) {
-    val bgColor by animateColorAsState(if (isSelected) IOSGreen else Color.Transparent, label = "bg")
-    val textColor by animateColorAsState(if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface, label = "txt")
+    val bgColor by animateColorAsState(
+        if (isSelected) IOSGreen else Color.Transparent,
+        label = "bg"
+    )
+    val textColor by animateColorAsState(
+        if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface,
+        label = "txt"
+    )
 
     // Получаем день недели ("Пн", "Вт") с помощью SimpleDateFormat
     val sdfDayOfWeek = remember { SimpleDateFormat("E", Locale("ru", "RU")) }
@@ -332,7 +411,11 @@ fun EmptyMealSlot(onClick: () -> Unit) {
             .height(80.dp)
             .clip(RoundedCornerShape(Dimen.medium))
             .drawBehind {
-                drawRoundRect(color = strokeColor, style = stroke, cornerRadius = androidx.compose.ui.geometry.CornerRadius(16.dp.toPx()))
+                drawRoundRect(
+                    color = strokeColor,
+                    style = stroke,
+                    cornerRadius = CornerRadius(16.dp.toPx())
+                )
             }
             .iosClickable { onClick() },
         contentAlignment = Alignment.Center
@@ -370,7 +453,11 @@ fun MealPlanReceiptCard(
         state = dismissState,
         enableDismissFromStartToEnd = false,
         backgroundContent = {
-            val color by animateColorAsState(if (dismissState.targetValue == SwipeToDismissBoxValue.EndToStart) Color(0xFFFF3B30) else Color(0xFFFF3B30).copy(alpha = 0.5f))
+            val color by animateColorAsState(
+                if (dismissState.targetValue == SwipeToDismissBoxValue.EndToStart) Color(
+                    0xFFFF3B30
+                ) else Color(0xFFFF3B30).copy(alpha = 0.5f)
+            )
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -380,7 +467,11 @@ fun MealPlanReceiptCard(
                     .padding(end = Dimen.medium),
                 contentAlignment = Alignment.CenterEnd
             ) {
-                Icon(Icons.Rounded.Delete, contentDescription = stringResource(R.string.cd_delete), tint = Color.White)
+                Icon(
+                    Icons.Rounded.Delete,
+                    contentDescription = stringResource(R.string.cd_delete),
+                    tint = Color.White
+                )
             }
         },
         content = {
@@ -417,18 +508,34 @@ fun MealPlanReceiptCard(
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.LocalFireDepartment, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(12.dp))
+                        Icon(
+                            Icons.Default.LocalFireDepartment,
+                            contentDescription = null,
+                            tint = Color.Gray,
+                            modifier = Modifier.size(12.dp)
+                        )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = stringResource(R.string.format_kcal, receipt.calories), // Из ресурсов!
+                            text = stringResource(
+                                R.string.format_kcal,
+                                receipt.calories
+                            ), // Из ресурсов!
                             style = MaterialTheme.typography.bodySmall,
                             color = Color.Gray
                         )
                         Spacer(modifier = Modifier.width(Dimen.medium))
-                        Icon(Icons.Default.Schedule, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(12.dp))
+                        Icon(
+                            Icons.Default.Schedule,
+                            contentDescription = null,
+                            tint = Color.Gray,
+                            modifier = Modifier.size(12.dp)
+                        )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = stringResource(R.string.format_minutes, receipt.timeMinutes), // Из ресурсов!
+                            text = stringResource(
+                                R.string.format_minutes,
+                                receipt.timeMinutes
+                            ), // Из ресурсов!
                             style = MaterialTheme.typography.bodySmall,
                             color = Color.Gray
                         )
@@ -561,7 +668,12 @@ fun RecipeSelectionSheet(
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(Icons.Default.LocalFireDepartment, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(12.dp))
+                                Icon(
+                                    Icons.Default.LocalFireDepartment,
+                                    contentDescription = null,
+                                    tint = Color.Gray,
+                                    modifier = Modifier.size(12.dp)
+                                )
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
                                     text = "${recipe.calories} ккал",
@@ -569,7 +681,12 @@ fun RecipeSelectionSheet(
                                     color = Color.Gray
                                 )
                                 Spacer(modifier = Modifier.width(Dimen.medium))
-                                Icon(Icons.Default.Schedule, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(12.dp))
+                                Icon(
+                                    Icons.Default.Schedule,
+                                    contentDescription = null,
+                                    tint = Color.Gray,
+                                    modifier = Modifier.size(12.dp)
+                                )
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
                                     text = "${recipe.timeMinutes} мин",

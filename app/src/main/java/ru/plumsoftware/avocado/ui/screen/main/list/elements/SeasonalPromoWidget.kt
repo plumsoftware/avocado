@@ -44,7 +44,7 @@ fun SeasonalPromoWidget(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(200.dp)
-                .clip(RoundedCornerShape(Dimen.large))
+                .clip(MaterialTheme.shapes.large)
                 .background(MaterialTheme.colorScheme.surfaceVariant)
         ) {
             // Картинка из Base64
@@ -77,19 +77,25 @@ fun SeasonalPromoWidget(
             ) {
                 Box(
                     modifier = Modifier
-                        .clip(RoundedCornerShape(6.dp))
+                        .clip(RoundedCornerShape(Dimen.small))
                         .background(Color.White.copy(alpha = 0.9f))
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                        .padding(horizontal = Dimen.medium, vertical = Dimen.extraSmall)
                 ) {
                     Text(
                         text = "СЕЗОННОЕ ПРЕДЛОЖЕНИЕ",
-                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, color = Color.Black)
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black
+                        )
                     )
                 }
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(Dimen.mediumHalf))
                 Text(
                     text = promo.title,
-                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold, color = Color.White)
+                    style = MaterialTheme.typography.headlineSmall.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
                 )
             }
         }
@@ -100,14 +106,14 @@ fun SeasonalPromoWidget(
 
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(Dimen.mediumHalf),
-                contentPadding = PaddingValues(horizontal = 4.dp)
+                contentPadding = PaddingValues(horizontal = Dimen.extraSmall)
             ) {
                 items(foods) { food ->
                     // Используем уже готовый компонент IngredientItem (из рецептов)
                     // или делаем маленькую карточку
-                    IngredientItem(food = food) {
+                    IngredientItem(food = food, onClick = {
                         onFoodClick(food.id)
-                    }
+                    }, isShort = true)
                 }
             }
         }

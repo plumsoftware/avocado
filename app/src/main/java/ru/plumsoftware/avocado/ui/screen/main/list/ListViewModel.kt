@@ -324,20 +324,6 @@ class ListViewModel(
         return allFood.value.filter { it.id in ids }
     }
 
-    // --- ВОДА ---
-    val waterIntake: StateFlow<Int> = userPreferencesRepository.waterIntake
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = 0
-        )
-
-    fun addWater(amountMl: Int) {
-        viewModelScope.launch {
-            userPreferencesRepository.addWater(amountMl)
-        }
-    }
-
     companion object {
         class ListViewModelFactory(
             private val favoritesRepository: FavoritesRepository,

@@ -54,7 +54,12 @@ fun RecipesScreen(
     shoppingRepository: ShoppingRepository
 ) {
     val viewModel: RecipesViewModel =
-        viewModel(factory = RecipesViewModel.Factory(userPrefsRepo = userPreferencesRepository, shoppingRepository = shoppingRepository))
+        viewModel(
+            factory = RecipesViewModel.Factory(
+                userPrefsRepo = userPreferencesRepository,
+                shoppingRepository = shoppingRepository
+            )
+        )
 
     val featuredReceipts by viewModel.featuredReceipts.collectAsState()
     val recipeList by viewModel.recipeList.collectAsState()
@@ -66,155 +71,179 @@ fun RecipesScreen(
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
-        topBar = { }
+        topBar = {}
     ) { padding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(horizontal = Dimen.medium),
-            verticalArrangement = Arrangement.spacedBy(Dimen.large),
-            contentPadding = PaddingValues(bottom = Dimen.bottomNavPadding)
-        ) {
-
-            item {
-                Spacer(modifier = Modifier.height(Dimen.medium))
-            }
-
-            // 1. ЗАГОЛОВОК ЭКРАНА
-            item {
-                Spacer(modifier = Modifier.height(Dimen.spacerVertical))
-                Text(
-                    text = stringResource(R.string.recipes_title),
-                    style = MaterialTheme.typography.displaySmall.copy(
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
+        Box(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = Dimen.medium),
+                verticalArrangement = Arrangement.spacedBy(Dimen.large),
+                contentPadding = PaddingValues(
+                    top = Dimen.extraLarge,
+                    bottom = Dimen.bottomNavPadding
                 )
-                Text(
-                    text = stringResource(R.string.recipes_subtitle),
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                )
-            }
-
-            // 2. БАННЕР (VIEW PAGER)
-            if (featuredReceipts.isNotEmpty()) {
+            ) {
+                // 1. ЗАГОЛОВОК ЭКРАНА
                 item {
-                    Column {
-                        HorizontalPager(
-                            state = pagerState,
-                            modifier = Modifier.fillMaxWidth(),
-                            pageSpacing = Dimen.medium
-                        ) { page ->
-                            val receipt = featuredReceipts[page]
-                            // Ищем первое совпадение с целью юзера
-                            val matchingGoal =
-                                receipt.suitableGoals.firstOrNull { userGoals.contains(it) }
+                    Spacer(modifier = Modifier.height(Dimen.spacerVertical))
+                    Text(
+                        text = stringResource(R.string.recipes_title),
+                        style = MaterialTheme.typography.displaySmall.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    )
+                    Text(
+                        text = stringResource(R.string.recipes_subtitle),
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    )
+                }
 
-                            FeaturedReceiptCard(
-                                receipt = receipt,
-                                matchingGoal = matchingGoal,
-                                onClick = {
-                                    navController.navigate(
-                                        AppDestination.ReceiptDetailRoute(
-                                            receipt.id
+                // 2. БАННЕР (VIEW PAGER)
+                if (featuredReceipts.isNotEmpty()) {
+                    item {
+                        Column {
+                            HorizontalPager(
+                                state = pagerState,
+                                modifier = Modifier.fillMaxWidth(),
+                                pageSpacing = Dimen.medium
+                            ) { page ->
+                                val receipt = featuredReceipts[page]
+                                // Ищем первое совпадение с целью юзера
+                                val matchingGoal =
+                                    receipt.suitableGoals.firstOrNull { userGoals.contains(it) }
+
+                                FeaturedReceiptCard(
+                                    receipt = receipt,
+                                    matchingGoal = matchingGoal,
+                                    onClick = {
+                                        navController.navigate(
+                                            AppDestination.ReceiptDetailRoute(
+                                                receipt.id
+                                            )
                                         )
+                                    }
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(Dimen.mediumHalf))
+
+                            // Индикатор (Точки)
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                repeat(featuredReceipts.size) { iteration ->
+                                    val color =
+                                        if (pagerState.currentPage == iteration) IOSGreen else Color.LightGray
+                                    Box(
+                                        modifier = Modifier
+                                            .padding(Dimen.extraSmall)
+                                            .clip(CircleShape)
+                                            .background(color)
+                                            .size(Dimen.small)
                                     )
                                 }
-                            )
+                            }
                         }
+                    }
+                }
 
-                        Spacer(modifier = Modifier.height(Dimen.mediumHalf))
+                // 3. ФИЛЬТРЫ (Категории)
+                item {
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(Dimen.mediumHalf)
+                    ) {
+                        items(categories) { category ->
+                            val isSelected = category == selectedCategory
+                            val bgColor =
+                                if (isSelected) IOSGreen else MaterialTheme.colorScheme.surface
+                            val contentColor =
+                                if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface
+                            val borderColor =
+                                if (isSelected) Color.Transparent else MaterialTheme.colorScheme.outlineVariant
 
-                        // Индикатор (Точки)
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            repeat(featuredReceipts.size) { iteration ->
-                                val color =
-                                    if (pagerState.currentPage == iteration) IOSGreen else Color.LightGray
-                                Box(
-                                    modifier = Modifier
-                                        .padding(Dimen.extraSmall)
-                                        .clip(CircleShape)
-                                        .background(color)
-                                        .size(Dimen.small)
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(50))
+                                    .background(bgColor)
+                                    .border(1.dp, borderColor, RoundedCornerShape(50))
+                                    .clickable { viewModel.onCategorySelect(category) }
+                                    .padding(horizontal = Dimen.medium, vertical = Dimen.mediumHalf)
+                            ) {
+                                Text(
+                                    text = stringResource(category.titleRes),
+                                    style = MaterialTheme.typography.bodyMedium.copy(
+                                        fontWeight = FontWeight.Medium,
+                                        color = contentColor
+                                    )
                                 )
                             }
                         }
                     }
                 }
-            }
 
-            // 3. ФИЛЬТРЫ (Категории)
-            item {
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(Dimen.mediumHalf)
-                ) {
-                    items(categories) { category ->
-                        val isSelected = category == selectedCategory
-                        val bgColor =
-                            if (isSelected) IOSGreen else MaterialTheme.colorScheme.surface
-                        val contentColor =
-                            if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface
-                        val borderColor =
-                            if (isSelected) Color.Transparent else MaterialTheme.colorScheme.outlineVariant
+                // 4. ЗАГОЛОВОК СПИСКА
+                item {
+                    Text(
+                        text = if (selectedCategory == RecipeCategory.ALL)
+                            stringResource(R.string.recipes_header_all)
+                        else stringResource(selectedCategory.titleRes),
+                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
 
-                        Box(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(50))
-                                .background(bgColor)
-                                .border(1.dp, borderColor, RoundedCornerShape(50))
-                                .clickable { viewModel.onCategorySelect(category) }
-                                .padding(horizontal = Dimen.medium, vertical = Dimen.mediumHalf)
-                        ) {
-                            Text(
-                                text = stringResource(category.titleRes),
-                                style = MaterialTheme.typography.bodyMedium.copy(
-                                    fontWeight = FontWeight.Medium,
-                                    color = contentColor
+                // 5. СПИСОК РЕЦЕПТОВ
+                if (recipeList.isEmpty()) {
+                    item {
+                        Text(
+                            text = stringResource(R.string.recipes_empty_category),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(vertical = Dimen.extraLarge)
+                        )
+                    }
+                } else {
+                    items(recipeList) { receipt ->
+                        val matchingGoal =
+                            receipt.suitableGoals.firstOrNull { userGoals.contains(it) }
+
+                        ReceiptListItem(
+                            receipt = receipt,
+                            matchingGoal = matchingGoal,
+                            onClick = {
+                                navController.navigate(
+                                    AppDestination.ReceiptDetailRoute(
+                                        receipt.id
+                                    )
                                 )
-                            )
-                        }
+                            }
+                        )
                     }
                 }
             }
-
-            // 4. ЗАГОЛОВОК СПИСКА
-            item {
-                Text(
-                    text = if (selectedCategory == RecipeCategory.ALL)
-                        stringResource(R.string.recipes_header_all)
-                    else stringResource(selectedCategory.titleRes),
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            }
-
-            // 5. СПИСОК РЕЦЕПТОВ
-            if (recipeList.isEmpty()) {
-                item {
-                    Text(
-                        text = stringResource(R.string.recipes_empty_category),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(vertical = Dimen.extraLarge)
+            // --- 2. ВЕРХНИЙ ГРАДИЕНТ (IOS Style Blur) ---
+            // Рисуется ПОВЕРХ списка (вторым в Box), создает эффект матового стекла под статус-баром
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.TopCenter)
+                    .height(80.dp)
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(
+                                MaterialTheme.colorScheme.background.copy(alpha = 0.95f),
+                                MaterialTheme.colorScheme.background.copy(alpha = 0.8f),
+                                Color.Transparent,
+                                Color.Transparent
+                            )
+                        )
                     )
-                }
-            } else {
-                items(recipeList) { receipt ->
-                    val matchingGoal = receipt.suitableGoals.firstOrNull { userGoals.contains(it) }
-
-                    ReceiptListItem(
-                        receipt = receipt,
-                        matchingGoal = matchingGoal,
-                        onClick = { navController.navigate(AppDestination.ReceiptDetailRoute(receipt.id)) }
-                    )
-                }
-            }
+            )
         }
     }
 }

@@ -22,11 +22,11 @@ class SeasonProductsRepository(
     suspend fun addSeasonProducts(seasonProducts: SeasonProductsResponse) {
         dataStore.updateData { prefs ->
             prefs.toBuilder()
+                .clearProducts()
                 .setDateStart(seasonProducts.dateStart)
                 .setDateEnd(seasonProducts.dateEnd)
                 .setPromo(seasonProducts.promo)
                 .setTitle(seasonProducts.title)
-                .clearProducts()
                 .addAllProducts(seasonProducts.products.toList())
                 .build()
         }

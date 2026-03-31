@@ -1,4 +1,4 @@
-package ru.plumsoftware.avocado.ui.screen.meal.elements
+package ru.plumsoftware.avocado.ui.screen.main.meal.elements
 
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
@@ -32,7 +32,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import ru.plumsoftware.avocado.R
-import ru.plumsoftware.avocado.ui.screen.meal.elements.DailyTotals
 import ru.plumsoftware.avocado.ui.theme.Dimen
 
 @Composable

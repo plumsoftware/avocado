@@ -24,13 +24,14 @@ import ru.plumsoftware.avocado.data.favorite.FavoritesRepository
 import ru.plumsoftware.avocado.data.meal.MealPlanRepository
 import ru.plumsoftware.avocado.data.shopping.ShoppingRepository
 import ru.plumsoftware.avocado.data.user_preferences.UserPreferencesRepository
+import ru.plumsoftware.avocado.data.water.WaterRepository
 import ru.plumsoftware.avocado.ui.screen.main.elements.BottomNavBar
 import ru.plumsoftware.avocado.ui.screen.main.favorite.FavoriteScreen
 import ru.plumsoftware.avocado.ui.screen.main.list.MainListScreen
 import ru.plumsoftware.avocado.ui.screen.main.receipt.RecipesScreen
 import ru.plumsoftware.avocado.ui.screen.main.settings.SettingsScreen
 import ru.plumsoftware.avocado.ui.screen.main.settings.SettingsViewModel
-import ru.plumsoftware.avocado.ui.screen.meal.MealPlannerScreen
+import ru.plumsoftware.avocado.ui.screen.main.meal.MealPlannerScreen
 
 @Composable
 fun MainScreen(
@@ -39,6 +40,7 @@ fun MainScreen(
     settingsViewModel: SettingsViewModel,
     shoppingRepository: ShoppingRepository,
     mealPlanRepository: MealPlanRepository,
+    waterRepository: WaterRepository,
     navController: NavHostController
 ) {
 
@@ -90,7 +92,8 @@ fun MainScreen(
                         navController = navController,
                         userPreferencesRepository = userPreferencesRepository,
                         shoppingRepository = shoppingRepository,
-                        mealPlanRepository = mealPlanRepository
+                        mealPlanRepository = mealPlanRepository,
+                        waterRepository = waterRepository
                     )
                 }
             }

@@ -49,6 +49,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -76,8 +78,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    viewModel: SettingsViewModel,
-    navController: NavHostController
+    viewModel: SettingsViewModel, navController: NavHostController
 ) {
     val currentTheme by viewModel.currentTheme.collectAsState()
     val context = LocalContext.current
@@ -87,7 +88,9 @@ fun SettingsScreen(
     var hasNotifications by remember {
         mutableStateOf(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+                ContextCompat.checkSelfPermission(
+                    context, Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
             } else true
         )
     }
@@ -103,8 +106,7 @@ fun SettingsScreen(
                 // Обновляем статус свитча каждый раз, когда юзер возвращается на экран
                 hasNotifications = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     ContextCompat.checkSelfPermission(
-                        context,
-                        Manifest.permission.POST_NOTIFICATIONS
+                        context, Manifest.permission.POST_NOTIFICATIONS
                     ) == PackageManager.PERMISSION_GRANTED
                 } else true
             }
@@ -139,8 +141,7 @@ fun SettingsScreen(
     }
 
     Scaffold(
-        modifier = Modifier,
-        topBar = {
+        modifier = Modifier, topBar = {
             CenterAlignedTopAppBar(
                 title = {
                     Text(
@@ -148,195 +149,210 @@ fun SettingsScreen(
                         text = stringResource(R.string.settings),
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                     )
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background
                 )
             )
-        },
-        containerColor = MaterialTheme.colorScheme.background
+        }, containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
 
-        Column(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(all = Dimen.medium)
-        ) {
-
-            Text(
-                text = stringResource(R.string.settings_section_personalization),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(start = Dimen.medium, bottom = Dimen.mediumHalf)
-            )
-
+        Box(modifier = Modifier.fillMaxSize()) {
             Column(
                 modifier = Modifier
-                    .clip(MaterialTheme.shapes.medium)
-                    .background(MaterialTheme.colorScheme.surface)
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = Dimen.medium)
             ) {
-                // Кнопка для повторного открытия Онбординга
-                IOSSettingsNavigationItem(
-                    title = stringResource(R.string.settings_item_goals),
-                    icon = Icons.Default.RestaurantMenu, // Или любая иконка
-                    onClick = {
-                        navController.navigate(AppDestination.Onboarding)
-                    },
-                    showDivider = false
+
+                Text(
+                    text = stringResource(R.string.settings_section_personalization),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(start = Dimen.medium, bottom = Dimen.mediumHalf)
                 )
-            }
 
-            Spacer(modifier = Modifier.height(Dimen.large))
+                Column(
+                    modifier = Modifier
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(MaterialTheme.colorScheme.surface)
+                ) {
+                    // Кнопка для повторного открытия Онбординга
+                    IOSSettingsNavigationItem(
+                        title = stringResource(R.string.settings_item_goals),
+                        icon = Icons.Default.RestaurantMenu, // Или любая иконка
+                        onClick = {
+                            navController.navigate(AppDestination.Onboarding)
+                        },
+                        showDivider = false
+                    )
+                }
 
-            Text(
-                text = stringResource(R.string.settings_section_permissions),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(start = Dimen.medium, bottom = Dimen.mediumHalf)
-            )
+                Spacer(modifier = Modifier.height(Dimen.large))
 
-            Column(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(Dimen.large))
-                    .background(MaterialTheme.colorScheme.surface)
-            ) {
-                // 1. Уведомления
-                IOSSettingsSwitchItem(
-                    title = stringResource(R.string.settings_item_push),
-                    isChecked = hasNotifications,
-                    onCheckedChange = { turnOn ->
-                        if (turnOn) {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                notifLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                            }
-                        } else {
-                            val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-                                    putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                Text(
+                    text = stringResource(R.string.settings_section_permissions),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(start = Dimen.medium, bottom = Dimen.mediumHalf)
+                )
+
+                Column(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(Dimen.large))
+                        .background(MaterialTheme.colorScheme.surface)
+                ) {
+                    // 1. Уведомления
+                    IOSSettingsSwitchItem(
+                        title = stringResource(R.string.settings_item_push),
+                        isChecked = hasNotifications,
+                        onCheckedChange = { turnOn ->
+                            if (turnOn) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                    notifLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                                 }
                             } else {
-                                Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                                    data = Uri.fromParts("package", context.packageName, null)
+                                val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                                        putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                                    }
+                                } else {
+                                    Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                        data = Uri.fromParts("package", context.packageName, null)
+                                    }
                                 }
+                                context.startActivity(intent)
                             }
-                            context.startActivity(intent)
-                        }
-                    },
-                    showDivider = true // Теперь тут есть разделитель!
-                )
+                        },
+                        showDivider = true // Теперь тут есть разделитель!
+                    )
 
-                // 2. Работа в фоне (Игнорирование экономии заряда)
-                IOSSettingsSwitchItem(
-                    title = stringResource(R.string.settings_item_background),
-                    isChecked = hasBackgroundWork,
-                    onCheckedChange = { turnOn ->
-                        if (turnOn) {
-                            // Просим разрешить работу в фоне
-                            val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
-                                data = "package:${context.packageName}".toUri()
+                    // 2. Работа в фоне (Игнорирование экономии заряда)
+                    IOSSettingsSwitchItem(
+                        title = stringResource(R.string.settings_item_background),
+                        isChecked = hasBackgroundWork,
+                        onCheckedChange = { turnOn ->
+                            if (turnOn) {
+                                // Просим разрешить работу в фоне
+                                val intent =
+                                    Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
+                                        data = "package:${context.packageName}".toUri()
+                                    }
+                                backgroundLauncher.launch(intent)
+                            } else {
+                                // Если юзер хочет выключить — перекидываем в общие настройки батареи
+                                val intent =
+                                    Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
+                                context.startActivity(intent)
                             }
-                            backgroundLauncher.launch(intent)
-                        } else {
-                            // Если юзер хочет выключить — перекидываем в общие настройки батареи
-                            val intent = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
-                            context.startActivity(intent)
-                        }
-                    },
-                    showDivider = false // Последний элемент без линии
-                )
-            }
+                        },
+                        showDivider = false // Последний элемент без линии
+                    )
+                }
 
-            Spacer(modifier = Modifier.height(Dimen.large))
+                Spacer(modifier = Modifier.height(Dimen.large))
 
-            // ЗАГОЛОВОК СЕКЦИИ
-            Text(
-                text = stringResource(R.string.settings_section_appearance),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(start = Dimen.medium, bottom = Dimen.mediumHalf)
-            )
-
-            // БЛОК НАСТРОЕК (Скругленный контейнер)
-            Column(
-                modifier = Modifier
-                    .clip(MaterialTheme.shapes.medium)
-                    .background(MaterialTheme.colorScheme.surface)
-            ) {
-                IOSSettingsItem(
-                    title = stringResource(R.string.settings_theme_system),
-                    isSelected = currentTheme == AppTheme.System,
-                    onClick = { viewModel.updateTheme(AppTheme.System) }
-                )
-                IOSSettingsItem(
-                    title = stringResource(R.string.settings_theme_light),
-                    isSelected = currentTheme == AppTheme.Light,
-                    onClick = { viewModel.updateTheme(AppTheme.Light) }
-                )
-                IOSSettingsItem(
-                    title = stringResource(R.string.settings_theme_dark),
-                    isSelected = currentTheme == AppTheme.Dark,
-                    onClick = { viewModel.updateTheme(AppTheme.Dark) },
-                    showDivider = false
-                )
-            }
-
-            Spacer(modifier = Modifier.height(Dimen.large))
-
-            // --- НОВАЯ СЕКЦИЯ: О ПРИЛОЖЕНИИ ---
-            Text(
-                text = stringResource(R.string.settings_section_about),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(start = Dimen.medium, bottom = Dimen.mediumHalf)
-            )
-
-            Column(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(Dimen.large))
-                    .background(MaterialTheme.colorScheme.surface)
-            ) {
-                IOSSettingsNavigationItem(
-                    title = stringResource(R.string.privacy_policy_title),
-                    icon = Icons.Default.Info, // Либо любая другая иконка (document)
-                    onClick = {
-                        navController.navigate(AppDestination.PrivacyPolicy)
-                    },
-                    showDivider = false
-                )
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Box(
-                modifier = Modifier.fillMaxWidth().padding(bottom = 100.dp),
-                contentAlignment = Alignment.BottomEnd
-            ) {
+                // ЗАГОЛОВОК СЕКЦИИ
                 Text(
-                    text = appVersion,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    text = stringResource(R.string.settings_section_appearance),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(start = Dimen.medium, bottom = Dimen.mediumHalf)
                 )
+
+                // БЛОК НАСТРОЕК (Скругленный контейнер)
+                Column(
+                    modifier = Modifier
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(MaterialTheme.colorScheme.surface)
+                ) {
+                    IOSSettingsItem(
+                        title = stringResource(R.string.settings_theme_system),
+                        isSelected = currentTheme == AppTheme.System,
+                        onClick = { viewModel.updateTheme(AppTheme.System) })
+                    IOSSettingsItem(
+                        title = stringResource(R.string.settings_theme_light),
+                        isSelected = currentTheme == AppTheme.Light,
+                        onClick = { viewModel.updateTheme(AppTheme.Light) })
+                    IOSSettingsItem(
+                        title = stringResource(R.string.settings_theme_dark),
+                        isSelected = currentTheme == AppTheme.Dark,
+                        onClick = { viewModel.updateTheme(AppTheme.Dark) },
+                        showDivider = false
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(Dimen.large))
+
+                // --- НОВАЯ СЕКЦИЯ: О ПРИЛОЖЕНИИ ---
+                Text(
+                    text = stringResource(R.string.settings_section_about),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(start = Dimen.medium, bottom = Dimen.mediumHalf)
+                )
+
+                Column(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(Dimen.large))
+                        .background(MaterialTheme.colorScheme.surface)
+                ) {
+                    IOSSettingsNavigationItem(
+                        title = stringResource(R.string.privacy_policy_title),
+                        icon = Icons.Default.Info, // Либо любая другая иконка (document)
+                        onClick = {
+                            navController.navigate(AppDestination.PrivacyPolicy)
+                        },
+                        showDivider = false
+                    )
+                }
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 100.dp),
+                    contentAlignment = Alignment.BottomEnd
+                ) {
+                    Text(
+                        text = appVersion,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
+            // --- 2. ВЕРХНИЙ ГРАДИЕНТ (IOS Style Blur) ---
+            // Рисуется ПОВЕРХ списка (вторым в Box), создает эффект матового стекла под статус-баром
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.TopCenter)
+                    .height(80.dp)
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(
+                                MaterialTheme.colorScheme.background.copy(alpha = 0.95f),
+                                MaterialTheme.colorScheme.background.copy(alpha = 0.8f),
+                                Color.Transparent,
+                                Color.Transparent
+                            )
+                        )
+                    )
+            )
         }
     }
 }
 
 @Composable
 fun IOSSettingsNavigationItem(
-    title: String,
-    icon: ImageVector? = null,
-    onClick: () -> Unit,
-    showDivider: Boolean = true
+    title: String, icon: ImageVector? = null, onClick: () -> Unit, showDivider: Boolean = true
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surface)
             .iosClickable { onClick() }
-            .padding(start = Dimen.medium)
-    ) {
+            .padding(start = Dimen.medium)) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()

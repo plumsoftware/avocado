@@ -13,6 +13,7 @@ import ru.rustore.sdk.remoteconfig.DeviceModel
 import ru.rustore.sdk.remoteconfig.OsVersion
 import ru.rustore.sdk.remoteconfig.RemoteConfigClient
 import ru.rustore.sdk.remoteconfig.RemoteConfigClientBuilder
+import ru.rustore.sdk.remoteconfig.UpdateBehaviour
 
 class App : Application() {
     override fun onCreate() {
@@ -38,6 +39,7 @@ class App : Application() {
             )
             .setConfigRequestParameterProvider(LanguageParameterProvider())
             .setRemoteConfigClientEventListener(listener)
+            .setUpdateBehaviour(UpdateBehaviour.Actual)
             .build()
 
         Companion.remoteConfigClient = remoteConfigClient
