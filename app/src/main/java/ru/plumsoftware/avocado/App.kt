@@ -1,7 +1,7 @@
 package ru.plumsoftware.avocado
 
 import android.app.Application
-import ru.plumsoftware.avocado.data.ads.RuStoreConfig
+import ru.plumsoftware.avocado.data.rustore.RuStoreConfig
 import ru.plumsoftware.avocado.data.rustore.LanguageParameterProvider
 import ru.plumsoftware.avocado.data.rustore.RemoteConfigClientEventListenerImpl
 import ru.plumsoftware.avocado.data.season_products.SeasonProductsRepository

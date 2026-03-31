@@ -29,7 +29,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("int", "PLATFORM", "3")
+        buildConfigField("int", "PLATFORM", "1")
     }
 
     buildTypes {
