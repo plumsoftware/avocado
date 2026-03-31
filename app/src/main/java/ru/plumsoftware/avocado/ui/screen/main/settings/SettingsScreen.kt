@@ -55,6 +55,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
@@ -78,13 +79,13 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    viewModel: SettingsViewModel, navController: NavHostController
+    viewModel: SettingsViewModel,
+    navController: NavHostController
 ) {
     val currentTheme by viewModel.currentTheme.collectAsState()
     val context = LocalContext.current
-    val activity = LocalActivity.current
 
-    // --- ПРОВЕРКА РАЗРЕШЕНИЙ (Реактивная) ---
+    // --- 1. ПРОВЕРКА УВЕДОМЛЕНИЙ (Реактивная) ---
     var hasNotifications by remember {
         mutableStateOf(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -124,15 +125,13 @@ fun SettingsScreen(
         mutableStateOf(powerManager.isIgnoringBatteryOptimizations(context.packageName))
     }
 
-    // Лаунчер для отслеживания возврата с экрана настроек батареи
     val backgroundLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) {
-        // Проверяем статус заново после возврата в приложение
         hasBackgroundWork = powerManager.isIgnoringBatteryOptimizations(context.packageName)
     }
 
-    // Получаем версию приложения
+    // --- 3. ВЕРСИЯ ПРИЛОЖЕНИЯ ---
     val appVersion = try {
         val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
         context.getString(R.string.settings_version_format, pInfo.versionName, pInfo.versionCode)
@@ -141,29 +140,38 @@ fun SettingsScreen(
     }
 
     Scaffold(
-        modifier = Modifier, topBar = {
+        containerColor = MaterialTheme.colorScheme.background,
+        topBar = {
+            // В iOS заголовок "Настройки" обычно крупный (Large Title) или по центру.
+            // Оставим твой CenterAlignedTopAppBar, но сделаем его прозрачным,
+            // чтобы градиент под ним красиво размывал список.
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        modifier = Modifier.padding(top = 14.dp),
                         text = stringResource(R.string.settings),
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                     )
-                }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = Color.Transparent // Прозрачный фон
                 )
             )
-        }, containerColor = MaterialTheme.colorScheme.background
+        }
     ) { padding ->
-
         Box(modifier = Modifier.fillMaxSize()) {
+
+            // --- ОСНОВНОЙ КОНТЕНТ (Скроллящийся) ---
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
-                    .padding(horizontal = Dimen.medium)
+                    .padding(horizontal = Dimen.medium),
+                // Отступы: сверху чтобы не перекрывать TopBar, снизу для BottomNav
             ) {
+                // Отступ от TopBar
+                Spacer(modifier = Modifier.height(padding.calculateTopPadding() + Dimen.medium))
 
+                // --- ПЕРСОНАЛИЗАЦИЯ ---
                 Text(
                     text = stringResource(R.string.settings_section_personalization),
                     style = MaterialTheme.typography.labelMedium,
@@ -173,22 +181,20 @@ fun SettingsScreen(
 
                 Column(
                     modifier = Modifier
-                        .clip(MaterialTheme.shapes.medium)
+                        .clip(RoundedCornerShape(Dimen.large))
                         .background(MaterialTheme.colorScheme.surface)
                 ) {
-                    // Кнопка для повторного открытия Онбординга
                     IOSSettingsNavigationItem(
                         title = stringResource(R.string.settings_item_goals),
-                        icon = Icons.Default.RestaurantMenu, // Или любая иконка
-                        onClick = {
-                            navController.navigate(AppDestination.Onboarding)
-                        },
+                        icon = Icons.Default.RestaurantMenu,
+                        onClick = { navController.navigate(AppDestination.Onboarding) },
                         showDivider = false
                     )
                 }
 
                 Spacer(modifier = Modifier.height(Dimen.large))
 
+                // --- РАЗРЕШЕНИЯ ---
                 Text(
                     text = stringResource(R.string.settings_section_permissions),
                     style = MaterialTheme.typography.labelMedium,
@@ -201,7 +207,6 @@ fun SettingsScreen(
                         .clip(RoundedCornerShape(Dimen.large))
                         .background(MaterialTheme.colorScheme.surface)
                 ) {
-                    // 1. Уведомления
                     IOSSettingsSwitchItem(
                         title = stringResource(R.string.settings_item_push),
                         isChecked = hasNotifications,
@@ -223,35 +228,30 @@ fun SettingsScreen(
                                 context.startActivity(intent)
                             }
                         },
-                        showDivider = true // Теперь тут есть разделитель!
+                        showDivider = true
                     )
 
-                    // 2. Работа в фоне (Игнорирование экономии заряда)
                     IOSSettingsSwitchItem(
                         title = stringResource(R.string.settings_item_background),
                         isChecked = hasBackgroundWork,
                         onCheckedChange = { turnOn ->
                             if (turnOn) {
-                                // Просим разрешить работу в фоне
-                                val intent =
-                                    Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
-                                        data = "package:${context.packageName}".toUri()
-                                    }
+                                val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
+                                    data = Uri.parse("package:${context.packageName}")
+                                }
                                 backgroundLauncher.launch(intent)
                             } else {
-                                // Если юзер хочет выключить — перекидываем в общие настройки батареи
-                                val intent =
-                                    Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
+                                val intent = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
                                 context.startActivity(intent)
                             }
                         },
-                        showDivider = false // Последний элемент без линии
+                        showDivider = false
                     )
                 }
 
                 Spacer(modifier = Modifier.height(Dimen.large))
 
-                // ЗАГОЛОВОК СЕКЦИИ
+                // --- ВНЕШНИЙ ВИД ---
                 Text(
                     text = stringResource(R.string.settings_section_appearance),
                     style = MaterialTheme.typography.labelMedium,
@@ -259,10 +259,9 @@ fun SettingsScreen(
                     modifier = Modifier.padding(start = Dimen.medium, bottom = Dimen.mediumHalf)
                 )
 
-                // БЛОК НАСТРОЕК (Скругленный контейнер)
                 Column(
                     modifier = Modifier
-                        .clip(MaterialTheme.shapes.medium)
+                        .clip(RoundedCornerShape(Dimen.large))
                         .background(MaterialTheme.colorScheme.surface)
                 ) {
                     IOSSettingsItem(
@@ -283,7 +282,7 @@ fun SettingsScreen(
 
                 Spacer(modifier = Modifier.height(Dimen.large))
 
-                // --- НОВАЯ СЕКЦИЯ: О ПРИЛОЖЕНИИ ---
+                // --- О ПРИЛОЖЕНИИ ---
                 Text(
                     text = stringResource(R.string.settings_section_about),
                     style = MaterialTheme.typography.labelMedium,
@@ -298,42 +297,40 @@ fun SettingsScreen(
                 ) {
                     IOSSettingsNavigationItem(
                         title = stringResource(R.string.privacy_policy_title),
-                        icon = Icons.Default.Info, // Либо любая другая иконка (document)
-                        onClick = {
-                            navController.navigate(AppDestination.PrivacyPolicy)
-                        },
+                        icon = Icons.Default.Info,
+                        onClick = { navController.navigate(AppDestination.PrivacyPolicy) },
                         showDivider = false
                     )
                 }
 
-                Spacer(modifier = Modifier.weight(1f))
+                // Отступ перед версией
+                Spacer(modifier = Modifier.height(Dimen.extraLarge))
 
-                Box(
+                // --- ВЕРСИЯ ПРИЛОЖЕНИЯ ---
+                Text(
+                    text = appVersion,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 100.dp),
-                    contentAlignment = Alignment.BottomEnd
-                ) {
-                    Text(
-                        text = appVersion,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
+                        .padding(bottom = 120.dp), // Место под нижний BottomBar
+                    textAlign = TextAlign.Center
+                )
             }
-            // --- 2. ВЕРХНИЙ ГРАДИЕНТ (IOS Style Blur) ---
-            // Рисуется ПОВЕРХ списка (вторым в Box), создает эффект матового стекла под статус-баром
+
+            // --- 2. ВЕРХНИЙ ГРАДИЕНТ (Под TopBar) ---
+            // Рисуется поверх списка, но под TopBar. Дает эффект стекла при скролле.
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.TopCenter)
-                    .height(80.dp)
+                    // Высота градиента = Высота TopBar + немного заступа
+                    .height(padding.calculateTopPadding() + 20.dp)
                     .background(
                         brush = Brush.verticalGradient(
                             colors = listOf(
                                 MaterialTheme.colorScheme.background.copy(alpha = 0.95f),
                                 MaterialTheme.colorScheme.background.copy(alpha = 0.8f),
-                                Color.Transparent,
                                 Color.Transparent
                             )
                         )
