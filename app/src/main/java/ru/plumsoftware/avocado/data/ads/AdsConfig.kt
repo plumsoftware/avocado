@@ -3,6 +3,12 @@ package ru.plumsoftware.avocado.data.ads
 import ru.plumsoftware.avocado.BuildConfig
 
 object AdsConfig {
+
+    /**
+     * 3 - Google Play
+     * 2 - Huawei App Gallery
+     * 1 - RuStore
+     */
     val APP_OPEN_ADS_ID: String =
         if (BuildConfig.DEBUG) "demo-appopenad-yandex" else if (BuildConfig.PLATFORM == 1) "R-M-18957454-1" else if (BuildConfig.PLATFORM == 2) "R-M-18957685-1" else if (BuildConfig.PLATFORM == 3) "R-M-19002616-2" else "demo-appopenad-yandex"
     val INTERSTITIAL_ADS_ID: String =
