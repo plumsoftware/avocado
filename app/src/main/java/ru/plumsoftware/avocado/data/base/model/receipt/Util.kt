@@ -295,6 +295,85 @@ val allReceipts = listOf(
         difficulty = 1,
         category = RecipeCategory.DINNER,
         suitableGoals = listOf(UserGoal.LOSE_WEIGHT, UserGoal.GAIN_MUSCLE, UserGoal.HEART_HEALTH)
+    ),
+
+    // 20. Салат с тунцом (Салат / Ужин)
+    TypicalReceipt(
+        id = "tuna_salad",
+        titleRes = R.string.rec_tuna_salad,
+        descRes = R.string.rec_desc_tuna_salad,
+        receiptText = R.string.rec_text_tuna_salad,
+        imageRes = R.drawable.tuna_salad, // Замени на фото салата
+        relatedFood = listOf("tuna", "cucumber", "tomato", "onion", "lemon"),
+        timeMinutes = 5,
+        calories = 210,
+        difficulty = 1,
+        category = RecipeCategory.SALAD,
+        suitableGoals = listOf(UserGoal.LOSE_WEIGHT, UserGoal.GAIN_MUSCLE, UserGoal.HEART_HEALTH)
+    ),
+
+    // 21. Запеченная тыква с пеканом (Десерт / Перекус)
+    TypicalReceipt(
+        id = "baked_pumpkin",
+        titleRes = R.string.rec_baked_pumpkin,
+        descRes = R.string.rec_desc_baked_pumpkin,
+        receiptText = R.string.rec_text_baked_pumpkin,
+        imageRes = R.drawable.baked_pumpkin, // Замени на фото запеченной тыквы
+        relatedFood = listOf("pumpkin", "pecan"),
+        timeMinutes = 25,
+        calories = 160,
+        difficulty = 1,
+        category = RecipeCategory.DESSERT, // Или SNACK
+        suitableGoals = listOf(UserGoal.DIGESTION, UserGoal.BETTER_SKIN, UserGoal.IMMUNITY)
+    ),
+
+    // 22. Куриные бедра с грибами (Обед / Ужин)
+    TypicalReceipt(
+        id = "chicken_mushrooms",
+        titleRes = R.string.rec_chicken_mushrooms,
+        descRes = R.string.rec_desc_chicken_mushrooms,
+        receiptText = R.string.rec_text_chicken_mushrooms,
+        imageRes = R.drawable.chicken_mushrooms, // Замени на фото курицы с грибами
+        relatedFood = listOf("chicken_thigh", "champignon", "onion", "garlic"),
+        timeMinutes = 30,
+        calories = 290,
+        difficulty = 2,
+        category = RecipeCategory.LUNCH,
+        suitableGoals = listOf(UserGoal.GAIN_MUSCLE, UserGoal.ENERGY)
+    ),
+
+    // 23. Фаршированные перцы с индейкой (Ужин / Обед)
+    TypicalReceipt(
+        id = "stuffed_peppers",
+        titleRes = R.string.rec_stuffed_peppers,
+        descRes = R.string.rec_desc_stuffed_peppers,
+        receiptText = R.string.rec_text_stuffed_peppers,
+        imageRes = R.drawable.stuffed_peppers, // Замени на фото красивых фаршированных перцев
+        relatedFood = listOf("bell_pepper", "turkey_breast", "onion", "tomato", "carrot"),
+        timeMinutes = 50,
+        calories = 240, // На порцию (очень легкое блюдо!)
+        difficulty = 2,
+        category = RecipeCategory.DINNER, // Можно и LUNCH
+        suitableGoals = listOf(UserGoal.LOSE_WEIGHT, UserGoal.GAIN_MUSCLE, UserGoal.DIGESTION)
+    ),
+
+    // 24. Ягодное мороженое (Найс-крим) - Десерт
+    TypicalReceipt(
+        id = "berry_ice_cream",
+        titleRes = R.string.rec_berry_ice_cream,
+        descRes = R.string.rec_desc_berry_ice_cream,
+        receiptText = R.string.rec_text_berry_ice_cream,
+        imageRes = R.drawable.berry_ice_cream,
+        relatedFood = listOf("banana", "blueberry", "strawberry", "almond"),
+        timeMinutes = 10,
+        calories = 140,
+        difficulty = 1,
+        category = RecipeCategory.DESSERT,
+        suitableGoals = listOf(
+            UserGoal.LOSE_WEIGHT,
+            UserGoal.BETTER_SKIN,
+            UserGoal.DIGESTION
+        ) // Витамины для кожи, клетчатка для пищеварения
     )
 )
 

@@ -24,12 +24,12 @@ android {
         applicationId = "ru.plumsoftware.avocado"
         minSdk = 24
         targetSdk = 36
-        versionCode = 5
+        versionCode = 6
         versionName = "1.0.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("int", "PLATFORM", "1")
+        buildConfigField("int", "PLATFORM", "2")
     }
 
     buildTypes {
@@ -136,6 +136,10 @@ dependencies {
     // RuStore
     implementation(platform(libs.bom))
     implementation(libs.remoteconfig)
+
+    // AppMetrica SDK.
+    implementation(libs.analytics)
+
 }
 
 configurations.all {

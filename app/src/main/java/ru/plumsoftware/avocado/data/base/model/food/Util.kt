@@ -32,7 +32,13 @@ val allFruits = listOf<Fruit>(
         titleRes = R.string.apple,
         descRes = R.string.desc_apple,
         imageRes = R.drawable.apple,
-        relatedReceipts = listOf("green_smoothie", "fruit_salad", "vitamin_glow", "beet_detox", "baked_apples"),
+        relatedReceipts = listOf(
+            "green_smoothie",
+            "fruit_salad",
+            "vitamin_glow",
+            "beet_detox",
+            "baked_apples"
+        ),
         vitamins = listOf(
             vitaminsMap["vitamin_c"]!!,
             vitaminsMap["vitamin_k"]!!,
@@ -113,7 +119,7 @@ val allFruits = listOf<Fruit>(
         titleRes = R.string.lemon,
         descRes = R.string.desc_lemon,
         imageRes = R.drawable.lemon,
-        relatedReceipts = listOf("baked_salmon", "beet_detox", "garlic_shrimp"),
+        relatedReceipts = listOf("baked_salmon", "beet_detox", "garlic_shrimp", "tuna_salad"),
         vitamins = listOf(
             vitaminsMap["vitamin_c"]!!,
             vitaminsMap["vitamin_b6"]!!,
@@ -633,7 +639,7 @@ val allNuts = listOf<Nut>(
         titleRes = R.string.pecan,
         descRes = R.string.desc_pecan,
         imageRes = R.drawable.pecan,
-        relatedReceipts = emptyList(),
+        relatedReceipts = listOf("baked_pumpkin"),
         vitamins = listOf(
             vitaminsMap["vitamin_e"]!!,
             vitaminsMap["vitamin_b1"]!!,
@@ -714,7 +720,7 @@ val allVegetables = listOf<Vegetable>(
         titleRes = R.string.carrot,
         descRes = R.string.desc_carrot,
         imageRes = R.drawable.carrot,
-        relatedReceipts = listOf("vitamin_glow"),
+        relatedReceipts = listOf("vitamin_glow", "stuffed_peppers"),
         vitamins = listOf(
             vitaminsMap["vitamin_a"]!!,
             vitaminsMap["vitamin_k"]!!,
@@ -736,7 +742,13 @@ val allVegetables = listOf<Vegetable>(
         titleRes = R.string.onion,
         descRes = R.string.desc_onion,
         imageRes = R.drawable.onion,
-        relatedReceipts = listOf("mushroom_soup", "beef_steak_veggies"),
+        relatedReceipts = listOf(
+            "mushroom_soup",
+            "beef_steak_veggies",
+            "tuna_salad",
+            "chicken_mushrooms",
+            "stuffed_peppers"
+        ),
         vitamins = listOf(
             vitaminsMap["vitamin_c"]!!,
             vitaminsMap["vitamin_b6"]!!,
@@ -758,7 +770,13 @@ val allVegetables = listOf<Vegetable>(
         titleRes = R.string.garlic,
         descRes = R.string.desc_garlic,
         imageRes = R.drawable.garlic,
-        relatedReceipts = listOf("chicken_broccoli", "ratatouille", "turkey_meatballs", "garlic_shrimp"),
+        relatedReceipts = listOf(
+            "chicken_broccoli",
+            "ratatouille",
+            "turkey_meatballs",
+            "garlic_shrimp",
+            "chicken_mushrooms"
+        ),
         vitamins = listOf(
             vitaminsMap["vitamin_c"]!!,
             vitaminsMap["vitamin_b6"]!!,
@@ -781,7 +799,14 @@ val allVegetables = listOf<Vegetable>(
         titleRes = R.string.tomato,
         descRes = R.string.desc_tomato,
         imageRes = R.drawable.tomato,
-        relatedReceipts = listOf("ratatouille", "greek_salad", "beef_steak_veggies", "spinach_omelet"),
+        relatedReceipts = listOf(
+            "ratatouille",
+            "greek_salad",
+            "beef_steak_veggies",
+            "spinach_omelet",
+            "tuna_salad",
+            "stuffed_peppers"
+        ),
         vitamins = listOf(
             vitaminsMap["vitamin_c"]!!,
             vitaminsMap["vitamin_a"]!!,
@@ -803,7 +828,7 @@ val allVegetables = listOf<Vegetable>(
         titleRes = R.string.cucumber,
         descRes = R.string.desc_cucumber,
         imageRes = R.drawable.cucumber,
-        relatedReceipts = emptyList(),
+        relatedReceipts = listOf("tuna_salad"),
         vitamins = listOf(
             vitaminsMap["vitamin_k"]!!,
             vitaminsMap["vitamin_c"]!!,
@@ -868,7 +893,7 @@ val allVegetables = listOf<Vegetable>(
         titleRes = R.string.bell_pepper,
         descRes = R.string.desc_bell_pepper,
         imageRes = R.drawable.bell_pepper,
-        relatedReceipts = listOf("beef_steak_veggies"),
+        relatedReceipts = listOf("beef_steak_veggies", "ratatouille", "stuffed_peppers"),
         vitamins = listOf(
             vitaminsMap["vitamin_c"]!!,
             vitaminsMap["vitamin_a"]!!,
@@ -911,7 +936,7 @@ val allVegetables = listOf<Vegetable>(
         titleRes = R.string.pumpkin,
         descRes = R.string.desc_pumpkin,
         imageRes = R.drawable.pumpkin,
-        relatedReceipts = emptyList(),
+        relatedReceipts = listOf("baked_pumpkin"),
         vitamins = listOf(
             vitaminsMap["vitamin_a"]!!,
             vitaminsMap["vitamin_c"]!!,
@@ -1048,7 +1073,7 @@ val allMeat = listOf<Meat>(
         descRes = R.string.desc_chicken_thigh,
         imageRes = R.drawable.chicken,
         foodType = FoodType.MEAT,
-        relatedReceipts = emptyList(),
+        relatedReceipts = listOf("chicken_mushrooms"),
         vitamins = listOf(
             vitaminsMap["vitamin_b3"]!!,
             vitaminsMap["vitamin_b6"]!!,
@@ -1065,7 +1090,7 @@ val allMeat = listOf<Meat>(
         descRes = R.string.desc_turkey_breast,
         imageRes = R.drawable.turkey_breast,
         foodType = FoodType.MEAT,
-        relatedReceipts = listOf("turkey_meatballs"),
+        relatedReceipts = listOf("turkey_meatballs", "stuffed_peppers"),
         vitamins = listOf(
             vitaminsMap["vitamin_b3"]!!,
             vitaminsMap["vitamin_b6"]!!,
@@ -1306,7 +1331,7 @@ val allFish = listOf<Fish>(
         titleRes = R.string.tuna,
         descRes = R.string.desc_tuna,
         imageRes = R.drawable.tuna,
-        relatedReceipts = emptyList(),
+        relatedReceipts = listOf("tuna_salad"),
         vitamins = listOf(vitaminsMap["vitamin_b12"]!!, vitaminsMap["vitamin_b3"]!!),
         minerals = listOf(mineralsMap["selenium"]!!, mineralsMap["phosphorus"]!!),
         fatKisloty = listOf(fatsMap["omega3"]!!),
@@ -1400,7 +1425,7 @@ val allMushrooms = listOf<Mushroom>(
         titleRes = R.string.champignon,
         descRes = R.string.desc_champignon,
         imageRes = R.drawable.champignon,
-        relatedReceipts = listOf("mushroom_soup"),
+        relatedReceipts = listOf("mushroom_soup", "chicken_thigh"),
         vitamins = listOf(
             vitaminsMap["vitamin_b2"]!!,
             vitaminsMap["vitamin_b3"]!!,

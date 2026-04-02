@@ -1,6 +1,9 @@
 package ru.plumsoftware.avocado
 
 import android.app.Application
+import io.appmetrica.analytics.AppMetrica
+import io.appmetrica.analytics.AppMetricaConfig
+import ru.plumsoftware.avocado.data.base.model.metrika.YaMetrikaConfig
 import ru.plumsoftware.avocado.data.rustore.RuStoreConfig
 import ru.plumsoftware.avocado.data.rustore.LanguageParameterProvider
 import ru.plumsoftware.avocado.data.rustore.RemoteConfigClientEventListenerImpl
@@ -18,6 +21,8 @@ import ru.rustore.sdk.remoteconfig.UpdateBehaviour
 class App : Application() {
     override fun onCreate() {
         super.onCreate()
+
+        initYaMetrica()
 
         Companion.seasonProductsRepository = SeasonProductsRepository(this.seasonProductsStore)
         val listener = RemoteConfigClientEventListenerImpl(seasonProductsRepository = seasonProductsRepository)
@@ -45,6 +50,12 @@ class App : Application() {
         Companion.remoteConfigClient = remoteConfigClient
 
         remoteConfigClient.init()
+    }
+
+    private fun initYaMetrica() {
+        val config = AppMetricaConfig.newConfigBuilder(YaMetrikaConfig.AppIdKey).build()
+        // Initializing the AppMetrica SDK.
+        AppMetrica.activate(this, config)
     }
 
     companion object {

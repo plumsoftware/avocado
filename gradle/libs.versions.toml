@@ -46,6 +46,9 @@ firebaseConfig = "23.0.1"
 # RuStore
 bom = "2025.02.01"
 
+# YaMetrika
+analytics = "8.0.0"
+
 [libraries]
 androidx-compose-foundation-layout = { module = "androidx.compose.foundation:foundation-layout", version.ref = "foundationLayout" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -104,6 +107,9 @@ firebase-config = { group = "com.google.firebase", name = "firebase-config", ver
 # RuStore
 bom = { module = "ru.rustore.sdk:bom", version.ref = "bom" }
 remoteconfig = { module = "ru.rustore.sdk:remoteconfig" }
+
+# YaMetrika
+analytics = { module = "io.appmetrica.analytics:analytics", version.ref = "analytics" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
