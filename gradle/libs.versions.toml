@@ -47,7 +47,7 @@ firebaseConfig = "23.0.1"
 bom = "2025.02.01"
 
 # YaMetrika
-analytics = "8.0.0"
+analytics = "7.14.2"
 
 [libraries]
 androidx-compose-foundation-layout = { module = "androidx.compose.foundation:foundation-layout", version.ref = "foundationLayout" }
