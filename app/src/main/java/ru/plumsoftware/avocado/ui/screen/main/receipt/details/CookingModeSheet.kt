@@ -1,6 +1,8 @@
 package ru.plumsoftware.avocado.ui.screen.main.receipt.details
 
 import android.annotation.SuppressLint
+import android.os.Bundle
+import android.provider.Settings.Global.putString
 import android.speech.tts.TextToSpeech
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -40,8 +42,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -59,6 +64,7 @@ import kotlinx.coroutines.launch
 import ru.plumsoftware.avocado.R
 import ru.plumsoftware.avocado.data.base.model.food.Food
 import ru.plumsoftware.avocado.ui.modifier.iosClickable
+import ru.plumsoftware.avocado.ui.screen.main.receipt.elements.VoiceAssistantWidget
 import ru.plumsoftware.avocado.ui.screen.onboarding.IOSGreen
 import ru.plumsoftware.avocado.ui.theme.Dimen
 
@@ -81,10 +87,37 @@ fun CookingModeSheet(
     val screenHeight = configuration.screenHeightDp.dp
     val sheetHeight = screenHeight * 0.92f
 
-    val tts = rememberTextToSpeech()
+    val context = LocalContext.current
 
-    LaunchedEffect(pagerState.currentPage) {
+    var isSpeaking by remember { mutableStateOf(false) }
+
+    // 1. Инициализируем TTS с коллбеками
+    val tts = rememberTextToSpeech(
+        onSpeakStart = { isSpeaking = true },
+        onSpeakDone = { isSpeaking = false }
+    )
+
+    // Вспомогательная функция для старта озвучки с ID
+    val speakText = { text: String ->
+        // Выключаем старую озвучку
         tts?.stop()
+        // Включаем новую (UTTERANCE_ID нужен, чтобы срабатывал UtteranceProgressListener)
+        val params = Bundle().apply { putString(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "recipe_step") }
+        tts?.speak(text, TextToSpeech.QUEUE_FLUSH, params, "recipe_step")
+    }
+
+    // 2. АВТОМАТИЧЕСКАЯ ОЗВУЧКА ПРИ ПЕРЕЛИСТЫВАНИИ!
+    // Как только юзер (или голос) перелистнул страницу - читаем её вслух
+    LaunchedEffect(pagerState.currentPage) {
+        val page = pagerState.currentPage
+        if (page == 0) {
+            val names = ingredients.joinToString(", ") { context.getString(it.titleRes) }
+            val textToRead = context.getString(R.string.you_need_ingredients, names)
+            speakText(textToRead)
+        } else {
+            val cleanText = steps[page - 1].replaceFirst(Regex("^\\d+\\.\\s*"), "")
+            speakText(cleanText)
+        }
     }
 
     ModalBottomSheet(
@@ -186,6 +219,38 @@ fun CookingModeSheet(
                 } else {
                     CookingStepSlide(stepText = steps[page - 1], tts = tts)
                 }
+            }
+
+            // 🔥 ВИДЖЕТ ГОЛОСОВОГО ПОМОЩНИКА
+            Box(modifier = Modifier.padding(horizontal = Dimen.large)) {
+                VoiceAssistantWidget(
+                    isSpeaking = isSpeaking, // Передаем состояние!
+                    onNext = {
+                        scope.launch {
+                            if (pagerState.currentPage < steps.size) {
+                                pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                            }
+                        }
+                    },
+                    onBack = {
+                        scope.launch {
+                            if (pagerState.currentPage > 0) {
+                                pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                            }
+                        }
+                    },
+                    onRepeat = {
+                        // Повторяем озвучку текущего слайда
+                        val page = pagerState.currentPage
+                        if (page > 0) {
+                            val cleanText = steps[page - 1].replaceFirst(Regex("^\\d+\\.\\s*"), "")
+                            speakText(cleanText)
+                        } else {
+                            val names = ingredients.joinToString(", ") { context.getString(it.titleRes) }
+                            speakText(context.getString(R.string.you_need_ingredients, names))
+                        }
+                    }
+                )
             }
 
             Row(

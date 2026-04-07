@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.speech.tts.TextToSpeech
+import android.speech.tts.UtteranceProgressListener
 import android.view.WindowManager
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -36,14 +37,39 @@ fun KeepScreenOn() {
 }
 
 @Composable
-fun rememberTextToSpeech(): TextToSpeech? {
+fun rememberTextToSpeech(
+    onSpeakStart: () -> Unit = {},
+    onSpeakDone: () -> Unit = {}
+): TextToSpeech? {
     val context = LocalContext.current
     var tts by remember { mutableStateOf<TextToSpeech?>(null) }
 
     DisposableEffect(context) {
         val textToSpeech = TextToSpeech(context) { status ->
             if (status == TextToSpeech.SUCCESS) {
-                tts?.language = Locale.getDefault()
+                val locale = Locale.getDefault()
+                // Пытаемся установить русский, если недоступен - ставим дефолтный
+                if (tts?.isLanguageAvailable(locale) == TextToSpeech.LANG_AVAILABLE) {
+                    tts?.language = locale
+                } else {
+                    tts?.language = Locale.getDefault()
+                }
+
+                // 🔥 ДОБАВЛЯЕМ СЛУШАТЕЛЬ ПРОГРЕССА
+                tts?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+                    override fun onStart(utteranceId: String?) {
+                        onSpeakStart() // Голос начал говорить
+                    }
+
+                    override fun onDone(utteranceId: String?) {
+                        onSpeakDone() // Голос закончил говорить
+                    }
+
+                    @Deprecated("Deprecated in Java")
+                    override fun onError(utteranceId: String?) {
+                        onSpeakDone() // Сбрасываем в любом случае
+                    }
+                })
             }
         }
         tts = textToSpeech

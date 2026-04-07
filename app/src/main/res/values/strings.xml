@@ -724,4 +724,13 @@
     <string name="day_sat">Сб</string>
     <string name="day_sun">Вс</string>
 
+    <!-- ГОЛОСОВОЙ ПОМОЩНИК -->
+    <string name="voice_assistant_title">Голосовой Су-шеф</string>
+    <string name="voice_assistant_hint">Скажите «Дальше», «Назад», «Повтори» или «Стоп»</string>
+    <string name="voice_btn_allow">Включить</string>
+
+    <!-- Новые строки для состояний -->
+    <string name="voice_assistant_speaking">Озвучиваю шаг...</string>
+    <string name="voice_assistant_turn_on_mic">Включите микрофон</string>
+    <string name="voice_assistant_paused_hint">На паузе. Нажмите на микрофон для запуска</string>
 </resources>
