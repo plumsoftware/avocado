@@ -25,6 +25,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -48,29 +49,33 @@ fun VoiceAssistantWidget(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    // 1. СОСТОЯНИЯ
+    // 1. ЗАГРУЖАЕМ СПИСКИ КОМАНД ИЗ XML
+    val commandsNext = stringArrayResource(R.array.voice_commands_next)
+    val commandsBack = stringArrayResource(R.array.voice_commands_back)
+    val commandsRepeat = stringArrayResource(R.array.voice_commands_repeat)
+    val commandsStop = stringArrayResource(R.array.voice_commands_stop)
+
+    // 2. СОСТОЯНИЯ
     var hasMicPermission by remember {
         mutableStateOf(
             ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
         )
     }
 
-    // 🔥 НОВОЕ: Состояние паузы, которую ставит сам пользователь (нажатием или голосом)
     var isUserPaused by remember { mutableStateOf(false) }
 
     val micLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
         hasMicPermission = isGranted
-        if (isGranted) isUserPaused = false // Если только что разрешили, сразу включаем
+        if (isGranted) isUserPaused = false
     }
 
-    // 🔥 Активно слушаем, если: есть права И диктор молчит И пользователь не нажал "пауза"
     val isListeningActive = hasMicPermission && !isSpeaking && !isUserPaused
 
-    // 2. АНИМАЦИЯ ПУЛЬСАЦИИ
+    // 3. АНИМАЦИЯ ПУЛЬСАЦИИ
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
     val scale by infiniteTransition.animateFloat(
         initialValue = 1f,
-        targetValue = if (isListeningActive) 1.2f else 1f, // Пульсирует только когда РЕАЛЬНО слушает
+        targetValue = if (isListeningActive) 1.2f else 1f,
         animationSpec = infiniteRepeatable(
             animation = tween(800, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
@@ -78,7 +83,7 @@ fun VoiceAssistantWidget(
         label = "scale"
     )
 
-    // 3. ЛОГИКА РАСПОЗНАВАНИЯ РЕЧИ
+    // 4. ЛОГИКА РАСПОЗНАВАНИЯ РЕЧИ
     DisposableEffect(isListeningActive) {
         var speechRecognizer: SpeechRecognizer? = null
 
@@ -108,20 +113,16 @@ fun VoiceAssistantWidget(
                     val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                     val text = matches?.firstOrNull()?.lowercase(Locale.getDefault()) ?: ""
 
-                    // 🔥 ОБНОВЛЕННЫЕ КОМАНДЫ (Добавлены синонимы и СТОП)
+                    // 🔥 ПРОВЕРЯЕМ СОВПАДЕНИЯ С МАССИВАМИ ИЗ РЕСУРСОВ
                     when {
-                        text.contains("дальше") || text.contains("вперед") || text.contains("следующий") || text.contains("продолжай") -> onNext()
-                        text.contains("назад") || text.contains("предыдущий") || text.contains("вернись") -> onBack()
-                        text.contains("повтори") || text.contains("еще раз") || text.contains("прочитай") -> onRepeat()
-                        text.contains("стоп") || text.contains("хватит") || text.contains("пауза") || text.contains("замолчи") -> {
-                            // Юзер сказал "Стоп" - ставим на паузу
-                            isUserPaused = true
-                        }
+                        commandsNext.any { text.contains(it) } -> onNext()
+                        commandsBack.any { text.contains(it) } -> onBack()
+                        commandsRepeat.any { text.contains(it) } -> onRepeat()
+                        commandsStop.any { text.contains(it) } -> isUserPaused = true
                     }
 
                     scope.launch {
                         delay(500)
-                        // Запускаем снова, только если мы всё еще активны (юзер не сказал СТОП)
                         if (!isUserPaused) {
                             try { speechRecognizer?.startListening(intent) } catch (e: Exception) {}
                         }
@@ -142,7 +143,7 @@ fun VoiceAssistantWidget(
         }
     }
 
-    // 4. UI КОМПОНЕНТ
+    // 5. UI КОМПОНЕНТ
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -156,18 +157,16 @@ fun VoiceAssistantWidget(
             // --- МИКРОФОН РАЗРЕШЕН ---
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                // 🔥 ДЕЛАЕМ БЛОК КЛИКАБЕЛЬНЫМ ДЛЯ РУЧНОЙ ПАУЗЫ
                 modifier = Modifier
                     .weight(1f)
                     .iosClickable { isUserPaused = !isUserPaused }
             ) {
-                // Визуальное состояние иконки (Зеленая если слушает, Серая если спит/пауза)
                 val isMicGreen = !isUserPaused && !isSpeaking
 
                 Box(
                     modifier = Modifier
                         .size(40.dp)
-                        .scale(scale) // Пульсирует
+                        .scale(scale)
                         .clip(CircleShape)
                         .background(if (isMicGreen) IOSGreen.copy(alpha = 0.2f) else Color.Gray.copy(alpha = 0.2f)),
                     contentAlignment = Alignment.Center
@@ -187,7 +186,6 @@ fun VoiceAssistantWidget(
                         color = MaterialTheme.colorScheme.onSurface
                     )
 
-                    // 🔥 ДИНАМИЧЕСКИЙ ТЕКСТ ПОДСКАЗКИ
                     val hintText = when {
                         isUserPaused -> stringResource(R.string.voice_assistant_paused_hint)
                         isSpeaking -> stringResource(R.string.voice_assistant_speaking)
@@ -225,7 +223,7 @@ fun VoiceAssistantWidget(
                         maxLines = 1
                     )
                     Text(
-                        text = stringResource(R.string.voice_assistant_turn_on_mic), // Из ресурсов
+                        text = stringResource(R.string.voice_assistant_turn_on_mic),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1

@@ -733,4 +733,35 @@
     <string name="voice_assistant_speaking">Озвучиваю шаг...</string>
     <string name="voice_assistant_turn_on_mic">Включите микрофон</string>
     <string name="voice_assistant_paused_hint">На паузе. Нажмите на микрофон для запуска</string>
+
+    <!-- КОМАНДЫ ГОЛОСОВОГО ПОМОЩНИКА (СИНОНИМЫ) -->
+    <!-- Команды "Дальше" -->
+    <string-array name="voice_commands_next">
+        <item>дальше</item>
+        <item>вперед</item>
+        <item>следующий</item>
+        <item>продолжай</item>
+    </string-array>
+
+    <!-- Команды "Назад" -->
+    <string-array name="voice_commands_back">
+        <item>назад</item>
+        <item>предыдущий</item>
+        <item>вернись</item>
+    </string-array>
+
+    <!-- Команды "Повтори" -->
+    <string-array name="voice_commands_repeat">
+        <item>повтори</item>
+        <item>еще раз</item>
+        <item>прочитай</item>
+    </string-array>
+
+    <!-- Команды "Стоп/Пауза" -->
+    <string-array name="voice_commands_stop">
+        <item>стоп</item>
+        <item>хватит</item>
+        <item>пауза</item>
+        <item>замолчи</item>
+    </string-array>
 </resources>
