@@ -237,7 +237,7 @@ fun SettingsScreen(
                         onCheckedChange = { turnOn ->
                             if (turnOn) {
                                 val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
-                                    data = Uri.parse("package:${context.packageName}")
+                                    data = "package:${context.packageName}".toUri()
                                 }
                                 backgroundLauncher.launch(intent)
                             } else {

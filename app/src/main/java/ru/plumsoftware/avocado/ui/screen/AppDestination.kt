@@ -26,4 +26,7 @@ object AppDestination {
 
     @Serializable
     data object ShoppingList
+
+    @Serializable
+    data object Scanner
 }

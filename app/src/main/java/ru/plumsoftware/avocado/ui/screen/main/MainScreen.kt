@@ -25,6 +25,7 @@ import ru.plumsoftware.avocado.data.meal.MealPlanRepository
 import ru.plumsoftware.avocado.data.shopping.ShoppingRepository
 import ru.plumsoftware.avocado.data.user_preferences.UserPreferencesRepository
 import ru.plumsoftware.avocado.data.water.WaterRepository
+import ru.plumsoftware.avocado.ui.screen.AppDestination
 import ru.plumsoftware.avocado.ui.screen.main.elements.BottomNavBar
 import ru.plumsoftware.avocado.ui.screen.main.favorite.FavoriteScreen
 import ru.plumsoftware.avocado.ui.screen.main.list.MainListScreen
@@ -126,6 +127,10 @@ fun MainScreen(
             BottomNavBar(
                 onItemSelected = { newItem ->
                     currentRoute = newItem
+                },
+                onScannerClick = {
+                    // Открываем сканер на весь экран, перекрывая нижнее меню!
+                    navController.navigate(AppDestination.Scanner) // Убедись, что добавил этот роут в NavHost
                 }
             )
         }

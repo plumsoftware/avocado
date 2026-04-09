@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
@@ -60,6 +61,7 @@ import ru.plumsoftware.avocado.data.user_preferences.util.userPreferencesDataSto
 import ru.plumsoftware.avocado.data.water.WaterRepository
 import ru.plumsoftware.avocado.ui.screen.AppDestination
 import ru.plumsoftware.avocado.ui.screen.details.ProductDetailScreen
+import ru.plumsoftware.avocado.ui.screen.food_scanner.FoodScannerScreen
 import ru.plumsoftware.avocado.ui.screen.main.MainScreen
 import ru.plumsoftware.avocado.ui.screen.main.MainViewModel
 import ru.plumsoftware.avocado.ui.screen.main.elements.IOSLoadingDialog
@@ -76,6 +78,7 @@ import ru.plumsoftware.avocado.ui.theme.Dimen
 class MainActivity : ComponentActivity() {
     private var hasSeenOnboardingThisSession = false
 
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -345,6 +348,14 @@ class MainActivity : ComponentActivity() {
                         composable<AppDestination.ShoppingList> { backStackEntry ->
                             ShoppingScreen(
                                 navController = navController,
+                                shoppingRepository = shoppingRepo
+                            )
+                        }
+
+                        composable<AppDestination.Scanner> { backStackEntry ->
+                            FoodScannerScreen(
+                                navController = navController,
+                                userPreferencesRepository = userRepo,
                                 shoppingRepository = shoppingRepo
                             )
                         }

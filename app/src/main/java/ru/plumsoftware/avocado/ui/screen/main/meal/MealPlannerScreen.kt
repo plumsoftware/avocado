@@ -1,9 +1,6 @@
 package ru.plumsoftware.avocado.ui.screen.main.meal
 
-import android.graphics.Color.TRANSPARENT
-import androidx.activity.SystemBarStyle
-import androidx.activity.compose.LocalActivity
-import androidx.activity.enableEdgeToEdge
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.expandVertically
@@ -15,7 +12,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,17 +35,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat.enableEdgeToEdge
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import ru.plumsoftware.avocado.R
@@ -61,7 +51,6 @@ import ru.plumsoftware.avocado.data.user_preferences.UserPreferencesRepository
 import ru.plumsoftware.avocado.data.water.WaterRepository
 import ru.plumsoftware.avocado.ui.modifier.iosClickable
 import ru.plumsoftware.avocado.ui.screen.AppDestination
-import ru.plumsoftware.avocado.ui.screen.main.list.ListViewModel
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.WaterTrackerCard
 import ru.plumsoftware.avocado.ui.screen.main.receipt.RecipesViewModel
 import ru.plumsoftware.avocado.ui.screen.main.meal.elements.DailySummaryCard

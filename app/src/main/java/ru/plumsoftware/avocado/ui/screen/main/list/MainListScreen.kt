@@ -35,7 +35,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import ru.plumsoftware.avocado.R
 import ru.plumsoftware.avocado.data.base.model.food.Food
 import ru.plumsoftware.avocado.data.favorite.FavoritesRepository
 import ru.plumsoftware.avocado.data.shopping.ShoppingRepository
@@ -43,7 +42,6 @@ import ru.plumsoftware.avocado.data.user_preferences.UserPreferencesRepository
 import ru.plumsoftware.avocado.ui.screen.AppDestination
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.IOSTopBar
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.SeasonalPromoWidget
-import ru.plumsoftware.avocado.ui.screen.main.list.elements.WaterTrackerCard
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.filter.FilterItem
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.food.FoodCard
 import ru.plumsoftware.avocado.ui.theme.Dimen
@@ -245,10 +243,11 @@ fun MainListScreen(
                     onSearchQueryChange = { viewModel.onSearchQueryChange(it) },
                     isSearchFocused = isSearchFocused,
                     onFocusChange = { isSearchFocused = it },
-                    onFilterClick = {},
+                    onFavouriteClick = {
+                        navController.navigate(AppDestination.Favorite)
+                    },
                     cartItemsCount = cartItemsCount,
                     onCartClick = {
-                        // Предполагается, что ты добавил объект ShoppingList в AppDestination
                         navController.navigate(AppDestination.ShoppingList)
                     },
                 )

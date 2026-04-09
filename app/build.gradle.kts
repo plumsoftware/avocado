@@ -48,6 +48,9 @@ android {
 //    kotlin {
 //        jvmToolchain(11)
 //    }
+    androidResources {
+        noCompress("tflite")
+    }
     buildFeatures {
         compose = true
         buildConfig = true
@@ -140,6 +143,24 @@ dependencies {
     // AppMetrica SDK.
     implementation(libs.analytics)
 
+    // CameraX
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+
+    // Google ML Kit (On-Device Image Labeling)
+    //implementation(libs.image.labeling.default)
+    //implementation(libs.image.labeling.common)
+    implementation("com.google.android.gms:play-services-mlkit-image-labeling:16.0.8")
+
+//    implementation("org.tensorflow:tensorflow-lite-task-vision:0.4.4") {
+//        exclude(group = "org.tensorflow", module = "tensorflow-lite-support-api")
+//    }
+//    implementation("org.tensorflow:tensorflow-lite:2.14.0")
+//    implementation("org.tensorflow:tensorflow-lite-support:0.4.4") {
+//        exclude(group = "org.tensorflow", module = "tensorflow-lite-support-api")
+//    }
 }
 
 configurations.all {

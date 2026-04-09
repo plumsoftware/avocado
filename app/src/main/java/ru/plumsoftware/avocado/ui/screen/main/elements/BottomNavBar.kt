@@ -9,13 +9,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessAlarm
+import androidx.compose.material.icons.rounded.CameraAlt
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -34,13 +37,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ru.plumsoftware.avocado.R
+import ru.plumsoftware.avocado.ui.modifier.iosClickable
 import ru.plumsoftware.avocado.ui.screen.main.MainScreenStates
 import ru.plumsoftware.avocado.ui.screen.main.elements.bottom_bar.BottomBarItem
+import ru.plumsoftware.avocado.ui.screen.onboarding.IOSGreen
 import ru.plumsoftware.avocado.ui.theme.Dimen
 
 @Composable
 fun BottomNavBar(
-    onItemSelected: (MainScreenStates) -> Unit
+    onItemSelected: (MainScreenStates) -> Unit,
+    onScannerClick: () -> Unit // 🔥 НОВЫЙ КОЛЛБЕК ДЛЯ КАМЕРЫ
 ) {
     var selected by remember { mutableIntStateOf(0) }
     val list = listOf(
@@ -53,12 +59,12 @@ fun BottomNavBar(
             iconRes = R.drawable.chef,
         ),
         BottomBarItem(
-            title = R.string.racion,
-            iconRes = R.drawable.racion
+            title = R.string.scanner,
+            iconVector = Icons.Rounded.CameraAlt
         ),
         BottomBarItem(
-            title = R.string.fav,
-            iconRes = R.drawable.fav,
+            title = R.string.racion,
+            iconRes = R.drawable.racion
         ),
         BottomBarItem(
             title = R.string.settings,
@@ -70,12 +76,14 @@ fun BottomNavBar(
         val item = when (selected) {
             0 -> MainScreenStates.List
             1 -> MainScreenStates.Rec
-            2 -> MainScreenStates.MealPlanner
-            3 -> MainScreenStates.Fav
+            // Индекс 2 пропущен, так как сканер не меняет стейт меню!
+            3 -> MainScreenStates.MealPlanner
             4 -> MainScreenStates.Settings
             else -> MainScreenStates.Empty
         }
-        onItemSelected(item)
+        if (item != MainScreenStates.Empty) {
+            onItemSelected(item)
+        }
     }
 
     Box(
@@ -99,57 +107,66 @@ fun BottomNavBar(
             list.forEachIndexed { index, item ->
                 val isSelected = selected == index
 
-                Column(
-                    modifier = Modifier
-                        .wrapContentHeight()
-                        .wrapContentWidth()
-                        .clickable(
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() },
-                            enabled = true,
-                            onClick = { selected = index }
+                if (index == 2) {
+                    // --- 🔥 ЦЕНТРАЛЬНАЯ КНОПКА СКАНЕРА (iOS Style) ---
+                    Box(
+                        modifier = Modifier
+                            .offset(y = (-10).dp) // Слегка приподнимаем кнопку над баром
+                            .size(56.dp) // Делаем ее больше остальных
+                            .clip(CircleShape)
+                            .background(IOSGreen) // Твой фирменный зеленый цвет
+                            .iosClickable { onScannerClick() }, // Не меняем selected, просто открываем камеру
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (item.iconVector != null) {
+                            Icon(
+                                imageVector = item.iconVector,
+                                contentDescription = stringResource(item.title),
+                                tint = Color.White,
+                                modifier = Modifier.size(28.dp)
+                            )
+                        }
+                    }
+                } else {
+                    // --- ОБЫЧНЫЕ ТАБЫ ---
+                    Column(
+                        modifier = Modifier
+                            .wrapContentHeight()
+                            .wrapContentWidth()
+                            .clickable(
+                                indication = null,
+                                interactionSource = remember { MutableInteractionSource() },
+                                enabled = true,
+                                onClick = { selected = index }
+                            ),
+                        verticalArrangement = Arrangement.spacedBy(
+                            space = Dimen.extraSmall,
+                            alignment = Alignment.CenterVertically
                         ),
-                    verticalArrangement = Arrangement.spacedBy(
-                        space = Dimen.extraSmall,
-                        alignment = Alignment.CenterVertically
-                    ),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    if (item.iconRes != null) {
-                        Image(
-                            modifier = Modifier
-                                .size(22.dp),
-                            painter = painterResource(item.iconRes),
-                            contentDescription = stringResource(item.title),
-                            colorFilter = if (isSelected) {
-                                null
-                            } else {
-                                ColorFilter.tint(Color.Gray)
-                            }
-                        )
-                    } else if (item.iconVector != null) {
-                        Icon(
-                            modifier = Modifier
-                                .size(28.dp),
-                            imageVector = item.iconVector,
-                            contentDescription = stringResource(item.title),
-                            tint = if (isSelected) {
-                                MaterialTheme.colorScheme.primary
-                            } else {
-                                Color.Gray
-                            }
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        if (item.iconRes != null) {
+                            Image(
+                                modifier = Modifier.size(22.dp),
+                                painter = painterResource(item.iconRes),
+                                contentDescription = stringResource(item.title),
+                                colorFilter = if (isSelected) null else ColorFilter.tint(Color.Gray)
+                            )
+                        } else if (item.iconVector != null) {
+                            Icon(
+                                modifier = Modifier.size(28.dp),
+                                imageVector = item.iconVector,
+                                contentDescription = stringResource(item.title),
+                                tint = if (isSelected) MaterialTheme.colorScheme.primary else Color.Gray
+                            )
+                        }
+
+                        Text(
+                            text = stringResource(item.title),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Gray
                         )
                     }
-
-                    Text(
-                        text = stringResource(item.title),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = if (isSelected) {
-                            MaterialTheme.colorScheme.primary
-                        } else {
-                            Color.Gray
-                        }
-                    )
                 }
             }
         }

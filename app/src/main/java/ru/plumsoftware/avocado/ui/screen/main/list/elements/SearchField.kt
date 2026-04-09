@@ -7,9 +7,9 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,13 +21,17 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.ShoppingCart
+import androidx.compose.material.icons.rounded.ArrowBackIosNew
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -58,10 +62,12 @@ fun IOSTopBar(
     onSearchQueryChange: (String) -> Unit,
     isSearchFocused: Boolean,
     onFocusChange: (Boolean) -> Unit,
-    onFilterClick: () -> Unit,
+    onFavouriteClick: () -> Unit,
     cartItemsCount: Int,
     onCartClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onBackClick: (() -> Unit)? = null,
+    isFav: Boolean = false
 ) {
     val searchBarColor = MaterialTheme.colorScheme.surfaceVariant
     val focusRequester = remember { FocusRequester() }
@@ -73,6 +79,22 @@ fun IOSTopBar(
             .padding(horizontal = Dimen.medium),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        if (onBackClick != null) {
+            Box(
+                modifier = Modifier
+                    .padding(end = Dimen.mediumHalf)
+                    .size(36.dp)
+                    .clip(CircleShape)
+                    .iosClickable { onBackClick() },
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.ArrowBackIosNew,
+                    contentDescription = stringResource(R.string.cd_back),
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+            }
+        }
         // --- 1. СТРОКА ПОИСКА ---
         Box(
             modifier = Modifier
@@ -88,7 +110,7 @@ fun IOSTopBar(
                     .fillMaxSize()
                     .focusRequester(focusRequester)
                     .onFocusChanged { onFocusChange(it.isFocused) },
-                singleLine = true,
+                singleLine = isFav,
                 textStyle = MaterialTheme.typography.bodyLarge.copy(
                     color = MaterialTheme.colorScheme.onSurface,
                     lineHeight = 20.sp
@@ -106,7 +128,7 @@ fun IOSTopBar(
                             modifier = Modifier.size(18.dp)
                         )
 
-                        Spacer(modifier = Modifier.width(6.dp))
+                        Spacer(modifier = Modifier.width(Dimen.small))
 
                         Box(modifier = Modifier.weight(1f)) {
                             if (searchQuery.isEmpty()) {
@@ -162,60 +184,80 @@ fun IOSTopBar(
             }
         }
 
-        AnimatedVisibility(
-            visible = !isSearchFocused,
-            enter = fadeIn() + expandHorizontally(),
-            exit = fadeOut() + shrinkHorizontally()
-        ) {
-            Box(
-                modifier = Modifier
-                    .padding(start = Dimen.mediumHalf)
-                    .size(36.dp) // Размер кликабельной зоны
-                    .iosClickable { onCartClick() },
-                contentAlignment = Alignment.Center
+        if (!isFav)
+        // --- 3. ИКОНКА КОРЗИНЫ С БЕЙДЖЕМ ---
+            AnimatedVisibility(
+                visible = !isSearchFocused,
+                enter = fadeIn() + expandHorizontally(),
+                exit = fadeOut() + shrinkHorizontally()
             ) {
-                // Контейнер для иконки и бейджа
-                Box {
-                    Icon(
-                        imageVector = Icons.Outlined.ShoppingCart,
-                        contentDescription = stringResource(R.string.cd_shopping_cart),
-                        tint = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.align(Alignment.Center)
+                Row(
+                    modifier = Modifier.wrapContentWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(
+                        space = Dimen.extraSmall,
+                        alignment = Alignment.CenterHorizontally
                     )
-
-                    // 🔥 IOS BADGE
-                    if (cartItemsCount > 0) {
-                        Box(
-                            modifier = Modifier
-                                .align(Alignment.TopEnd)
-                                .offset(x = 6.dp, y = (-4).dp)
-                                // 🔥 1. Вместо жесткого size используем defaultMinSize,
-                                // чтобы бейдж мог растягиваться для "99+"
-                                .defaultMinSize(minWidth = 14.dp, minHeight = 14.dp)
-                                .background(Color(0xFFFF3B30), CircleShape)
-                                // 🔥 2. Отступы по бокам, чтобы текст не прилипал к краям
-                                .padding(horizontal = 4.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = if (cartItemsCount > 99) "99+" else cartItemsCount.toString(),
-                                color = Color.White,
-                                // 7.sp слишком мелко даже для iOS, 9.sp читается идеально
-                                fontSize = 7.sp,
-                                fontWeight = FontWeight.Bold,
-                                textAlign = TextAlign.Center,
-                                // 🔥 3. МАГИЯ ЗДЕСЬ: отключаем системные отступы шрифта
-                                style = TextStyle(
-                                    platformStyle = PlatformTextStyle(includeFontPadding = false),
-                                    lineHeight = 7.sp
-                                ),
-                                // 🔥 4. Оптическая корректировка (иногда Android все равно смещает текст шрифта Roboto на 1 пиксель вниз)
-                                modifier = Modifier.offset(y = (-0.5).dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .padding(start = Dimen.mediumHalf)
+                            .size(36.dp) // Размер кликабельной зоны
+                            .iosClickable { onCartClick() },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        // Контейнер для иконки и бейджа
+                        Box {
+                            Icon(
+                                imageVector = Icons.Outlined.ShoppingCart,
+                                contentDescription = stringResource(R.string.cd_shopping_cart),
+                                tint = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.align(Alignment.Center)
                             )
+
+                            // IOS BADGE
+                            if (cartItemsCount > 0) {
+                                Box(
+                                    modifier = Modifier
+                                        .align(Alignment.TopEnd)
+                                        .offset(x = 6.dp, y = (-4).dp)
+                                        .defaultMinSize(minWidth = 14.dp, minHeight = 14.dp)
+                                        .background(Color(0xFFFF3B30), CircleShape)
+                                        .padding(horizontal = 4.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = if (cartItemsCount > 99) "99+" else cartItemsCount.toString(),
+                                        color = Color.White,
+                                        fontSize = 7.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        textAlign = TextAlign.Center,
+                                        style = TextStyle(
+                                            platformStyle = PlatformTextStyle(includeFontPadding = false),
+                                            lineHeight = 7.sp
+                                        ),
+                                        modifier = Modifier.offset(y = (-0.5).dp)
+                                    )
+                                }
+                            }
                         }
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .padding(start = Dimen.mediumHalf)
+                            .size(36.dp)
+                            .iosClickable { onFavouriteClick() },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.FavoriteBorder,
+                            contentDescription = stringResource(R.string.fav),
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.align(Alignment.Center)
+                        )
                     }
                 }
             }
-        }
     }
 }

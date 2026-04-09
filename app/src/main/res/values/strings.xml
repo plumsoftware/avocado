@@ -6,6 +6,7 @@
     <string name="loading">Загрузка...</string>
     <string name="back">Назад</string>
     <string name="dalee">Далее</string>
+    <string name="undefined_meal">Нераспознано</string>
 
     <!-- Content Descriptions (Для доступности/Слепых) -->
     <string name="cd_back">Назад</string>
@@ -764,4 +765,17 @@
         <item>пауза</item>
         <item>замолчи</item>
     </string-array>
+
+    <!-- AI СКАНЕР ЕДЫ -->
+    <string name="scanner">Сканер</string>
+    <string name="scanner_title">AI Сканер</string>
+    <string name="scanner_subtitle">Наведите камеру на продукт</string>
+    <string name="scanner_permission_denied">Разрешите доступ к камере в настройках</string>
+    <string name="scanner_btn_allow">Разрешить камеру</string>
+    <string name="scanner_analyzing">Распознаю продукт...</string>
+    <string name="scanner_result_title">Я вижу: %1$s</string>
+    <string name="scanner_no_food_found">Не удалось распознать еду. Попробуйте еще раз.</string>
+    <string name="scanner_found_recipes">Что можно приготовить:</string>
+    <string name="cd_take_photo">Сделать фото</string>
+    <string name="cd_close_scanner">Закрыть сканер</string>
 </resources>

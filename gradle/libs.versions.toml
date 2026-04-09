@@ -49,6 +49,13 @@ bom = "2025.02.01"
 # YaMetrika
 analytics = "7.14.2"
 
+# CameraX
+cameraCore = "1.6.0"
+
+# Google ML Kit (On-Device Image Labeling)
+imageLabelingCommon = "17.0.9"
+imageLabelingDefault = "17.0.0"
+
 [libraries]
 androidx-compose-foundation-layout = { module = "androidx.compose.foundation:foundation-layout", version.ref = "foundationLayout" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -110,6 +117,16 @@ remoteconfig = { module = "ru.rustore.sdk:remoteconfig" }
 
 # YaMetrika
 analytics = { module = "io.appmetrica.analytics:analytics", version.ref = "analytics" }
+
+# CameraX
+androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraCore" }
+androidx-camera-core = { module = "androidx.camera:camera-core", version.ref = "cameraCore" }
+androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "cameraCore" }
+androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "cameraCore" }
+
+# Google ML Kit (On-Device Image Labeling)
+image-labeling-common = { module = "com.google.mlkit:image-labeling", version.ref = "imageLabelingCommon" }
+image-labeling-default = { module = "com.google.mlkit:image-labeling-default-common", version.ref = "imageLabelingDefault" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

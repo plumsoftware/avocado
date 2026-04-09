@@ -26,15 +26,9 @@ import androidx.navigation.NavHostController
 import ru.plumsoftware.avocado.data.favorite.FavoritesRepository
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.IOSTopBar
 import ru.plumsoftware.avocado.ui.theme.Dimen
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,10 +39,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.plumsoftware.avocado.R
-import ru.plumsoftware.avocado.data.base.model.food.Food
 import ru.plumsoftware.avocado.data.shopping.ShoppingRepository
 import ru.plumsoftware.avocado.ui.screen.AppDestination
 import ru.plumsoftware.avocado.ui.screen.main.list.elements.food.FoodCard
@@ -186,16 +178,20 @@ fun FavoriteScreen(
 
                 // Подключили поиск
                 IOSTopBar(
+                    isFav = true,
                     searchQuery = searchQuery,
                     onSearchQueryChange = { viewModel.onSearchQueryChange(it) },
                     isSearchFocused = isSearchFocused,
                     onFocusChange = { isSearchFocused = it },
-                    onFilterClick = {},
+                    onFavouriteClick = {},
                     cartItemsCount = cartItemsCount,
                     onCartClick = {
                         // Предполагается, что ты добавил объект ShoppingList в AppDestination
                         navController.navigate(AppDestination.ShoppingList)
                     },
+                    onBackClick = {
+                        navController.navigateUp()
+                    }
                 )
             }
         }
