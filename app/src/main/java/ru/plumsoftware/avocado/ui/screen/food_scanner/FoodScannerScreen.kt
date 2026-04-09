@@ -9,6 +9,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.OptIn
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
@@ -111,26 +112,33 @@ fun FoodScannerScreen(
         cameraController.takePicture(
             ContextCompat.getMainExecutor(context),
             object : ImageCapture.OnImageCapturedCallback() {
-                @androidx.annotation.OptIn(androidx.camera.core.ExperimentalGetImage::class)
+                @ExperimentalGetImage // Обязательная аннотация
                 override fun onCaptureSuccess(imageProxy: ImageProxy) {
                     val mediaImage = imageProxy.image
                     if (mediaImage != null) {
-                        val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
+                        // 🔥 ИСПРАВЛЕНИЕ 1: Создаем InputImage напрямую из mediaImage,
+                        // передавая точный градус поворота от CameraX
+                        val image = InputImage.fromMediaImage(
+                            mediaImage,
+                            imageProxy.imageInfo.rotationDegrees
+                        )
 
                         labeler.process(image)
                             .addOnSuccessListener { labels ->
-                                // Дебаг: выводим в лог всё, что видит ИИ
+                                // Дебаг лог
                                 Log.d("ML_KIT", "Вижу: ${labels.joinToString { "${it.text} (${it.confidence})" }}")
 
                                 var matchedId: String? = null
 
                                 for (label in labels) {
                                     val text = label.text.lowercase()
-                                    // Игнорируем слишком общие слова, которые нейросеть лепит на любую еду
-                                    if (text == "food" || text == "plant" || text == "produce" || text == "natural foods" || text == "ingredient") continue
+                                    // Игнорируем общие мусорные слова
+                                    if (text == "food" || text == "plant" || text == "produce" ||
+                                        text == "ingredient" || text == "fruit" || text == "vegetable" ||
+                                        text == "still life photography") continue
 
-                                    matchedId = ScannerDictionary.findFoodId(label.text)
-                                    if (matchedId != null) break // Нашли совпадение!
+                                    matchedId = ScannerDictionary.findFoodId(text)
+                                    if (matchedId != null) break
                                 }
 
                                 if (matchedId != null) {
@@ -140,11 +148,13 @@ fun FoodScannerScreen(
                                 } else {
                                     errorMessage = context.getString(R.string.search_no_results)
                                 }
-                                isAnalyzing = false
-                                imageProxy.close()
                             }
                             .addOnFailureListener {
-                                errorMessage = "Ошибка распознавания"
+                                errorMessage = "Ошибка нейросети"
+                            }
+                            .addOnCompleteListener {
+                                // 🔥 ИСПРАВЛЕНИЕ 2: Обязательно закрываем ImageProxy в блоке complete,
+                                // иначе камера зависнет после первого снимка!
                                 isAnalyzing = false
                                 imageProxy.close()
                             }
@@ -156,7 +166,7 @@ fun FoodScannerScreen(
 
                 override fun onError(exception: ImageCaptureException) {
                     isAnalyzing = false
-                    errorMessage = "Ошибка камеры"
+                    errorMessage = "Ошибка камеры: ${exception.message}"
                 }
             }
         )
