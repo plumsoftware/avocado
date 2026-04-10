@@ -39,8 +39,10 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.google.mlkit.common.model.LocalModel
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.label.ImageLabeling
+import com.google.mlkit.vision.label.custom.CustomImageLabelerOptions
 import com.google.mlkit.vision.label.defaults.ImageLabelerOptions
 import ru.plumsoftware.avocado.R
 import ru.plumsoftware.avocado.data.base.model.receipt.TypicalReceipt
@@ -102,7 +104,21 @@ fun FoodScannerScreen(
         }
     }
 
-    val labeler = remember { ImageLabeling.getClient(ImageLabelerOptions.DEFAULT_OPTIONS) }
+    val labeler = remember {
+        // 1. Создаем объект локальной модели
+        val localModel = LocalModel.Builder()
+            .setAssetFilePath("efficientnet.tflite") // Имя файла в папке assets
+            .build()
+
+        // 2. Настраиваем опции (Берем только результаты с уверенностью > 30%)
+        val customImageLabelerOptions = CustomImageLabelerOptions.Builder(localModel)
+            .setMaxResultCount(5)
+            .setConfidenceThreshold(0.3f)
+            .build()
+
+        // 3. Создаем клиент
+        ImageLabeling.getClient(customImageLabelerOptions)
+    }
 
     // --- 4. ЛОГИКА СКАНИРОВАНИЯ ---
     val scanImage: () -> Unit = {
@@ -112,33 +128,26 @@ fun FoodScannerScreen(
         cameraController.takePicture(
             ContextCompat.getMainExecutor(context),
             object : ImageCapture.OnImageCapturedCallback() {
-                @ExperimentalGetImage // Обязательная аннотация
+                @ExperimentalGetImage
                 override fun onCaptureSuccess(imageProxy: ImageProxy) {
                     val mediaImage = imageProxy.image
                     if (mediaImage != null) {
-                        // 🔥 ИСПРАВЛЕНИЕ 1: Создаем InputImage напрямую из mediaImage,
-                        // передавая точный градус поворота от CameraX
-                        val image = InputImage.fromMediaImage(
-                            mediaImage,
-                            imageProxy.imageInfo.rotationDegrees
-                        )
+                        val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
 
                         labeler.process(image)
                             .addOnSuccessListener { labels ->
-                                // Дебаг лог
-                                Log.d("ML_KIT", "Вижу: ${labels.joinToString { "${it.text} (${it.confidence})" }}")
+                                // ДЕБАГ: Теперь тут будут конкретные названия!
+                                Log.d("ML_KIT_CUSTOM", "Вижу: ${labels.joinToString { "${it.text} (${it.confidence})" }}")
 
                                 var matchedId: String? = null
 
                                 for (label in labels) {
                                     val text = label.text.lowercase()
                                     // Игнорируем общие мусорные слова
-                                    if (text == "food" || text == "plant" || text == "produce" ||
-                                        text == "ingredient" || text == "fruit" || text == "vegetable" ||
-                                        text == "still life photography") continue
+                                    if (text == "food" || text == "plant" || text == "produce" || text == "ingredient" || text == "fruit" || text == "vegetable" || text == "still life photography") continue
 
                                     matchedId = ScannerDictionary.findFoodId(text)
-                                    if (matchedId != null) break
+                                    if (matchedId != null) break // Нашли совпадение!
                                 }
 
                                 if (matchedId != null) {
@@ -150,13 +159,11 @@ fun FoodScannerScreen(
                                 }
                             }
                             .addOnFailureListener {
-                                errorMessage = "Ошибка нейросети"
+                                errorMessage = "Ошибка распознавания"
                             }
                             .addOnCompleteListener {
-                                // 🔥 ИСПРАВЛЕНИЕ 2: Обязательно закрываем ImageProxy в блоке complete,
-                                // иначе камера зависнет после первого снимка!
                                 isAnalyzing = false
-                                imageProxy.close()
+                                imageProxy.close() // Обязательно закрываем!
                             }
                     } else {
                         isAnalyzing = false

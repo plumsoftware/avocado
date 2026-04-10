@@ -153,6 +153,7 @@ dependencies {
     //implementation(libs.image.labeling.default)
     //implementation(libs.image.labeling.common)
     implementation("com.google.android.gms:play-services-mlkit-image-labeling:16.0.8")
+    implementation("com.google.mlkit:image-labeling-custom:17.0.3")
 
 //    implementation("org.tensorflow:tensorflow-lite-task-vision:0.4.4") {
 //        exclude(group = "org.tensorflow", module = "tensorflow-lite-support-api")
@@ -161,6 +162,12 @@ dependencies {
 //    implementation("org.tensorflow:tensorflow-lite-support:0.4.4") {
 //        exclude(group = "org.tensorflow", module = "tensorflow-lite-support-api")
 //    }
+
+    //implementation("org.tensorflow:tensorflow-lite-support:0.5.0")
+    //implementation("org.tensorflow:tensorflow-lite-metadata:0.5.0")
+    //implementation("org.tensorflow:tensorflow-lite:2.17.0")
+    //implementation("org.tensorflow:tensorflow-lite-gpu:2.17.0")
+    //implementation("org.tensorflow:tensorflow-lite-task-vision:0.4.4")
 }
 
 configurations.all {
