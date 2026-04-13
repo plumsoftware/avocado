@@ -55,6 +55,8 @@ cameraCore = "1.6.0"
 # Google ML Kit (On-Device Image Labeling)
 imageLabelingCommon = "17.0.9"
 imageLabelingDefault = "17.0.0"
+playServicesMlkitImageLabeling = "16.0.8"
+imageLabelingCustom = "17.0.3"
 
 [libraries]
 androidx-compose-foundation-layout = { module = "androidx.compose.foundation:foundation-layout", version.ref = "foundationLayout" }
@@ -127,6 +129,8 @@ androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "
 # Google ML Kit (On-Device Image Labeling)
 image-labeling-common = { module = "com.google.mlkit:image-labeling", version.ref = "imageLabelingCommon" }
 image-labeling-default = { module = "com.google.mlkit:image-labeling-default-common", version.ref = "imageLabelingDefault" }
+image-labeling-custom = { module = "com.google.mlkit:image-labeling-custom", version.ref = "imageLabelingCustom" }
+play-services-mlkit-image-labeling = { module = "com.google.android.gms:play-services-mlkit-image-labeling", version.ref = "playServicesMlkitImageLabeling" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

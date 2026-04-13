@@ -2,6 +2,7 @@ package ru.plumsoftware.avocado.ui.screen.main.elements
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -31,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
@@ -46,7 +49,7 @@ import ru.plumsoftware.avocado.ui.theme.Dimen
 @Composable
 fun BottomNavBar(
     onItemSelected: (MainScreenStates) -> Unit,
-    onScannerClick: () -> Unit // 🔥 НОВЫЙ КОЛЛБЕК ДЛЯ КАМЕРЫ
+    onScannerClick: () -> Unit
 ) {
     var selected by remember { mutableIntStateOf(0) }
     val list = listOf(
@@ -59,7 +62,7 @@ fun BottomNavBar(
             iconRes = R.drawable.chef,
         ),
         BottomBarItem(
-            title = R.string.scanner,
+            title = R.string.scanner_title, // Твоя строка
             iconVector = Icons.Rounded.CameraAlt
         ),
         BottomBarItem(
@@ -76,7 +79,6 @@ fun BottomNavBar(
         val item = when (selected) {
             0 -> MainScreenStates.List
             1 -> MainScreenStates.Rec
-            // Индекс 2 пропущен, так как сканер не меняет стейт меню!
             3 -> MainScreenStates.MealPlanner
             4 -> MainScreenStates.Settings
             else -> MainScreenStates.Empty
@@ -88,34 +90,43 @@ fun BottomNavBar(
 
     Box(
         modifier = Modifier
-            .wrapContentSize()
+            .fillMaxWidth()
             .padding(horizontal = Dimen.medium)
+            .padding(bottom = Dimen.medium)
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
+        // --- 1. ФОН ПАНЕЛИ ---
+        Box(
             modifier = Modifier
-                .clip(shape = MaterialTheme.shapes.large)
-                .wrapContentHeight()
                 .fillMaxWidth()
+                .height(60.dp)
+                .align(Alignment.BottomCenter)
+                .clip(shape = MaterialTheme.shapes.large)
                 .background(MaterialTheme.colorScheme.surface)
-                .padding(
-                    horizontal = Dimen.large,
-                    vertical = Dimen.mediumHalf
-                )
+                .shadow(elevation = Dimen.extraSmall, shape = MaterialTheme.shapes.large)
+                //.border(width = 1.dp, shape = MaterialTheme.shapes.large, color = MaterialTheme.colorScheme.primary)
+        )
+
+        // --- 2. ИКОНКИ ---
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(60.dp)
+                .align(Alignment.BottomCenter)
+                .padding(horizontal = Dimen.mediumHalf),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             list.forEachIndexed { index, item ->
                 val isSelected = selected == index
 
                 if (index == 2) {
-                    // --- 🔥 ЦЕНТРАЛЬНАЯ КНОПКА СКАНЕРА (iOS Style) ---
                     Box(
                         modifier = Modifier
-                            .offset(y = (-10).dp) // Слегка приподнимаем кнопку над баром
-                            .size(56.dp) // Делаем ее больше остальных
+                            .offset(y = (-16).dp)
+                            .size(56.dp)
                             .clip(CircleShape)
-                            .background(IOSGreen) // Твой фирменный зеленый цвет
-                            .iosClickable { onScannerClick() }, // Не меняем selected, просто открываем камеру
+                            .background(IOSGreen)
+                            .iosClickable { onScannerClick() },
                         contentAlignment = Alignment.Center
                     ) {
                         if (item.iconVector != null) {
@@ -128,11 +139,8 @@ fun BottomNavBar(
                         }
                     }
                 } else {
-                    // --- ОБЫЧНЫЕ ТАБЫ ---
                     Column(
                         modifier = Modifier
-                            .wrapContentHeight()
-                            .wrapContentWidth()
                             .clickable(
                                 indication = null,
                                 interactionSource = remember { MutableInteractionSource() },
@@ -147,14 +155,14 @@ fun BottomNavBar(
                     ) {
                         if (item.iconRes != null) {
                             Image(
-                                modifier = Modifier.size(22.dp),
+                                modifier = Modifier.size(24.dp),
                                 painter = painterResource(item.iconRes),
                                 contentDescription = stringResource(item.title),
                                 colorFilter = if (isSelected) null else ColorFilter.tint(Color.Gray)
                             )
                         } else if (item.iconVector != null) {
                             Icon(
-                                modifier = Modifier.size(28.dp),
+                                modifier = Modifier.size(24.dp),
                                 imageVector = item.iconVector,
                                 contentDescription = stringResource(item.title),
                                 tint = if (isSelected) MaterialTheme.colorScheme.primary else Color.Gray
