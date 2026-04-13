@@ -46,6 +46,7 @@ import androidx.core.content.ContextCompat
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.material.icons.rounded.CameraAlt
 
 // Цвета (лучше тоже вынести в Color.kt, но пока здесь)
 val IOSGreen = Color(0xFF5E8C31)
@@ -60,7 +61,8 @@ fun OnboardingScreen(
 ) {
     val selectedGoals = remember { mutableStateListOf<UserGoal>() }
     val selectedRestrictions = remember { mutableStateListOf<UserRestriction>() }
-    val pagerState = rememberPagerState(pageCount = { 4 })
+
+    val pagerState = rememberPagerState(pageCount = { 5 })
     val scope = rememberCoroutineScope()
 
     Box(
@@ -97,7 +99,8 @@ fun OnboardingScreen(
                     0 -> WelcomePage(onPrivacyClick = onPrivacyClick)
                     1 -> GoalsPage(selectedGoals)
                     2 -> RestrictionsPage(selectedRestrictions)
-                    3 -> NotificationsPage()
+                    3 -> CameraPermissionPage() // 🔥 НОВАЯ СТРАНИЦА (Камера)
+                    4 -> NotificationsPage()    // 5-я страница (Уведомления)
                 }
             }
 
@@ -110,8 +113,8 @@ fun OnboardingScreen(
             ) {
                 // Точки
                 Row(horizontalArrangement = Arrangement.spacedBy(Dimen.mediumHalf)) {
-                    // 🔥 ИЗМЕНЕНО: repeat(4)
-                    repeat(4) { index ->
+                    // 🔥 ИЗМЕНЕНО: repeat(5)
+                    repeat(5) { index ->
                         val isSelected = pagerState.currentPage == index
                         val color by animateColorAsState(
                             if (isSelected) IOSGreen else Color(0xFFC7C7CC),
@@ -126,12 +129,12 @@ fun OnboardingScreen(
                     }
                 }
 
-                // 🔥 ИЗМЕНЕНО: Последняя страница теперь 3
-                val isLastPage = pagerState.currentPage == 3
+                // 🔥 ИЗМЕНЕНО: Последняя страница теперь 4
+                val isLastPage = pagerState.currentPage == 4
                 val buttonText = when (pagerState.currentPage) {
                     0 -> stringResource(R.string.onboarding_btn_read)
-                    1, 2 -> stringResource(R.string.onboarding_btn_continue)
-                    3 -> stringResource(R.string.onboarding_btn_start)
+                    1, 2, 3 -> stringResource(R.string.onboarding_btn_continue)
+                    4 -> stringResource(R.string.onboarding_btn_start)
                     else -> stringResource(R.string.onboarding_btn_continue)
                 }
 
@@ -509,5 +512,107 @@ fun OnboardingDisclaimer() {
                 textAlign = TextAlign.Start
             )
         )
+    }
+}
+
+// --- НОВЫЙ ЭКРАН: КАМЕРА ---
+@Composable
+fun CameraPermissionPage() {
+    val context = LocalContext.current
+
+    // Проверяем, дано ли разрешение на камеру
+    var isGranted by remember {
+        mutableStateOf(
+            ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+        )
+    }
+
+    // Лаунчер для запроса разрешения
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { granted ->
+            isGranted = granted
+        }
+    )
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = Dimen.extraLarge),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        // Красивая иконка камеры
+        Box(
+            modifier = Modifier
+                .size(140.dp)
+                .background(Color(0xFFE8F5E9), CircleShape), // Мягкий зеленый фон (как бренд)
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Rounded.CameraAlt,
+                contentDescription = null,
+                tint = IOSGreen, // Фирменный зеленый
+                modifier = Modifier.size(64.dp)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(40.dp))
+
+        Text(
+            text = stringResource(R.string.onboarding_camera_title),
+            style = MaterialTheme.typography.displaySmall.copy(
+                fontWeight = FontWeight.Bold,
+                fontSize = 28.sp
+            ),
+            color = Color.Black,
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(modifier = Modifier.height(Dimen.mediumAboveHalf))
+
+        Text(
+            text = stringResource(R.string.onboarding_camera_subtitle),
+            style = MaterialTheme.typography.bodyLarge.copy(
+                fontSize = 17.sp,
+                lineHeight = 24.sp
+            ),
+            color = Color.Gray,
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(modifier = Modifier.height(40.dp))
+
+        // Кнопка запроса разрешения
+        if (isGranted) {
+            // Если уже разрешил
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Rounded.CheckCircle, contentDescription = null, tint = IOSGreen)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = stringResource(R.string.onboarding_camera_granted),
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold, color = IOSGreen)
+                )
+            }
+        } else {
+            // Кнопка в стиле iOS "Secondary Action"
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(Dimen.chipCornerRadius))
+                    .background(Color(0xFFE5E5EA)) // System Gray 5
+                    .iosClickable {
+                        permissionLauncher.launch(Manifest.permission.CAMERA)
+                    }
+                    .padding(horizontal = 24.dp, vertical = 14.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.onboarding_btn_allow_camera),
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFF007AFF) // iOS Blue Link Color
+                    )
+                )
+            }
+        }
     }
 }

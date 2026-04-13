@@ -778,4 +778,10 @@
     <string name="scanner_found_recipes">Что можно приготовить:</string>
     <string name="cd_take_photo">Сделать фото</string>
     <string name="cd_close_scanner">Закрыть сканер</string>
+
+    <!-- Камера (Онбординг) -->
+    <string name="onboarding_camera_title">Умный сканер еды</string>
+    <string name="onboarding_camera_subtitle">Разрешите доступ к камере, чтобы мгновенно распознавать продукты и находить для них рецепты.</string>
+    <string name="onboarding_btn_allow_camera">Разрешить камеру</string>
+    <string name="onboarding_camera_granted">Камера доступна ✓</string>
 </resources>
