@@ -24,12 +24,12 @@ android {
         applicationId = "ru.plumsoftware.avocado"
         minSdk = 24
         targetSdk = 36
-        versionCode = 8
-        versionName = "1.0.6"
+        versionCode = 9
+        versionName = "1.0.7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("int", "PLATFORM", "3")
+        buildConfigField("int", "PLATFORM", "1")
     }
 
     buildTypes {

@@ -102,7 +102,7 @@ fun BottomNavBar(
                 .align(Alignment.BottomCenter)
                 .clip(shape = MaterialTheme.shapes.large)
                 .background(MaterialTheme.colorScheme.surface)
-                .shadow(elevation = Dimen.extraSmall, shape = MaterialTheme.shapes.large)
+                //.shadow(elevation = Dimen.extraSmall, shape = MaterialTheme.shapes.large)
                 //.border(width = 1.dp, shape = MaterialTheme.shapes.large, color = MaterialTheme.colorScheme.primary)
         )
 
