@@ -9,4 +9,8 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="primary_color">#FF6B9E26</color>
+
+    <color name="gray_light">#F2F2F7</color>
+    <color name="ios_blue">#007AFF</color>
+    <color name="black_alpha_40">#66000000</color>
 </resources>

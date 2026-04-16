@@ -58,6 +58,9 @@ imageLabelingDefault = "17.0.0"
 playServicesMlkitImageLabeling = "16.0.8"
 imageLabelingCustom = "17.0.3"
 
+# Glance widget
+glanceAppwidget = "1.1.1"
+
 [libraries]
 androidx-compose-foundation-layout = { module = "androidx.compose.foundation:foundation-layout", version.ref = "foundationLayout" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -131,6 +134,9 @@ image-labeling-common = { module = "com.google.mlkit:image-labeling", version.re
 image-labeling-default = { module = "com.google.mlkit:image-labeling-default-common", version.ref = "imageLabelingDefault" }
 image-labeling-custom = { module = "com.google.mlkit:image-labeling-custom", version.ref = "imageLabelingCustom" }
 play-services-mlkit-image-labeling = { module = "com.google.android.gms:play-services-mlkit-image-labeling", version.ref = "playServicesMlkitImageLabeling" }
+
+# Glance widget
+androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "glanceAppwidget" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -152,6 +152,9 @@ dependencies {
     // Google ML Kit (On-Device Image Labeling)
     implementation(libs.play.services.mlkit.image.labeling)
     implementation(libs.image.labeling.custom)
+
+    // Jetpack Glance
+    implementation(libs.androidx.glance.appwidget)
 }
 
 configurations.all {

@@ -5,7 +5,9 @@ import kotlinx.serialization.Serializable
 object AppDestination {
 
     @Serializable
-    data object MainScreen
+    data class MainScreen (
+        val instaOpenMealPlanner: Boolean
+    )
 
     @Serializable
     data class DetailedScreen(

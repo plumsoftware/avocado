@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,10 +43,18 @@ fun MainScreen(
     shoppingRepository: ShoppingRepository,
     mealPlanRepository: MealPlanRepository,
     waterRepository: WaterRepository,
-    navController: NavHostController
+    navController: NavHostController,
+    instaMealPlannerOpen: Boolean
 ) {
-
+    var isInstaMealPlannerOpen by remember { mutableStateOf(instaMealPlannerOpen) }
     var currentRoute by remember { mutableStateOf<MainScreenStates>(MainScreenStates.Empty) }
+
+    LaunchedEffect(key1 = isInstaMealPlannerOpen) {
+        if (isInstaMealPlannerOpen) {
+            currentRoute = MainScreenStates.MealPlanner
+            isInstaMealPlannerOpen = false
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -62,7 +71,7 @@ fun MainScreen(
                         navController = navController,
                         favoritesRepository = favoritesRepository,
                         userPreferencesRepository = userPreferencesRepository,
-                        shoppingRepository = shoppingRepository
+                        shoppingRepository = shoppingRepository,
                     )
                 }
 
@@ -94,7 +103,7 @@ fun MainScreen(
                         userPreferencesRepository = userPreferencesRepository,
                         shoppingRepository = shoppingRepository,
                         mealPlanRepository = mealPlanRepository,
-                        waterRepository = waterRepository
+                        waterRepository = waterRepository,
                     )
                 }
             }

@@ -188,6 +188,7 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
+
                 // Логика загрузки (оставляем снаружи навигации, чтобы не дергать граф)
                 if (startState == MainViewModel.StartDestination.Loading) {
                     Box(
@@ -209,35 +210,35 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 } else {
-                    // 🔥 РЕШЕНИЕ: Динамически определяем стартовый экран для NavHost
                     val startRoute: Any =
                         if (startState == MainViewModel.StartDestination.Onboarding) {
                             AppDestination.Onboarding
                         } else {
-                            AppDestination.MainScreen
+                            AppDestination.MainScreen(instaOpenMealPlanner = false)
                         }
 
                     // Обработка диплинков
                     LaunchedEffect(destinationRoute) {
                         if (destinationRoute != null && startState == MainViewModel.StartDestination.Main) {
                             val parts = destinationRoute.split("/")
-                            if (parts.size == 2) {
-                                val type = parts[0]
-                                val id = parts[1]
+                            val type = parts[0]
+                            val id = if (parts.size > 1) parts[1] else ""
 
-                                when (type) {
-                                    "food" -> navController.navigate(
-                                        AppDestination.DetailedScreen(
-                                            foodId = id
-                                        )
+                            when (type) {
+                                "food" -> navController.navigate(
+                                    AppDestination.DetailedScreen(
+                                        foodId = id
                                     )
-
-                                    "receipt" -> navController.navigate(
-                                        AppDestination.ReceiptDetailRoute(
-                                            receiptId = id
-                                        )
+                                )
+                                "receipt" -> navController.navigate(
+                                    AppDestination.ReceiptDetailRoute(
+                                        receiptId = id
                                     )
-                                }
+                                )
+                                "scanner" -> navController.navigate(AppDestination.Scanner)
+                                "planner" -> navController.navigate(AppDestination.MainScreen(instaOpenMealPlanner = true))
+                                "shopping" -> navController.navigate(AppDestination.ShoppingList)
+                                "favorite" -> navController.navigate(AppDestination.Favorite)
                             }
                         }
                     }
@@ -254,7 +255,7 @@ class MainActivity : ComponentActivity() {
                                     // Сохраняем в память
                                     mainViewModel.finishOnboarding(goals, restrictions)
                                     // Переключаемся на главный экран и очищаем стек, чтобы нельзя было вернуться назад кнопкой "Назад"
-                                    navController.navigate(AppDestination.MainScreen) {
+                                    navController.navigate(AppDestination.MainScreen(instaOpenMealPlanner = false)) {
                                         popUpTo(AppDestination.Onboarding) { inclusive = true }
                                     }
                                 },
@@ -266,7 +267,10 @@ class MainActivity : ComponentActivity() {
                         }
 
                         // 2. ГЛАВНЫЙ ЭКРАН
-                        composable<AppDestination.MainScreen> {
+                        composable<AppDestination.MainScreen> { backStackEntry ->
+                            val args = backStackEntry.toRoute<AppDestination.MainScreen>()
+                            val isInstaMealPlannerOpen = args.instaOpenMealPlanner
+
                             MainScreen(
                                 userPreferencesRepository = userRepo,
                                 settingsViewModel = settingsViewModel,
@@ -274,7 +278,8 @@ class MainActivity : ComponentActivity() {
                                 navController = navController,
                                 favoritesRepository = favRepo,
                                 mealPlanRepository = mealPlanRepository,
-                                waterRepository = waterRepo
+                                waterRepository = waterRepo,
+                                instaMealPlannerOpen = isInstaMealPlannerOpen
                             )
                         }
 
