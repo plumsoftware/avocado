@@ -62,7 +62,7 @@ fun BottomNavBar(
         ),
         BottomBarItem(
             title = R.string.racion,
-            iconRes = R.drawable.racion
+            iconRes = R.drawable.racion_2
         ),
         BottomBarItem(
             title = R.string.settings,
