@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.rounded.ArrowBackIosNew
 import androidx.compose.material.icons.rounded.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -133,14 +134,14 @@ fun ReceiptDetailScreen(
                                     interstitialAd.setAdEventListener(null)
                                     ru.plumsoftware.avocado.ui.screen.main.receipt.details.interstitialAd =
                                         null
-                                    navController.popBackStack()
+                                    navController.navigateUp()
                                 }
 
                                 override fun onAdDismissed() {
                                     interstitialAd.setAdEventListener(null)
                                     ru.plumsoftware.avocado.ui.screen.main.receipt.details.interstitialAd =
                                         null
-                                    navController.popBackStack()
+                                    navController.navigateUp()
                                 }
 
                                 override fun onAdClicked() {}
@@ -166,10 +167,10 @@ fun ReceiptDetailScreen(
             if (interstitialAd != null && activity != null) {
                 interstitialAd?.show(activity = activity)
             } else {
-                navController.popBackStack()
+                navController.navigateUp()
             }
         } else {
-            navController.popBackStack()
+            navController.navigateUp()
         }
     }
 
@@ -407,10 +408,10 @@ fun ReceiptDetailScreen(
                 if (interstitialAd != null && activity != null)
                     interstitialAd?.show(activity = activity)
                 else
-                    navController.popBackStack()
+                    navController.navigateUp()
             }) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    imageVector = Icons.Rounded.ArrowBackIosNew,
                     contentDescription = stringResource(R.string.cd_back),
                     tint = MaterialTheme.colorScheme.onSurface
                 )

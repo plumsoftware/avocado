@@ -100,6 +100,43 @@ fun SettingsScreen(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted -> hasNotifications = isGranted }
 
+    // --- КАМЕРА ---
+    var hasCameraPermission by remember {
+        mutableStateOf(
+            ContextCompat.checkSelfPermission(
+                context, Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        )
+    }
+
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted -> hasCameraPermission = isGranted }
+
+    // --- МИКРОФОН ---
+    var hasMicPermission by remember {
+        mutableStateOf(
+            ContextCompat.checkSelfPermission(
+                context, Manifest.permission.RECORD_AUDIO
+            ) == PackageManager.PERMISSION_GRANTED
+        )
+    }
+
+    val micLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted -> hasMicPermission = isGranted }
+
+    // --- ПАМЯТЬ ---
+    var hasStoragePermission by remember {
+        mutableStateOf(checkStoragePermission(context))
+    }
+
+    val storageLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        hasStoragePermission = permissions.values.all { it }
+    }
+
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -110,6 +147,16 @@ fun SettingsScreen(
                         context, Manifest.permission.POST_NOTIFICATIONS
                     ) == PackageManager.PERMISSION_GRANTED
                 } else true
+
+                hasCameraPermission = ContextCompat.checkSelfPermission(
+                    context, Manifest.permission.CAMERA
+                ) == PackageManager.PERMISSION_GRANTED
+
+                hasMicPermission = ContextCompat.checkSelfPermission(
+                    context, Manifest.permission.RECORD_AUDIO
+                ) == PackageManager.PERMISSION_GRANTED
+
+                hasStoragePermission = checkStoragePermission(context)
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -245,6 +292,57 @@ fun SettingsScreen(
                                 context.startActivity(intent)
                             }
                         },
+                        showDivider = true
+                    )
+
+                    IOSSettingsSwitchItem(
+                        title = "Камера",
+                        isChecked = hasCameraPermission,
+                        onCheckedChange = { turnOn ->
+                            if (turnOn) {
+                                cameraLauncher.launch(Manifest.permission.CAMERA)
+                            } else {
+                                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                    data = Uri.fromParts("package", context.packageName, null)
+                                }
+                                context.startActivity(intent)
+                            }
+                        },
+                        showDivider = true
+                    )
+
+                    IOSSettingsSwitchItem(
+                        title = "Микрофон",
+                        isChecked = hasMicPermission,
+                        onCheckedChange = { turnOn ->
+                            if (turnOn) {
+                                micLauncher.launch(Manifest.permission.RECORD_AUDIO)
+                            } else {
+                                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                    data = Uri.fromParts("package", context.packageName, null)
+                                }
+                                context.startActivity(intent)
+                            }
+                        },
+                        showDivider = true
+                    )
+
+                    IOSSettingsSwitchItem(
+                        title = "Память",
+                        isChecked = hasStoragePermission,
+                        onCheckedChange = { turnOn ->
+                            if (turnOn) {
+                                val permissions = getStoragePermissions()
+                                if (permissions.isNotEmpty()) {
+                                    storageLauncher.launch(permissions)
+                                }
+                            } else {
+                                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                    data = Uri.fromParts("package", context.packageName, null)
+                                }
+                                context.startActivity(intent)
+                            }
+                        },
                         showDivider = false
                     )
                 }
@@ -316,6 +414,8 @@ fun SettingsScreen(
                         .padding(bottom = 120.dp), // Место под нижний BottomBar
                     textAlign = TextAlign.Center
                 )
+
+                Spacer(modifier = Modifier.height(Dimen.extraLarge))
             }
 
             // --- 2. ВЕРХНИЙ ГРАДИЕНТ (Под TopBar) ---
@@ -337,6 +437,47 @@ fun SettingsScreen(
                     )
             )
         }
+    }
+}
+
+fun getStoragePermissions(): Array<String> {
+    return when {
+        Build.VERSION.SDK_INT <= Build.VERSION_CODES.P -> {
+            arrayOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+        }
+
+        Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2 -> {
+            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+        }
+
+        else -> emptyArray()
+    }
+}
+
+fun checkStoragePermission(context: Context): Boolean {
+    return when {
+        Build.VERSION.SDK_INT <= Build.VERSION_CODES.P -> {
+            val read = ContextCompat.checkSelfPermission(
+                context, Manifest.permission.READ_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+
+            val write = ContextCompat.checkSelfPermission(
+                context, Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+
+            read && write
+        }
+
+        Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2 -> {
+            ContextCompat.checkSelfPermission(
+                context, Manifest.permission.READ_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+        }
+
+        else -> true // Android 13+ — тут уже другие кейсы (READ_MEDIA_*)
     }
 }
 

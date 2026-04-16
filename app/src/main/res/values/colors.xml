@@ -10,7 +10,12 @@
 
     <color name="primary_color">#FF6B9E26</color>
 
-    <color name="gray_light">#F2F2F7</color>
-    <color name="ios_blue">#007AFF</color>
-    <color name="black_alpha_40">#66000000</color>
+    <color name="widget_background">#FFFFFF</color>
+    <color name="widget_surface">#F2F2F7</color> <!-- iOS Gray 6 -->
+    <color name="widget_text_primary">#000000</color>
+    <color name="widget_text_secondary">#8E8E93</color> <!-- iOS Gray -->
+    <color name="widget_blue">#007AFF</color> <!-- iOS Blue -->
+    <color name="widget_green">#5E8C31</color> <!-- Avocado Green -->
+    <color name="widget_scrim">#66000000</color> <!-- 40% Black -->
+    <color name="widget_white">#FFFFFF</color>
 </resources>

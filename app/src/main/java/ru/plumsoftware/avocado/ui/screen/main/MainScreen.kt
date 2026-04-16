@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,15 +45,13 @@ fun MainScreen(
     navController: NavHostController,
     instaMealPlannerOpen: Boolean
 ) {
-    var isInstaMealPlannerOpen by remember { mutableStateOf(instaMealPlannerOpen) }
-    var currentRoute by remember { mutableStateOf<MainScreenStates>(MainScreenStates.Empty) }
-
-    LaunchedEffect(key1 = isInstaMealPlannerOpen) {
-        if (isInstaMealPlannerOpen) {
-            currentRoute = MainScreenStates.MealPlanner
-            isInstaMealPlannerOpen = false
-        }
+    var currentRoute by remember(instaMealPlannerOpen) {
+        mutableStateOf<MainScreenStates>(
+            if (instaMealPlannerOpen) MainScreenStates.MealPlanner else MainScreenStates.List
+        )
     }
+
+    val initialTab = if (instaMealPlannerOpen) 3 else 0
 
     Box(
         modifier = Modifier
@@ -134,6 +131,7 @@ fun MainScreen(
                 .align(Alignment.BottomCenter)
         ) {
             BottomNavBar(
+                initialSelection = initialTab,
                 onItemSelected = { newItem ->
                     currentRoute = newItem
                 },

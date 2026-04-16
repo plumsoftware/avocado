@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Отступы для виджетов (копии твоих Dimen) -->
+    <dimen name="widget_padding_small">8dp</dimen>
+    <dimen name="widget_padding_medium">16dp</dimen>
+    <dimen name="widget_radius">16dp</dimen>
+</resources>

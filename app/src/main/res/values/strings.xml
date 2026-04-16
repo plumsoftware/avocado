@@ -784,4 +784,15 @@
     <string name="onboarding_camera_subtitle">Разрешите доступ к камере, чтобы мгновенно распознавать продукты и находить для них рецепты.</string>
     <string name="onboarding_btn_allow_camera">Разрешить камеру</string>
     <string name="onboarding_camera_granted">Камера доступна ✓</string>
+
+    <!-- Виджеты -->
+    <string name="widget_scanner_title">AI Сканер</string>
+    <string name="widget_water_title">Водный баланс</string>
+    <string name="widget_water_format">%1$d / %2$d мл</string>
+    <string name="widget_recipe_title">Рецепт</string>
+    <string name="widget_recipe_empty">Рецепт не выбран</string>
+    <string name="widget_btn_planner">Рацион</string>
+    <string name="widget_btn_shopping">Покупки</string>
+    <string name="widget_btn_scanner">Сканер</string>
+    <string name="widget_btn_favorite">Избранное</string>
 </resources>

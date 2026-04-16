@@ -68,7 +68,7 @@ fun ShoppingScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = { navController.navigateUp() }) {
                         Icon(imageVector = Icons.Rounded.ArrowBackIosNew, contentDescription = "Назад")
                     }
                 },
