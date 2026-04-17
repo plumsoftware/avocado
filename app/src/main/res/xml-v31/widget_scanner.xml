@@ -4,6 +4,6 @@
     android:minHeight="60dp"
     android:targetCellWidth="1"
     android:targetCellHeight="1"
-    android:previewImage="@drawable/apple"
+    android:previewImage="@drawable/widget_scanner_promo"
     android:initialLayout="@layout/glance_default_loading_layout"
     android:widgetCategory="home_screen" />

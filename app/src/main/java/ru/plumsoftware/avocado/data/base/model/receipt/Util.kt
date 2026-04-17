@@ -374,6 +374,96 @@ val allReceipts = listOf(
             UserGoal.BETTER_SKIN,
             UserGoal.DIGESTION
         ) // Витамины для кожи, клетчатка для пищеварения
+    ),
+
+    // 25. Домашний куриный суп с овощами
+    TypicalReceipt(
+        id = "chicken_soup",
+        titleRes = R.string.rec_chicken_soup,
+        descRes = R.string.rec_desc_chicken_soup,
+        receiptText = R.string.rec_text_chicken_soup,
+        imageRes = R.drawable.chicken_soup,
+        relatedFood = listOf("chicken_breast", "potato", "carrot", "onion"),
+        timeMinutes = 45,
+        calories = 150,
+        difficulty = 1,
+        category = RecipeCategory.SOUP,
+        suitableGoals = listOf(UserGoal.IMMUNITY, UserGoal.DIGESTION, UserGoal.ENERGY)
+    ),
+
+    // 26. Витаминный салат из свеклы с грецким орехом
+    TypicalReceipt(
+        id = "beet_walnut_salad",
+        titleRes = R.string.rec_beet_walnut_salad,
+        descRes = R.string.rec_desc_beet_walnut_salad,
+        receiptText = R.string.rec_text_beet_walnut_salad,
+        imageRes = R.drawable.beet_walnut_salad,
+        relatedFood = listOf("beet", "garlic", "walnut"),
+        timeMinutes = 15,
+        calories = 180,
+        difficulty = 1,
+        category = RecipeCategory.SALAD,
+        suitableGoals = listOf(UserGoal.DIGESTION, UserGoal.HEART_HEALTH, UserGoal.IMMUNITY)
+    ),
+
+    // 27. Запеченная форель с лимоном и кабачками
+    TypicalReceipt(
+        id = "baked_trout_veggies",
+        titleRes = R.string.rec_baked_trout_veggies,
+        descRes = R.string.rec_desc_baked_trout_veggies,
+        receiptText = R.string.rec_text_baked_trout_veggies,
+        imageRes = R.drawable.baked_trout_veggies,
+        relatedFood = listOf("trout", "lemon", "zucchini", "tomato"),
+        timeMinutes = 30,
+        calories = 320,
+        difficulty = 1,
+        category = RecipeCategory.DINNER,
+        suitableGoals = listOf(UserGoal.GAIN_MUSCLE, UserGoal.HEART_HEALTH, UserGoal.BETTER_SKIN)
+    ),
+
+    // 28. Свиная вырезка, запеченная с яблоками
+    TypicalReceipt(
+        id = "pork_baked_apples",
+        titleRes = R.string.rec_pork_baked_apples,
+        descRes = R.string.rec_desc_pork_baked_apples,
+        receiptText = R.string.rec_text_pork_baked_apples,
+        imageRes = R.drawable.pork_baked_apples,
+        relatedFood = listOf("pork_tenderloin", "apple", "onion", "garlic"),
+        timeMinutes = 50,
+        calories = 380,
+        difficulty = 2,
+        category = RecipeCategory.LUNCH,
+        suitableGoals = listOf(UserGoal.GAIN_MUSCLE, UserGoal.ENERGY)
+    ),
+
+    // 29. Энергетический фруктово-ореховый боул (Завтрак)
+    TypicalReceipt(
+        id = "fruit_nut_bowl",
+        titleRes = R.string.rec_fruit_nut_bowl,
+        descRes = R.string.rec_desc_fruit_nut_bowl,
+        receiptText = R.string.rec_text_fruit_nut_bowl,
+        imageRes = R.drawable.fruit_nut_bowl,
+        relatedFood = listOf("kiwi", "pear", "hazelnut", "blueberry"),
+        timeMinutes = 10,
+        calories = 310,
+        difficulty = 1,
+        category = RecipeCategory.BREAKFAST,
+        suitableGoals = listOf(UserGoal.ENERGY, UserGoal.DIGESTION, UserGoal.BETTER_SKIN)
+    ),
+
+    // 30. Запеченная груша с макадамией и клюквой (Десерт)
+    TypicalReceipt(
+        id = "stuffed_pear_nuts",
+        titleRes = R.string.rec_stuffed_pear_nuts,
+        descRes = R.string.rec_desc_stuffed_pear_nuts,
+        receiptText = R.string.rec_text_stuffed_pear_nuts,
+        imageRes = R.drawable.stuffed_pear_nuts,
+        relatedFood = listOf("pear", "macadamia", "cranberry"),
+        timeMinutes = 20,
+        calories = 240,
+        difficulty = 2,
+        category = RecipeCategory.DESSERT,
+        suitableGoals = listOf(UserGoal.HEART_HEALTH, UserGoal.DIGESTION, UserGoal.ENERGY)
     )
 )
 

@@ -2,7 +2,7 @@
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:minWidth="130dp"
     android:minHeight="130dp"
-    android:previewImage="@drawable/chef"
+    android:previewImage="@drawable/green_smoothie"
     android:initialLayout="@layout/glance_default_loading_layout"
     android:configure="ru.plumsoftware.avocado.ui.widget.RecipeWidgetConfigureActivity"
     android:widgetCategory="home_screen" />

@@ -4,7 +4,7 @@
     android:minHeight="130dp"
     android:targetCellWidth="2"
     android:targetCellHeight="2"
-    android:previewImage="@drawable/chef"
+    android:previewImage="@drawable/green_smoothie"
     android:initialLayout="@layout/glance_default_loading_layout"
     android:configure="ru.plumsoftware.avocado.ui.widget.RecipeWidgetConfigureActivity"
     android:widgetCategory="home_screen" />
