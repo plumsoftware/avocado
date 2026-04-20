@@ -63,8 +63,10 @@ import ru.plumsoftware.avocado.ui.theme.Dimen
 import ru.plumsoftware.avocado.R
 import ru.plumsoftware.avocado.data.ads.AdsConfig
 import ru.plumsoftware.avocado.data.shopping.ShoppingRepository
+import ru.plumsoftware.avocado.ui.screen.details.DetailSectionTitle
 import ru.plumsoftware.avocado.ui.screen.main.elements.IOSAlertDialog
 import ru.plumsoftware.avocado.ui.screen.main.elements.IOSLoadingDialog
+import ru.plumsoftware.avocado.ui.screen.main.meal.elements.DailyTotals
 
 private val HEADER_HEIGHT = 380.dp
 private var interstitialAd: InterstitialAd? = null
@@ -97,24 +99,45 @@ fun ReceiptDetailScreen(
         return
     }
 
+    // --- ИНГРЕДИЕНТЫ ---
     val ingredients = remember { viewModel.getIngredients(receipt.relatedFood) }
     val scrollState = rememberScrollState()
     val context = LocalContext.current
+    val activity = LocalActivity.current
 
-    // СОСТОЯНИЯ ДЛЯ КОРЗИНЫ
+    // 🔥 НОВОЕ: Динамический подсчет БЖУ на основе ингредиентов
+    val recipeTotals = remember(receipt, ingredients) {
+        var proteins = 0.0
+        var fats = 0.0
+        var carbs = 0.0
+
+        ingredients.forEach { food ->
+            proteins += food.kpfc_100g.proteins
+            fats += food.kpfc_100g.fats
+            carbs += food.kpfc_100g.carbohydrates
+        }
+
+        // Калории берем из самого рецепта, а макросы из суммы ингредиентов
+        DailyTotals(
+            kals = receipt.calories,
+            proteins = proteins,
+            fats = fats,
+            carbs = carbs
+        )
+    }
+
+    // СОСТОЯНИЯ
     var isAddedToCart by remember { mutableStateOf(false) }
     var showSuccessDialog by remember { mutableStateOf(false) }
+    var showCookingMode by remember { mutableStateOf(false) }
+    var isAdLoading by remember { mutableStateOf(false) }
 
     val rawInstructions = stringResource(receipt.receiptText)
-    var isAdLoading by remember { mutableStateOf(false) }
     val steps = remember(rawInstructions) {
         rawInstructions.split("\n").filter { it.isNotBlank() }
     }
 
-    var showCookingMode by remember { mutableStateOf(false) }
-
-    val activity = LocalActivity.current
-
+    // РЕКЛАМА
     LaunchedEffect(key1 = Unit) {
         if (AdsConfig.canShowAd()) {
             isAdLoading = true
@@ -123,52 +146,39 @@ fun ReceiptDetailScreen(
                     override fun onAdLoaded(interstitialAd: InterstitialAd) {
                         AdsConfig.registerAdShown()
                         isAdLoading = false
-                        ru.plumsoftware.avocado.ui.screen.main.receipt.details.interstitialAd =
-                            interstitialAd
+                        ru.plumsoftware.avocado.ui.screen.main.receipt.details.interstitialAd = interstitialAd
 
                         interstitialAd.apply {
                             setAdEventListener(object : InterstitialAdEventListener {
                                 override fun onAdShown() {}
-
                                 override fun onAdFailedToShow(adError: AdError) {
                                     interstitialAd.setAdEventListener(null)
-                                    ru.plumsoftware.avocado.ui.screen.main.receipt.details.interstitialAd =
-                                        null
+                                    ru.plumsoftware.avocado.ui.screen.main.receipt.details.interstitialAd = null
                                     navController.navigateUp()
                                 }
-
                                 override fun onAdDismissed() {
                                     interstitialAd.setAdEventListener(null)
-                                    ru.plumsoftware.avocado.ui.screen.main.receipt.details.interstitialAd =
-                                        null
+                                    ru.plumsoftware.avocado.ui.screen.main.receipt.details.interstitialAd = null
                                     navController.navigateUp()
                                 }
-
                                 override fun onAdClicked() {}
-
                                 override fun onAdImpression(impressionData: ImpressionData?) {}
                             })
                         }
                     }
-
                     override fun onAdFailedToLoad(error: AdRequestError) {
                         isAdLoading = false
                     }
                 })
             }
-            val adRequestConfiguration =
-                AdRequestConfiguration.Builder(AdsConfig.INTERSTITIAL_ADS_ID).build()
+            val adRequestConfiguration = AdRequestConfiguration.Builder(AdsConfig.INTERSTITIAL_ADS_ID).build()
             interstitialAdLoader?.loadAd(adRequestConfiguration)
         }
     }
 
     BackHandler(enabled = true) {
-        if (AdsConfig.canShowAd()) {
-            if (interstitialAd != null && activity != null) {
-                interstitialAd?.show(activity = activity)
-            } else {
-                navController.navigateUp()
-            }
+        if (AdsConfig.canShowAd() && interstitialAd != null && activity != null) {
+            interstitialAd?.show(activity = activity)
         } else {
             navController.navigateUp()
         }
@@ -179,7 +189,7 @@ fun ReceiptDetailScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        // --- PARALLAX HEADER ---
+        // --- 1. ПЛАВНЫЙ HEADER (Без резких теней, легкий градиент) ---
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -195,26 +205,27 @@ fun ReceiptDetailScreen(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
             )
+            // Плавное растворение в цвет фона приложения
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(
                         Brush.verticalGradient(
-                            colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.4f)),
-                            startY = 0f,
-                            endY = 1000f
+                            colors = listOf(Color.Transparent, MaterialTheme.colorScheme.surface),
+                            startY = HEADER_HEIGHT.value * 1.5f,
+                            endY = Float.POSITIVE_INFINITY
                         )
                     )
             )
         }
 
-        // --- 2. CONTENT ---
+        // --- 2. CONTENT (Чистый скролл) ---
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(scrollState)
         ) {
-            Spacer(modifier = Modifier.height(HEADER_HEIGHT - 32.dp))
+            Spacer(modifier = Modifier.height(HEADER_HEIGHT - 40.dp))
 
             Column(
                 modifier = Modifier
@@ -222,193 +233,118 @@ fun ReceiptDetailScreen(
                     .defaultMinSize(minHeight = 800.dp)
                     .clip(RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp))
                     .background(MaterialTheme.colorScheme.surface)
-                    .padding(Dimen.large)
+                    .padding(horizontal = Dimen.large, vertical = Dimen.medium)
             ) {
                 // "Ручка"
                 Box(
                     modifier = Modifier
+                        .padding(top = Dimen.extraSmall, bottom = Dimen.extraLarge)
                         .align(Alignment.CenterHorizontally)
-                        .width(40.dp)
+                        .width(36.dp)
                         .height(5.dp)
-                        .clip(RoundedCornerShape(5.dp))
+                        .clip(RoundedCornerShape(50))
                         .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f))
                 )
 
-                Spacer(modifier = Modifier.height(Dimen.extraLarge))
-
+                // --- ЗАГОЛОВОК ---
                 Text(
                     text = stringResource(receipt.titleRes),
                     style = MaterialTheme.typography.displaySmall.copy(
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
+                        letterSpacing = (-0.5).sp
                     )
                 )
 
+                // --- ОПИСАНИЕ ---
                 Text(
                     text = stringResource(receipt.descRes),
                     style = MaterialTheme.typography.bodyLarge.copy(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        lineHeight = 22.sp
+                        lineHeight = 24.sp,
+                        fontSize = 17.sp
                     ),
-                    modifier = Modifier.padding(top = Dimen.medium, bottom = 24.dp)
+                    modifier = Modifier.padding(top = Dimen.mediumHalf, bottom = Dimen.extraLarge)
                 )
 
-                // --- МЕТА ДАННЫЕ ---
+                // --- МИНИМАЛИСТИЧНЫЕ МЕТА ДАННЫЕ ---
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = Dimen.extraLarge),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    ReceiptMetaBig(
-                        Icons.Default.Schedule,
-                        stringResource(R.string.format_minutes, receipt.timeMinutes),
-                        stringResource(R.string.meta_time)
+                    ReceiptMetaMinimal(
+                        icon = Icons.Default.Schedule,
+                        value = stringResource(R.string.format_minutes, receipt.timeMinutes),
+                        label = stringResource(R.string.meta_time)
                     )
-                    ReceiptMetaBig(
-                        Icons.Default.LocalFireDepartment,
-                        stringResource(R.string.format_kcal, receipt.calories),
-                        stringResource(R.string.meta_kcal)
-                    )
+//                    VerticalDivider(modifier = Modifier.height(32.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(0.5f))
+//                    ReceiptMetaMinimal(
+//                        icon = Icons.Default.LocalFireDepartment,
+//                        value = stringResource(R.string.format_kcal, receipt.calories),
+//                        label = stringResource(R.string.meta_kcal)
+//                    )
+                    VerticalDivider(modifier = Modifier.height(32.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(0.5f))
+
                     val diffText = when (receipt.difficulty) {
                         1 -> stringResource(R.string.diff_easy)
                         2 -> stringResource(R.string.diff_medium)
                         else -> stringResource(R.string.diff_hard)
                     }
-                    ReceiptMetaBig(
-                        Icons.Default.Bolt,
-                        diffText,
-                        stringResource(R.string.meta_level)
-                    )
+                    ReceiptMetaMinimal(icon = Icons.Default.Bolt, value = diffText, label = stringResource(R.string.meta_level))
                 }
 
-                Spacer(modifier = Modifier.height(32.dp))
+                // 🔥 НОВОЕ: ВИДЖЕТ ПИЩЕВОЙ ЦЕННОСТИ (КОЛЬЦА)
+                RecipeMacrosRingWidget(totals = recipeTotals)
+
+                Spacer(modifier = Modifier.height(Dimen.extraLarge))
 
                 // --- КНОПКА "НАЧАТЬ ГОТОВКУ" ---
                 Button(
                     onClick = { showCookingMode = true },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(Dimen.buttonHeight),
-                    shape = MaterialTheme.shapes.medium,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = IOSGreen,
-                        contentColor = Color.White
-                    )
+                        .height(56.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = IOSGreen, contentColor = Color.White),
+                    elevation = ButtonDefaults.buttonElevation(0.dp)
                 ) {
                     Text(
                         stringResource(R.string.btn_start_cooking),
-                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.Bold
                     )
                 }
 
-                Spacer(modifier = Modifier.height(32.dp))
-
-                // --- ИНГРЕДИЕНТЫ ---
-                if (ingredients.isNotEmpty()) {
-                    Text(
-                        text = stringResource(R.string.ingredients),
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
-                        ),
-                        modifier = Modifier.padding(bottom = 16.dp)
-                    )
-
-                    Row(
-                        modifier = Modifier
-                            .horizontalScroll(rememberScrollState())
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        ingredients.forEach { food ->
-                            IngredientItem(food = food, onClick = {
-                                navController.navigate(AppDestination.DetailedScreen(foodId = food.id))
-                            }
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(Dimen.medium))
-
-                    // 🛒 КНОПКА ДОБАВИТЬ В КОРЗИНУ
-                    Box(
-                        modifier = Modifier
-                            .clip(MaterialTheme.shapes.medium)
-                            // Если добавлено - серый цвет, если нет - светло-зеленый (или как у тебя было)
-                            .background(
-                                if (isAddedToCart) MaterialTheme.colorScheme.surfaceVariant.copy(
-                                    alpha = 0.5f
-                                )
-                                else MaterialTheme.colorScheme.surfaceVariant
-                            )
-                            // Клик работает только если еще НЕ добавлено
-                            .then(
-                                if (!isAddedToCart) {
-                                    Modifier.iosClickable {
-                                        // 1. Вызываем метод ViewModel для сохранения в БД
-                                        viewModel.addIngredientsToCart(ingredients)
-                                        // 2. Меняем состояния для UI
-                                        isAddedToCart = true
-                                        showSuccessDialog = true
-                                    }
-                                } else Modifier
-                            )
-                            .padding(horizontal = Dimen.medium, vertical = Dimen.mediumHalf)
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                // Иконка меняется с Корзины на Галочку
-                                imageVector = if (isAddedToCart) Icons.Default.Check else Icons.Rounded.ShoppingCart,
-                                contentDescription = null,
-                                tint = if (isAddedToCart) MaterialTheme.colorScheme.onSurfaceVariant else IOSGreen,
-                                modifier = Modifier.size(18.dp)
-                            )
-                            Spacer(modifier = Modifier.width(Dimen.mediumHalf))
-                            Text(
-                                // Текст меняется
-                                text = if (isAddedToCart) stringResource(R.string.shopping_added_btn)
-                                else stringResource(R.string.shopping_add_to_cart),
-                                style = MaterialTheme.typography.labelLarge.copy(
-                                    fontWeight = FontWeight.Bold,
-                                    color = if (isAddedToCart) MaterialTheme.colorScheme.onSurfaceVariant else IOSGreen
-                                )
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(32.dp))
-                }
+                Spacer(modifier = Modifier.height(Dimen.extraLarge))
 
                 // --- ПРИГОТОВЛЕНИЕ ---
-                Text(
-                    text = stringResource(R.string.cooking),
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    ),
-                    modifier = Modifier.padding(bottom = Dimen.medium)
-                )
+                DetailSectionTitle(stringResource(R.string.cooking))
 
                 steps.forEachIndexed { index, step ->
                     StepItem(index + 1, step)
                     Spacer(modifier = Modifier.height(16.dp))
                 }
 
-                Spacer(modifier = Modifier.height(32.dp))
-
+                Spacer(modifier = Modifier.height(Dimen.extraLarge))
                 DisclaimerCard()
-                Spacer(modifier = Modifier.height(60.dp))
+                Spacer(modifier = Modifier.height(100.dp))
             }
         }
 
-        // --- BACK BUTTON ---
-        Box(
-            modifier = Modifier.padding(top = 48.dp, start = 16.dp)
+        // --- 3. НАВИГАЦИОННЫЕ КНОПКИ ПОВЕРХ ---
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 48.dp, start = Dimen.medium, end = Dimen.medium),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             GlassButton(onClick = {
-                if (interstitialAd != null && activity != null)
+                if (AdsConfig.canShowAd() && interstitialAd != null && activity != null) {
                     interstitialAd?.show(activity = activity)
-                else
-                    navController.navigateUp()
+                } else navController.navigateUp()
             }) {
                 Icon(
                     imageVector = Icons.Rounded.ArrowBackIosNew,
@@ -419,6 +355,7 @@ fun ReceiptDetailScreen(
         }
     }
 
+    // ДИАЛОГИ
     if (showCookingMode) {
         CookingModeSheet(
             title = stringResource(receipt.titleRes),
@@ -437,15 +374,86 @@ fun ReceiptDetailScreen(
         )
     }
 
-    if (isAdLoading) {
-        // Рисуем наш полупрозрачный лоадер поверх всего экрана
-        IOSLoadingDialog()
-    }
+    if (isAdLoading) IOSLoadingDialog()
 }
 
 // =======================
 // UI COMPONENTS
 // =======================
+
+// =======================
+// УЛЬТРА-ЧИСТЫЕ UI КОМПОНЕНТЫ
+// =======================
+
+@Composable
+fun ReceiptMetaMinimal(icon: ImageVector, value: String, label: String) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = IOSGreen,
+            modifier = Modifier.size(22.dp).padding(bottom = 4.dp)
+        )
+        Text(
+            text = value,
+            style = MaterialTheme.typography.titleMedium.copy(
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        )
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodySmall.copy(
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
+            )
+        )
+    }
+}
+
+// IngredientItem и StepItem уже были обновлены в предыдущем ответе для минимализма
+// Но я дублирую их здесь для целостности картины
+
+@Composable
+fun IngredientItem(food: Food, onClick: () -> Unit, isShort: Boolean = false) {
+    Column(
+        modifier = Modifier
+            .width(80.dp)
+            .iosClickable { onClick() },
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(
+            modifier = Modifier
+                .size(64.dp) // Чуть меньше и аккуратнее
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                .border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f), CircleShape),
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(food.imageRes),
+                contentDescription = null,
+                contentScale = ContentScale.Fit,
+                modifier = Modifier.size(40.dp)
+            )
+        }
+
+        if (!isShort) {
+            Spacer(modifier = Modifier.height(Dimen.mediumHalf))
+            Text(
+                text = stringResource(food.titleRes),
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurface
+                ),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+    }
+}
 
 @Composable
 fun ReceiptMetaBig(icon: ImageVector, value: String, label: String) {
@@ -480,70 +488,70 @@ fun ReceiptMetaBig(icon: ImageVector, value: String, label: String) {
     }
 }
 
-@Composable
-fun IngredientItem(food: Food, onClick: () -> Unit, isShort: Boolean = false) {
-    Column(
-        modifier = Modifier
-            .wrapContentSize()
-            .iosClickable { onClick() },
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Box(
-            modifier = Modifier
-                .size(70.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-                .border(
-                    1.dp,
-                    MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-                    CircleShape
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painter = painterResource(food.imageRes),
-                contentDescription = null,
-                contentScale = ContentScale.Fit,
-                modifier = Modifier.size(50.dp)
-            )
-        }
-
-        if (!isShort) {
-            Spacer(modifier = Modifier.height(Dimen.mediumHalf))
-
-            Text(
-                text = stringResource(food.titleRes),
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onSurface
-                ),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-    }
-}
+//@Composable
+//fun IngredientItem(food: Food, onClick: () -> Unit, isShort: Boolean = false) {
+//    Column(
+//        modifier = Modifier
+//            .wrapContentSize()
+//            .iosClickable { onClick() },
+//        horizontalAlignment = Alignment.CenterHorizontally
+//    ) {
+//        Box(
+//            modifier = Modifier
+//                .size(70.dp)
+//                .clip(CircleShape)
+//                .background(MaterialTheme.colorScheme.surfaceVariant)
+//                .border(
+//                    1.dp,
+//                    MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+//                    CircleShape
+//                ),
+//            contentAlignment = Alignment.Center
+//        ) {
+//            Image(
+//                painter = painterResource(food.imageRes),
+//                contentDescription = null,
+//                contentScale = ContentScale.Fit,
+//                modifier = Modifier.size(50.dp)
+//            )
+//        }
+//
+//        if (!isShort) {
+//            Spacer(modifier = Modifier.height(Dimen.mediumHalf))
+//
+//            Text(
+//                text = stringResource(food.titleRes),
+//                style = MaterialTheme.typography.bodyMedium.copy(
+//                    fontWeight = FontWeight.Medium,
+//                    color = MaterialTheme.colorScheme.onSurface
+//                ),
+//                maxLines = 1,
+//                overflow = TextOverflow.Ellipsis
+//            )
+//        }
+//    }
+//}
 
 @Composable
 fun StepItem(number: Int, text: String) {
     Row(modifier = Modifier.fillMaxWidth()) {
         Box(
             modifier = Modifier
-                .size(28.dp)
+                .size(24.dp)
                 .clip(CircleShape)
                 .background(IOSGreen),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = number.toString(),
-                style = MaterialTheme.typography.labelLarge.copy(
+                style = MaterialTheme.typography.labelMedium.copy(
                     color = Color.White,
                     fontWeight = FontWeight.Bold
                 )
             )
         }
 
-        Spacer(modifier = Modifier.width(12.dp))
+        Spacer(modifier = Modifier.width(Dimen.medium))
 
         val cleanText = text.replaceFirst(Regex("^\\d+\\.\\s*"), "")
         Text(

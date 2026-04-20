@@ -55,6 +55,7 @@ import ru.plumsoftware.avocado.ui.screen.main.list.elements.WaterTrackerCard
 import ru.plumsoftware.avocado.ui.screen.main.receipt.RecipesViewModel
 import ru.plumsoftware.avocado.ui.screen.main.meal.elements.DailySummaryCard
 import ru.plumsoftware.avocado.ui.screen.main.meal.elements.DailyTotals
+import ru.plumsoftware.avocado.ui.screen.main.meal.elements.StatsRingsWidget
 import ru.plumsoftware.avocado.ui.screen.onboarding.IOSGreen
 import ru.plumsoftware.avocado.ui.theme.Dimen
 import java.text.SimpleDateFormat
@@ -87,7 +88,7 @@ fun MealPlannerScreen(
     val selectedDate by viewModel.selectedDate.collectAsState()
     val weekDays by viewModel.weekDays.collectAsState()
     val dailyPlan by viewModel.dailyPlan.collectAsState()
-    val allRecipes by recipesViewModel.recipeList.collectAsState()
+    val allRecipes = recipesViewModel.allRecipesList
     var showRecipeSelector by remember { mutableStateOf(false) }
     var selectedMealTypeForAdd by remember { mutableStateOf<MealType?>(null) }
     var showSwipeHint by rememberSaveable { mutableStateOf(true) }
@@ -189,9 +190,14 @@ fun MealPlannerScreen(
                 item { Spacer(modifier = Modifier.height(Dimen.medium)) }
 
                 item {
-                    DailySummaryCard(totals = dailyTotals)
+                    StatsRingsWidget(totals = dailyTotals)
                     Spacer(modifier = Modifier.height(Dimen.extraLarge))
                 }
+
+//                item {
+//                    DailySummaryCard(totals = dailyTotals)
+//                    Spacer(modifier = Modifier.height(Dimen.extraLarge))
+//                }
 
                 if (showSwipeHint && dailyPlan.isNotEmpty()) {
                     item {

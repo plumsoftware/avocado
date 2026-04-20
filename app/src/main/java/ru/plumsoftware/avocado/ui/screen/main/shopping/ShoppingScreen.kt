@@ -6,6 +6,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -43,18 +44,22 @@ import ru.plumsoftware.avocado.ui.modifier.iosClickable
 import ru.plumsoftware.avocado.ui.screen.onboarding.IOSGreen
 import ru.plumsoftware.avocado.ui.theme.Dimen
 import ru.plumsoftware.avocado.R
+import ru.plumsoftware.avocado.data.base.model.food.FoodType
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun ShoppingScreen(
     navController: NavController,
     shoppingRepository: ShoppingRepository
 ) {
-    val viewModel: ShoppingViewModel = viewModel (factory = ShoppingViewModel.Factory(repo = shoppingRepository))
+    val viewModel: ShoppingViewModel =
+        viewModel(factory = ShoppingViewModel.Factory(repo = shoppingRepository))
     val items by viewModel.shoppingList.collectAsState()
-    // Состояние для показа подсказки (сохраняется при перевороте экрана)
-    var showSwipeHint by rememberSaveable { mutableStateOf(true) }
 
+    // Сгруппированный список
+    val groupedItems by viewModel.groupedShoppingList.collectAsState()
+
+    var showSwipeHint by rememberSaveable { mutableStateOf(true) }
     val color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
 
     Scaffold(
@@ -69,7 +74,10 @@ fun ShoppingScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {
-                        Icon(imageVector = Icons.Rounded.ArrowBackIosNew, contentDescription = "Назад")
+                        Icon(
+                            imageVector = Icons.Rounded.ArrowBackIosNew,
+                            contentDescription = "Назад"
+                        )
                     }
                 },
                 actions = {
@@ -77,7 +85,11 @@ fun ShoppingScreen(
                         TextButton(onClick = { viewModel.clearChecked() }) {
                             Text(
                                 text = stringResource(R.string.shopping_btn_clear),
-                                style = MaterialTheme.typography.bodyLarge.copy(color = Color(0xFF007AFF))
+                                style = MaterialTheme.typography.bodyLarge.copy(
+                                    color = Color(
+                                        0xFF007AFF
+                                    )
+                                )
                             )
                         }
                     }
@@ -92,6 +104,13 @@ fun ShoppingScreen(
                 .padding(padding)
                 .padding(horizontal = Dimen.medium)
         ) {
+            Text(
+                text = stringResource(R.string.shopping_cart_title),
+                style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold),
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.padding(bottom = Dimen.large)
+            )
+
             if (items.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Column(
@@ -113,7 +132,7 @@ fun ShoppingScreen(
                         )
                     }
                 }
-            }  else {
+            } else {
 
                 AnimatedVisibility(
                     visible = showSwipeHint,
@@ -159,22 +178,48 @@ fun ShoppingScreen(
                         )
                     }
                 }
-
                 LazyColumn(
                     contentPadding = PaddingValues(bottom = 100.dp),
-                    verticalArrangement = Arrangement.spacedBy(0.dp) // Как разделители в iOS
+                    verticalArrangement = Arrangement.spacedBy(0.dp)
                 ) {
-                    itemsIndexed(
-                        items = items,
-                        key = { _, item -> item.foodId }
-                    ) { index, item ->
-                        SwipeToDeleteItem(
-                            item = item,
-                            onCheck = { isChecked -> viewModel.toggleCheck(item.foodId, isChecked) },
-                            onDelete = { viewModel.deleteItem(item.foodId) },
-                            isFirst = index == 0,
-                            isLast = index == items.lastIndex,
-                        )
+                    groupedItems.forEach { (type, categoryItems) ->
+                        // 1. Заголовок категории (Sticky Header)
+                        stickyHeader {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(MaterialTheme.colorScheme.background.copy(alpha = 0.95f))
+                                    .padding(vertical = Dimen.mediumHalf)
+                            ) {
+                                Text(
+                                    text = getFoodTypeTitle(type),
+                                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                        }
+
+                        // 2. Элементы внутри категории
+                        itemsIndexed(
+                            items = categoryItems,
+                            key = { _, item -> item.foodId }
+                        ) { index, item ->
+                            SwipeToDeleteItem(
+                                item = item,
+                                onCheck = { isChecked ->
+                                    viewModel.toggleCheck(
+                                        item.foodId,
+                                        isChecked
+                                    )
+                                },
+                                onDelete = { viewModel.deleteItem(item.foodId) },
+                                isFirst = index == 0,
+                                isLast = index == categoryItems.lastIndex,
+                            )
+                        }
+
+                        // 3. Отступ между категориями
+                        item { Spacer(modifier = Modifier.height(Dimen.medium)) }
                     }
                 }
             }
@@ -258,7 +303,12 @@ fun SwipeToDeleteItem(
                         contentAlignment = Alignment.Center
                     ) {
                         if (item.isChecked) {
-                            Icon(Icons.Default.Check, contentDescription = null, tint = Color.White, modifier = Modifier.size(16.dp))
+                            Icon(
+                                Icons.Default.Check,
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier.size(16.dp)
+                            )
                         }
                     }
 
@@ -278,7 +328,9 @@ fun SwipeToDeleteItem(
                         text = stringResource(item.titleRes),
                         style = MaterialTheme.typography.bodyLarge.copy(
                             fontWeight = FontWeight.Medium,
-                            color = if (item.isChecked) MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f) else MaterialTheme.colorScheme.onSurface,
+                            color = if (item.isChecked) MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                                alpha = 0.5f
+                            ) else MaterialTheme.colorScheme.onSurface,
                             textDecoration = if (item.isChecked) TextDecoration.LineThrough else TextDecoration.None
                         )
                     )
@@ -295,4 +347,19 @@ fun SwipeToDeleteItem(
             }
         }
     )
+}
+
+@Composable
+fun getFoodTypeTitle(type: FoodType): String {
+    return when (type) {
+        FoodType.FRUIT -> stringResource(R.string.type_fruit)
+        FoodType.VEGETABLE -> stringResource(R.string.type_vegetable)
+        FoodType.MEAT -> stringResource(R.string.type_meat)
+        FoodType.FISH -> stringResource(R.string.type_fish)
+        FoodType.NUT -> stringResource(R.string.type_nut)
+        FoodType.STRAWBERRY -> stringResource(R.string.type_berry)
+        FoodType.MUSHROOM -> stringResource(R.string.type_mushroom)
+        FoodType.SEAFOOD -> stringResource(R.string.type_seafood)
+        else -> type.name // Запасной вариант
+    }
 }

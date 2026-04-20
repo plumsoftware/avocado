@@ -825,4 +825,14 @@
     <string name="widget_btn_shopping">Покупки</string>
     <string name="widget_btn_scanner">Сканер</string>
     <string name="widget_btn_favorite">Избранное</string>
+
+    <!-- Фильтры на покупках -->
+    <string name="type_fruit">Фрукты</string>
+    <string name="type_vegetable">Овощи</string>
+    <string name="type_meat">Мясо и птица</string>
+    <string name="type_fish">Рыба и морепродукты</string>
+    <string name="type_nut">Орехи</string>
+    <string name="type_berry">Ягоды</string>
+    <string name="type_mushroom">Грибы</string>
+    <string name="type_seafood">Морепродукты</string>
 </resources>

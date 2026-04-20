@@ -25,9 +25,9 @@ class RecipesViewModel(
     private val shoppingRepository: ShoppingRepository
 ) : ViewModel() {
 
-    // --- ДАННЫЕ (MOCK DATA) ---
-    // В реальности это должно приходить из Repository
+    // --- ДАННЫЕ
     private val allReceipts = ru.plumsoftware.avocado.data.base.model.receipt.allReceipts
+    val allRecipesList = allReceipts
 
     // --- STATE FLOWS ---
 
