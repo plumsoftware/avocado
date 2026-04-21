@@ -12,10 +12,12 @@
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28"/>
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
 
     <queries>
         <intent>
@@ -45,9 +47,24 @@
             </intent-filter>
         </activity>
 
+        <service
+            android:name=".data.rustore.RuStorePushService"
+            android:exported="true"
+            tools:ignore="ExportedService">
+            <intent-filter>
+                <action android:name="ru.rustore.sdk.pushclient.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
         <meta-data
             android:name="com.yandex.mobile.ads.AUTOMATIC_SDK_INITIALIZATION"
             android:value="false" />
+
+
+        <!-- MyTarget -->
+        <activity
+            android:name="com.my.target.common.MyTargetActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
 
         <!-- Activity для настройки виджета Рецептов -->
         <activity
@@ -58,32 +75,48 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".ui.widget.ScannerWidgetReceiver" android:exported="true">
+        <receiver
+            android:name=".ui.widget.ScannerWidgetReceiver"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_scanner" />
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_scanner" />
         </receiver>
 
-        <receiver android:name=".ui.widget.QuickActionsWidgetReceiver" android:exported="true">
+        <receiver
+            android:name=".ui.widget.QuickActionsWidgetReceiver"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_quick_actions" />
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_quick_actions" />
         </receiver>
 
-        <receiver android:name=".ui.widget.WaterWidgetReceiver" android:exported="true">
+        <receiver
+            android:name=".ui.widget.WaterWidgetReceiver"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_water" />
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_water" />
         </receiver>
 
-        <receiver android:name=".ui.widget.RecipeWidgetReceiver" android:exported="true">
+        <receiver
+            android:name=".ui.widget.RecipeWidgetReceiver"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_recipe" />
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_recipe" />
         </receiver>
     </application>
 

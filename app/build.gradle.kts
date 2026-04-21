@@ -12,6 +12,7 @@ plugins {
 
     // Google services
     alias(libs.plugins.google.gms.google.services)
+    alias(libs.plugins.google.firebase.crashlytics)
 }
 
 android {
@@ -24,8 +25,8 @@ android {
         applicationId = "ru.plumsoftware.avocado"
         minSdk = 24
         targetSdk = 36
-        versionCode = 10
-        versionName = "1.0.8"
+        versionCode = 11
+        versionName = "1.0.9"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -89,6 +90,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.firebase.crashlytics)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -139,6 +141,7 @@ dependencies {
     // RuStore
     implementation(platform(libs.bom))
     implementation(libs.remoteconfig)
+    implementation(libs.pushclient)
 
     // AppMetrica SDK.
     implementation(libs.analytics)
@@ -155,6 +158,9 @@ dependencies {
 
     // Jetpack Glance
     implementation(libs.androidx.glance.appwidget)
+
+    // MyTarget
+    implementation(libs.mytarget.sdk)
 }
 
 configurations.all {

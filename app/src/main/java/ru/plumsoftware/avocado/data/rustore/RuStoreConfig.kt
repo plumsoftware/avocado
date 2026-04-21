@@ -5,4 +5,8 @@ object RuStoreConfig {
     val RU_STORE_APP_ID = ""
 
     val SEASON_PRODUCTS = "season_products"
+
+    object Push {
+        const val PUSH_PROJECT_ID = "wb2oP4bFxAfeiQo4J6U78kGfF-rLMT8O"
+    }
 }

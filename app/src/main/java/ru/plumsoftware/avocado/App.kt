@@ -10,6 +10,10 @@ import ru.plumsoftware.avocado.data.rustore.RemoteConfigClientEventListenerImpl
 import ru.plumsoftware.avocado.data.season_products.SeasonProductsRepository
 import ru.plumsoftware.avocado.data.season_products.util.seasonProductsStore
 import ru.plumsoftware.avocado.data.user_preferences.util.userPreferencesDataStore
+import ru.rustore.sdk.core.feature.model.FeatureAvailabilityResult
+import ru.rustore.sdk.pushclient.RuStorePushClient
+import ru.rustore.sdk.pushclient.common.logger.DefaultLogger
+import ru.rustore.sdk.pushclient.utils.resolveForPush
 import ru.rustore.sdk.remoteconfig.AppId
 import ru.rustore.sdk.remoteconfig.AppVersion
 import ru.rustore.sdk.remoteconfig.DeviceModel
@@ -50,12 +54,38 @@ class App : Application() {
         Companion.remoteConfigClient = remoteConfigClient
 
         remoteConfigClient.init()
+
+        initRuStorePushClient()
     }
 
     private fun initYaMetrica() {
         val config = AppMetricaConfig.newConfigBuilder(YaMetrikaConfig.AppIdKey).build()
         // Initializing the AppMetrica SDK.
         AppMetrica.activate(this, config)
+    }
+
+    private fun initRuStorePushClient() {
+        RuStorePushClient.init(
+            application = this,
+            projectId = RuStoreConfig.Push.PUSH_PROJECT_ID,
+            logger = DefaultLogger("rustore-push-log")
+        )
+
+        RuStorePushClient.checkPushAvailability()
+            .addOnSuccessListener { result ->
+                when (result) {
+                    FeatureAvailabilityResult.Available -> {
+                        // Process push available
+                    }
+
+                    is FeatureAvailabilityResult.Unavailable -> {
+                        result.cause.resolveForPush(this)
+                    }
+                }
+            }
+            .addOnFailureListener { throwable ->
+                // Process error
+            }
     }
 
     companion object {

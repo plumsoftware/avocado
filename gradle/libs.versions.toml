@@ -45,6 +45,7 @@ firebaseConfig = "23.0.1"
 
 # RuStore
 bom = "2025.02.01"
+pushclient = "7.2.0"
 
 # YaMetrika
 analytics = "7.14.2"
@@ -60,6 +61,13 @@ imageLabelingCustom = "17.0.3"
 
 # Glance widget
 glanceAppwidget = "1.1.1"
+firebaseCrashlytics = "20.0.5"
+
+# Cryshlitics
+googleFirebaseCrashlytics = "3.0.7"
+
+# MyTarget
+mytargetSdk = "5.45.3"
 
 [libraries]
 androidx-compose-foundation-layout = { module = "androidx.compose.foundation:foundation-layout", version.ref = "foundationLayout" }
@@ -118,6 +126,7 @@ firebase-config = { group = "com.google.firebase", name = "firebase-config", ver
 
 # RuStore
 bom = { module = "ru.rustore.sdk:bom", version.ref = "bom" }
+pushclient = { module = "ru.rustore.sdk:pushclient", version.ref = "pushclient" }
 remoteconfig = { module = "ru.rustore.sdk:remoteconfig" }
 
 # YaMetrika
@@ -138,10 +147,17 @@ play-services-mlkit-image-labeling = { module = "com.google.android.gms:play-ser
 # Glance widget
 androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "glanceAppwidget" }
 
+# Cryshlitics
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics", version.ref = "firebaseCrashlytics" }
+
+# MyTarget
+mytarget-sdk = { module = "com.my.target:mytarget-sdk", version.ref = "mytargetSdk" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinSerialization"}
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
+google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "googleFirebaseCrashlytics" }
 
