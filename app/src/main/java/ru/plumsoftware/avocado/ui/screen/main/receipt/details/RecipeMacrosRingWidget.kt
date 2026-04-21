@@ -5,6 +5,7 @@ import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,7 +15,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bolt
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,9 +40,14 @@ import ru.plumsoftware.avocado.ui.screen.details.StatsLegendItem
 import ru.plumsoftware.avocado.ui.screen.main.meal.elements.DailyTotals
 import ru.plumsoftware.avocado.ui.theme.Dimen
 import ru.plumsoftware.avocado.R
+import ru.plumsoftware.avocado.ui.screen.onboarding.IOSGreen
 
 @Composable
-fun RecipeMacrosRingWidget(totals: DailyTotals) {
+fun RecipeMacrosRingWidget(
+    totals: DailyTotals,
+    timeMinutes: Int, // <-- НОВЫЙ ПАРАМЕТР
+    difficulty: Int   // <-- НОВЫЙ ПАРАМЕТР
+) {
     // Масштабируем кольца, чтобы рецепт на 400-500 ккал заполнял их красиво
     val scaleFactor = 0.5f
     val goalKcal = 2000f * scaleFactor
@@ -56,16 +68,18 @@ fun RecipeMacrosRingWidget(totals: DailyTotals) {
 
     val trackColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
 
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(Dimen.large))
-            // Легкая серая подложка вместо жесткой рамки (iOS Style)
             .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
-            .padding(Dimen.large)
+            .border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f), RoundedCornerShape(Dimen.large))
     ) {
+        // --- ВЕРХНЯЯ ЧАСТЬ: КБЖУ И КОЛЬЦА ---
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(Dimen.large),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -139,6 +153,57 @@ fun RecipeMacrosRingWidget(totals: DailyTotals) {
                     drawRing(radius3, pFats, colorFats)
                     drawRing(radius4, pCarbs, colorCarbs)
                 }
+            }
+        }
+
+        // --- НИЖНЯЯ ЧАСТЬ: ВРЕМЯ И СЛОЖНОСТЬ (НОВОЕ) ---
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = Dimen.mediumHalf, horizontal = Dimen.large),
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Время
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.Schedule,
+                    contentDescription = null,
+                    tint = IOSGreen,
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = stringResource(R.string.format_minutes, timeMinutes),
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+
+            // Разделитель
+            Box(modifier = Modifier.height(20.dp).width(1.dp).background(MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)))
+
+            // Сложность
+            val diffText = when (difficulty) {
+                1 -> stringResource(R.string.diff_easy)
+                2 -> stringResource(R.string.diff_medium)
+                else -> stringResource(R.string.diff_hard)
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.Bolt,
+                    contentDescription = null,
+                    tint = IOSGreen,
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = diffText,
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
             }
         }
     }

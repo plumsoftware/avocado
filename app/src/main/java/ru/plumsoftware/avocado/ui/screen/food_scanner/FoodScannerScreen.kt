@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
@@ -56,14 +57,13 @@ import ru.plumsoftware.avocado.ui.screen.main.receipt.elements.SmallReceiptCard
 import ru.plumsoftware.avocado.ui.screen.onboarding.IOSGreen
 import ru.plumsoftware.avocado.ui.theme.Dimen
 
-@OptIn(ExperimentalMaterial3Api::class)
+@androidx.compose.material3.ExperimentalMaterial3Api
 @Composable
 fun FoodScannerScreen(
     navController: NavController,
     userPreferencesRepository: UserPreferencesRepository,
     shoppingRepository: ShoppingRepository
 ) {
-
     val recipesViewModel: RecipesViewModel = viewModel(
         factory = RecipesViewModel.Factory(
             userPrefsRepo = userPreferencesRepository,
@@ -96,6 +96,12 @@ fun FoodScannerScreen(
     var showResultSheet by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
+    // 🔥 ДОСТАЕМ СТРОКИ ДЛЯ ОШИБОК ЗАРАНЕЕ (Требование Compose Lint)
+    val errorModelStr = stringResource(R.string.scanner_error_model)
+    val errorRecognitionStr = stringResource(R.string.scanner_error_recognition)
+    val errorCameraStr = stringResource(R.string.scanner_error_camera)
+    val noResultsStr = stringResource(R.string.search_no_results)
+
     // Контроллер камеры
     val cameraController = remember {
         LifecycleCameraController(context).apply {
@@ -104,50 +110,61 @@ fun FoodScannerScreen(
         }
     }
 
+    // Инициализация TFLite
     val labeler = remember {
-        // 1. Создаем объект локальной модели
-        val localModel = LocalModel.Builder()
-            .setAssetFilePath("efficientnet.tflite") // Имя файла в папке assets
-            .build()
+        try {
+            // Загружаем наш файл из assets!
+            val localModel = LocalModel.Builder()
+                .setAssetFilePath("efficientnet.tflite")
+                .build()
 
-        // 2. Настраиваем опции (Берем только результаты с уверенностью > 30%)
-        val customImageLabelerOptions = CustomImageLabelerOptions.Builder(localModel)
-            .setMaxResultCount(5)
-            .setConfidenceThreshold(0.3f)
-            .build()
+            // Настраиваем: нам нужно 5 вариантов, с уверенностью хотя бы 30%
+            val customImageLabelerOptions = CustomImageLabelerOptions.Builder(localModel)
+                .setMaxResultCount(5)
+                .setConfidenceThreshold(0.3f)
+                .build()
 
-        // 3. Создаем клиент
-        ImageLabeling.getClient(customImageLabelerOptions)
+            ImageLabeling.getClient(customImageLabelerOptions)
+        } catch (e: Exception) {
+            Log.e("ML_KIT", "Ошибка инициализации LocalModel: ${e.message}")
+            null
+        }
     }
 
-    // --- 4. ЛОГИКА СКАНИРОВАНИЯ ---
+    // --- 4. ЛОГИКА СКАНИРОВАНИЯ (Теперь это локальная функция) ---
     val scanImage: () -> Unit = {
+        if (labeler == null) {
+            errorMessage = context.getString(R.string.scanner_error_model)
+        }
+
         isAnalyzing = true
         errorMessage = null
 
         cameraController.takePicture(
             ContextCompat.getMainExecutor(context),
             object : ImageCapture.OnImageCapturedCallback() {
-                @ExperimentalGetImage
+                @androidx.annotation.OptIn(androidx.camera.core.ExperimentalGetImage::class)
                 override fun onCaptureSuccess(imageProxy: ImageProxy) {
                     val mediaImage = imageProxy.image
                     if (mediaImage != null) {
                         val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
 
-                        labeler.process(image)
-                            .addOnSuccessListener { labels ->
-                                // ДЕБАГ: Теперь тут будут конкретные названия!
+                        labeler?.process(image)
+                            ?.addOnSuccessListener { labels ->
+                                // ДЕБАГ: Теперь тут будут конкретные названия (Banana, Apple и тд)
                                 Log.d("ML_KIT_CUSTOM", "Вижу: ${labels.joinToString { "${it.text} (${it.confidence})" }}")
 
                                 var matchedId: String? = null
 
                                 for (label in labels) {
                                     val text = label.text.lowercase()
-                                    // Игнорируем общие мусорные слова
-                                    if (text == "food" || text == "plant" || text == "produce" || text == "ingredient" || text == "fruit" || text == "vegetable" || text == "still life photography") continue
+                                    // Игнорируем мусор
+                                    if (text == "food" || text == "plant" || text == "produce" ||
+                                        text == "ingredient" || text == "fruit" || text == "vegetable" ||
+                                        text == "still life photography") continue
 
                                     matchedId = ScannerDictionary.findFoodId(text)
-                                    if (matchedId != null) break // Нашли совпадение!
+                                    if (matchedId != null) break
                                 }
 
                                 if (matchedId != null) {
@@ -158,12 +175,12 @@ fun FoodScannerScreen(
                                     errorMessage = context.getString(R.string.search_no_results)
                                 }
                             }
-                            .addOnFailureListener {
-                                errorMessage = "Ошибка распознавания"
+                            ?.addOnFailureListener {
+                                errorMessage = context.getString(R.string.scanner_error_recognition)
                             }
-                            .addOnCompleteListener {
+                            ?.addOnCompleteListener {
                                 isAnalyzing = false
-                                imageProxy.close() // Обязательно закрываем!
+                                imageProxy.close()
                             }
                     } else {
                         isAnalyzing = false
@@ -173,7 +190,7 @@ fun FoodScannerScreen(
 
                 override fun onError(exception: ImageCaptureException) {
                     isAnalyzing = false
-                    errorMessage = "Ошибка камеры: ${exception.message}"
+                    errorMessage = context.getString(R.string.scanner_error_camera, exception.message ?: "")
                 }
             }
         )
@@ -181,9 +198,7 @@ fun FoodScannerScreen(
 
     // --- 5. UI (Интерфейс Камеры) ---
     if (hasCamPermission) {
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black)) {
+        Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
             // Камера
             AndroidView(
                 factory = { ctx ->
@@ -217,19 +232,19 @@ fun FoodScannerScreen(
                     ) {
                         Icon(
                             Icons.Rounded.Close,
-                            contentDescription = "Закрыть",
+                            contentDescription = stringResource(R.string.cd_close_scanner),
                             tint = Color.White
                         )
                     }
                     Spacer(modifier = Modifier.width(Dimen.medium))
                     Column {
                         Text(
-                            text = "AI Сканер",
+                            text = stringResource(R.string.scanner_title),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             color = Color.White
                         )
                         Text(
-                            text = "Наведите на продукт",
+                            text = stringResource(R.string.scanner_subtitle),
                             style = MaterialTheme.typography.bodySmall,
                             color = Color.White.copy(alpha = 0.7f)
                         )
@@ -256,12 +271,12 @@ fun FoodScannerScreen(
                                 .background(Color.Black.copy(alpha = 0.8f))
                                 .padding(horizontal = Dimen.medium, vertical = Dimen.mediumHalf)
                         ) {
-                            Text(text = errorMessage!!, color = Color.White)
+                            Text(text = errorMessage!!, color = Color.White, style = MaterialTheme.typography.bodyMedium)
                         }
                     }
                 }
 
-                // НИЖНЯЯ КНОПКА (ЗАГЛУШКА)
+                // НИЖНЯЯ КНОПКА
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -273,7 +288,7 @@ fun FoodScannerScreen(
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             CircularProgressIndicator(color = IOSGreen)
                             Spacer(modifier = Modifier.height(Dimen.mediumHalf))
-                            Text("Анализирую...", color = Color.White)
+                            Text(stringResource(R.string.scanner_analyzing), color = Color.White)
                         }
                     } else {
                         Box(
@@ -283,7 +298,7 @@ fun FoodScannerScreen(
                                 .padding(6.dp)
                                 .clip(CircleShape)
                                 .background(Color.White)
-                                .iosClickable { scanImage() }
+                                .iosClickable { scanImage() } // Вызов нашей функции
                         )
                     }
                 }
@@ -297,8 +312,18 @@ fun FoodScannerScreen(
                 .background(MaterialTheme.colorScheme.background),
             contentAlignment = Alignment.Center
         ) {
-            Button(onClick = { launcher.launch(Manifest.permission.CAMERA) }) {
-                Text("Разрешить камеру")
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = stringResource(R.string.scanner_permission_denied),
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Spacer(modifier = Modifier.height(Dimen.medium))
+                Button(
+                    onClick = { launcher.launch(Manifest.permission.CAMERA) },
+                    colors = ButtonDefaults.buttonColors(containerColor = IOSGreen)
+                ) {
+                    Text(stringResource(R.string.scanner_btn_allow))
+                }
             }
         }
     }
@@ -342,13 +367,24 @@ fun ScannerResultSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         containerColor = MaterialTheme.colorScheme.surface,
-        dragHandle = { BottomSheetDefaults.DragHandle() }
+        dragHandle = {
+            // Красивая iOS-ручка
+            Box(
+                modifier = Modifier
+                    .padding(top = Dimen.medium, bottom = Dimen.mediumHalf)
+                    .width(40.dp)
+                    .height(5.dp)
+                    .clip(RoundedCornerShape(5.dp))
+                    .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f))
+            )
+        }
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = Dimen.extraLarge)
         ) {
+            // ЗАГОЛОВОК: "Помидор"
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -357,27 +393,36 @@ fun ScannerResultSheet(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Я вижу: ${stringResource(foodNameRes)}",
+                    text = stringResource(foodNameRes),
                     style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                TextButton(onClick = { onFoodClick(foodId) }) {
-                    Text("О продукте", color = IOSGreen, fontWeight = FontWeight.Bold)
+
+                // КНОПКА: О продукте
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(IOSGreen.copy(alpha = 0.15f))
+                        .iosClickable { onFoodClick(foodId) }
+                        .padding(horizontal = 12.dp, vertical = 6.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.scanner_btn_about_product),
+                        color = IOSGreen,
+                        style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
+                    )
                 }
             }
 
-            Spacer(modifier = Modifier.height(Dimen.medium))
+            Spacer(modifier = Modifier.height(Dimen.large))
 
+            // РЕЦЕПТЫ
             if (recipes.isNotEmpty()) {
                 Text(
-                    text = "Что можно приготовить:",
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(
-                        start = Dimen.large,
-                        end = Dimen.large,
-                        bottom = Dimen.mediumHalf
-                    )
+                    text = stringResource(R.string.scanner_found_recipes),
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.padding(start = Dimen.large, end = Dimen.large, bottom = Dimen.medium)
                 )
 
                 LazyRow(
@@ -385,11 +430,31 @@ fun ScannerResultSheet(
                     horizontalArrangement = Arrangement.spacedBy(Dimen.medium)
                 ) {
                     items(recipes) { receipt ->
-                        SmallReceiptCard(
-                            receipt = receipt,
-                            onClick = { onRecipeClick(receipt.id) }
-                        )
+                        Box(modifier = Modifier.width(160.dp)) {
+                            SmallReceiptCard(
+                                receipt = receipt,
+                                onClick = { onRecipeClick(receipt.id) }
+                            )
+                        }
                     }
+                }
+            } else {
+                // Если рецептов нет
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = Dimen.large)
+                        .clip(RoundedCornerShape(Dimen.medium))
+                        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                        .padding(Dimen.medium),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = stringResource(R.string.scanner_no_recipes), // Из ресурсов!
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center
+                    )
                 }
             }
         }

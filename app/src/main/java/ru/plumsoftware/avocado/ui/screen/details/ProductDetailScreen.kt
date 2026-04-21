@@ -12,6 +12,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -51,6 +52,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yandex.mobile.ads.common.AdError
 import com.yandex.mobile.ads.common.AdRequestConfiguration
 import com.yandex.mobile.ads.common.AdRequestError
@@ -69,9 +71,12 @@ import ru.plumsoftware.avocado.ui.theme.Dimen
 import ru.plumsoftware.avocado.R
 import ru.plumsoftware.avocado.data.ads.AdsConfig
 import ru.plumsoftware.avocado.data.base.model.receipt.getReceiptsByIds
+import ru.plumsoftware.avocado.data.shopping.ShoppingRepository
+import ru.plumsoftware.avocado.data.user_preferences.UserPreferencesRepository
 import ru.plumsoftware.avocado.ui.screen.main.elements.IOSAlertDialog
 import ru.plumsoftware.avocado.ui.screen.main.elements.IOSLoadingDialog
 import ru.plumsoftware.avocado.ui.screen.main.meal.elements.DailyTotals
+import ru.plumsoftware.avocado.ui.screen.main.receipt.RecipesViewModel
 import ru.plumsoftware.avocado.ui.screen.main.receipt.elements.SmallReceiptCard
 import ru.plumsoftware.avocado.ui.screen.onboarding.IOSGreen
 
@@ -224,11 +229,15 @@ fun ProductDetailScreen(
                 )
 
                 // --- ЗАГОЛОВОК И ВРЕМЯ ---
-                Row(
+                Column (
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.Center
                 ) {
+                    BestTimeCard(item.timeForFood)
+
+                    Spacer(modifier = Modifier.width(Dimen.medium))
+
                     Text(
                         text = stringResource(item.titleRes),
                         style = MaterialTheme.typography.displaySmall.copy(
@@ -238,10 +247,6 @@ fun ProductDetailScreen(
                         ),
                         modifier = Modifier.weight(1f)
                     )
-
-                    Spacer(modifier = Modifier.width(Dimen.medium))
-
-                    BestTimeCard(item.timeForFood)
                 }
 
                 Spacer(modifier = Modifier.height(Dimen.medium))

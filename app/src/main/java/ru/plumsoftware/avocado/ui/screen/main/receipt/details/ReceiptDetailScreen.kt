@@ -117,7 +117,6 @@ fun ReceiptDetailScreen(
             carbs += food.kpfc_100g.carbohydrates
         }
 
-        // Калории берем из самого рецепта, а макросы из суммы ингредиентов
         DailyTotals(
             kals = receipt.calories,
             proteins = proteins,
@@ -205,7 +204,7 @@ fun ReceiptDetailScreen(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
             )
-            // Плавное растворение в цвет фона приложения
+            // Плавное растворение в цвет фона
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -267,39 +266,80 @@ fun ReceiptDetailScreen(
                     modifier = Modifier.padding(top = Dimen.mediumHalf, bottom = Dimen.extraLarge)
                 )
 
-                // --- МИНИМАЛИСТИЧНЫЕ МЕТА ДАННЫЕ ---
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = Dimen.extraLarge),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    ReceiptMetaMinimal(
-                        icon = Icons.Default.Schedule,
-                        value = stringResource(R.string.format_minutes, receipt.timeMinutes),
-                        label = stringResource(R.string.meta_time)
-                    )
-//                    VerticalDivider(modifier = Modifier.height(32.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(0.5f))
-//                    ReceiptMetaMinimal(
-//                        icon = Icons.Default.LocalFireDepartment,
-//                        value = stringResource(R.string.format_kcal, receipt.calories),
-//                        label = stringResource(R.string.meta_kcal)
-//                    )
-                    VerticalDivider(modifier = Modifier.height(32.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(0.5f))
-
-                    val diffText = when (receipt.difficulty) {
-                        1 -> stringResource(R.string.diff_easy)
-                        2 -> stringResource(R.string.diff_medium)
-                        else -> stringResource(R.string.diff_hard)
-                    }
-                    ReceiptMetaMinimal(icon = Icons.Default.Bolt, value = diffText, label = stringResource(R.string.meta_level))
-                }
-
                 // 🔥 НОВОЕ: ВИДЖЕТ ПИЩЕВОЙ ЦЕННОСТИ (КОЛЬЦА)
-                RecipeMacrosRingWidget(totals = recipeTotals)
+                RecipeMacrosRingWidget(
+                    totals = recipeTotals,
+                    timeMinutes = receipt.timeMinutes,
+                    difficulty = receipt.difficulty
+                )
 
                 Spacer(modifier = Modifier.height(Dimen.extraLarge))
+
+                if (ingredients.isNotEmpty()) {
+                    DetailSectionTitle(stringResource(R.string.title_ingredients))
+
+                    Row(
+                        modifier = Modifier
+                            .horizontalScroll(rememberScrollState())
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        ingredients.forEach { food ->
+                            IngredientItem(food = food, onClick = {
+                                navController.navigate(AppDestination.DetailedScreen(foodId = food.id))
+                            })
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(Dimen.medium))
+
+                    // 🛒 ПЛОСКАЯ КНОПКА ДОБАВИТЬ В КОРЗИНУ (iOS Style)
+                    Button(
+                        onClick = {
+                            viewModel.addIngredientsToCart(ingredients)
+                            isAddedToCart = true
+                            showSuccessDialog = true
+                        },
+                        enabled = !isAddedToCart,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f),
+                            contentColor = IOSGreen,
+                            disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+                            disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                        ),
+                        elevation = ButtonDefaults.buttonElevation(0.dp)
+                    ) {
+                        Icon(
+                            imageVector = if (isAddedToCart) Icons.Default.Check else Icons.Rounded.ShoppingCart,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = if (isAddedToCart) stringResource(R.string.shopping_added_btn) else stringResource(R.string.shopping_add_to_cart),
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(Dimen.medium))
+                }
+
+                Spacer(modifier = Modifier.height(Dimen.extraLarge))
+
+                // --- ПРИГОТОВЛЕНИЕ ---
+                DetailSectionTitle(stringResource(R.string.cooking))
+
+                steps.forEachIndexed { index, step ->
+                    StepItem(index + 1, step)
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+
+                Spacer(modifier = Modifier.height(Dimen.medium))
 
                 // --- КНОПКА "НАЧАТЬ ГОТОВКУ" ---
                 Button(
@@ -317,17 +357,6 @@ fun ReceiptDetailScreen(
                         fontWeight = FontWeight.Bold
                     )
                 }
-
-                Spacer(modifier = Modifier.height(Dimen.extraLarge))
-
-                // --- ПРИГОТОВЛЕНИЕ ---
-                DetailSectionTitle(stringResource(R.string.cooking))
-
-                steps.forEachIndexed { index, step ->
-                    StepItem(index + 1, step)
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
-
                 Spacer(modifier = Modifier.height(Dimen.extraLarge))
                 DisclaimerCard()
                 Spacer(modifier = Modifier.height(100.dp))
@@ -379,10 +408,6 @@ fun ReceiptDetailScreen(
 
 // =======================
 // UI COMPONENTS
-// =======================
-
-// =======================
-// УЛЬТРА-ЧИСТЫЕ UI КОМПОНЕНТЫ
 // =======================
 
 @Composable

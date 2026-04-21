@@ -673,6 +673,7 @@
     <string name="onboarding_terms_link">Условиями использования и Политикой конфиденциальности</string>
 
     <string name="settings_section_about">О ПРИЛОЖЕНИИ</string>
+    <string name="title_ingredients">Ингредиенты</string>
 
     <!-- Сам текст Политики в формате HTML -->
     <string name="privacy_policy_html"><![CDATA[
@@ -808,6 +809,11 @@
     <string name="scanner_found_recipes">Что можно приготовить:</string>
     <string name="cd_take_photo">Сделать фото</string>
     <string name="cd_close_scanner">Закрыть сканер</string>
+    <string name="scanner_error_model">Модель ИИ не загружена</string>
+    <string name="scanner_error_recognition">Ошибка распознавания</string>
+    <string name="scanner_error_camera">Ошибка камеры</string>
+    <string name="scanner_no_recipes">К сожалению, у нас пока нет рецептов с этим продуктом.</string>
+    <string name="scanner_btn_about_product">О продукте</string>
 
     <!-- Камера (Онбординг) -->
     <string name="onboarding_camera_title">Умный сканер еды</string>
