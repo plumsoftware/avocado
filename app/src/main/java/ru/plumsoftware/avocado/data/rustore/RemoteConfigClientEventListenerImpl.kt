@@ -11,7 +11,9 @@ import ru.plumsoftware.avocado.ui.log
 import ru.rustore.sdk.remoteconfig.RemoteConfigClientEventListener
 import ru.rustore.sdk.remoteconfig.RemoteConfigException
 
-class RemoteConfigClientEventListenerImpl(private val seasonProductsRepository: SeasonProductsRepository) : RemoteConfigClientEventListener {
+class RemoteConfigClientEventListenerImpl(
+    private val seasonProductsRepository: SeasonProductsRepository,
+) : RemoteConfigClientEventListener {
 
     // Создаем скоуп для фонового сохранения
     private val scope = CoroutineScope(Dispatchers.IO)
@@ -56,6 +58,16 @@ class RemoteConfigClientEventListenerImpl(private val seasonProductsRepository: 
             }
         } else {
             App.remoteConfigClient.getRemoteConfig().addOnSuccessListener { remoteConfig ->
+                // ПАРСИМ АКТУАЛЬНУЮ ВЕРСИЮ ---
+                if (remoteConfig.containsKey("actual_version")) {
+                    try {
+                        // Предполагаем, что в RuStore это Int или Long
+                        App.actualVersionCode = remoteConfig.getLong("actual_version").toInt()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+
                 // Проверяем, есть ли наш конфиг
                 if (remoteConfig.containsKey("season_products")) {
                     try {

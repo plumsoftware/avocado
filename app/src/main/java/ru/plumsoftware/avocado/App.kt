@@ -91,5 +91,6 @@ class App : Application() {
     companion object {
         lateinit var remoteConfigClient: RemoteConfigClient
         lateinit var seasonProductsRepository: SeasonProductsRepository
+        var actualVersionCode: Int = -1
     }
 }

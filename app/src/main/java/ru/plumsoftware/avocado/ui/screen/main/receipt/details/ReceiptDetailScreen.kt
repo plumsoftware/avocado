@@ -63,6 +63,7 @@ import ru.plumsoftware.avocado.ui.theme.Dimen
 import ru.plumsoftware.avocado.R
 import ru.plumsoftware.avocado.data.ads.AdsConfig
 import ru.plumsoftware.avocado.data.shopping.ShoppingRepository
+import ru.plumsoftware.avocado.ui.ads.YandexStickyBanner
 import ru.plumsoftware.avocado.ui.screen.details.DetailSectionTitle
 import ru.plumsoftware.avocado.ui.screen.main.elements.IOSAlertDialog
 import ru.plumsoftware.avocado.ui.screen.main.elements.IOSLoadingDialog
@@ -105,7 +106,7 @@ fun ReceiptDetailScreen(
     val context = LocalContext.current
     val activity = LocalActivity.current
 
-    // 🔥 НОВОЕ: Динамический подсчет БЖУ на основе ингредиентов
+    // Динамический подсчет БЖУ на основе ингредиентов
     val recipeTotals = remember(receipt, ingredients) {
         var proteins = 0.0
         var fats = 0.0
@@ -382,6 +383,10 @@ fun ReceiptDetailScreen(
                 )
             }
         }
+
+        YandexStickyBanner(
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
     }
 
     // ДИАЛОГИ

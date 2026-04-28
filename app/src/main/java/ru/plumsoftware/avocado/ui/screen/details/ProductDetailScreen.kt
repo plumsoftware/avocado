@@ -73,6 +73,7 @@ import ru.plumsoftware.avocado.data.ads.AdsConfig
 import ru.plumsoftware.avocado.data.base.model.receipt.getReceiptsByIds
 import ru.plumsoftware.avocado.data.shopping.ShoppingRepository
 import ru.plumsoftware.avocado.data.user_preferences.UserPreferencesRepository
+import ru.plumsoftware.avocado.ui.ads.YandexStickyBanner
 import ru.plumsoftware.avocado.ui.screen.main.elements.IOSAlertDialog
 import ru.plumsoftware.avocado.ui.screen.main.elements.IOSLoadingDialog
 import ru.plumsoftware.avocado.ui.screen.main.meal.elements.DailyTotals
@@ -404,6 +405,10 @@ fun ProductDetailScreen(
                 )
             }
         }
+
+        YandexStickyBanner(
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
     }
 
     // --- ДИАЛОГИ ---

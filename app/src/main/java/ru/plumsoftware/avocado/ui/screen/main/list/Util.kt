@@ -1,10 +1,15 @@
 package ru.plumsoftware.avocado.ui.screen.main.list
 
+import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.net.Uri
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
 import androidx.palette.graphics.Palette
+import androidx.core.net.toUri
+import ru.plumsoftware.avocado.BuildConfig
 
 fun getDominantColor(bitmap: Bitmap): Int {
     // Используем Palette API от Android
@@ -135,4 +140,30 @@ fun calculateContrastRatio(foreground: Int, background: Int): Double {
     val darkest = minOf(lum1, lum2)
 
     return (brightest + 0.05) / (darkest + 0.05)
+}
+
+fun openAppStore(context: Context) {
+    val packageName = context.packageName
+
+    try {
+        // Пытаемся открыть нативное приложение магазина (Google Play / RuStore)
+        val intent = Intent(Intent.ACTION_VIEW, "market://details?id=$packageName".toUri())
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(intent)
+    } catch (e: android.content.ActivityNotFoundException) {
+        val marketUrl = if (BuildConfig.PLATFORM == 1) {
+            "https://www.rustore.ru/catalog/app/ru.plumsoftware.avocado"
+        } else if (BuildConfig.PLATFORM == 2) {
+            "https://appgallery.huawei.com/app/C117173047"
+        } else if (BuildConfig.PLATFORM == 3) {
+            "https://play.google.com/store/apps/details?id=ru.plumsoftware.avocado"
+        } else {
+            "https://www.rustore.ru/catalog/app/ru.plumsoftware.avocado"
+        }
+        // Если магазинов нет (странно, но бывает), открываем браузер (по умолчанию Google Play)
+        val intent = Intent(Intent.ACTION_VIEW,
+            marketUrl.toUri())
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(intent)
+    }
 }

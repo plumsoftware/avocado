@@ -841,4 +841,10 @@
     <string name="type_berry">Ягоды</string>
     <string name="type_mushroom">Грибы</string>
     <string name="type_seafood">Морепродукты</string>
+
+    <!-- ОБНОВЛЕНИЕ ПРИЛОЖЕНИЯ -->
+    <string name="update_title">Время обновиться!</string>
+    <string name="update_message">Мы добавили новые рецепты и сделали Авокадо еще быстрее. Пожалуйста, обновите приложение.</string>
+    <string name="update_btn_update">Обновить</string>
+    <string name="update_btn_cancel">Позже</string>
 </resources>

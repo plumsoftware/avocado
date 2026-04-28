@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -67,6 +68,8 @@ import ru.plumsoftware.avocado.ui.screen.main.MainViewModel
 import ru.plumsoftware.avocado.ui.screen.main.elements.IOSLoadingDialog
 import ru.plumsoftware.avocado.ui.screen.main.favorite.FavoriteScreen
 import ru.plumsoftware.avocado.ui.screen.main.list.ListViewModel
+import ru.plumsoftware.avocado.ui.screen.main.list.elements.IOSUpdateDialog
+import ru.plumsoftware.avocado.ui.screen.main.list.openAppStore
 import ru.plumsoftware.avocado.ui.screen.main.receipt.details.ReceiptDetailScreen
 import ru.plumsoftware.avocado.ui.screen.main.settings.SettingsViewModel
 import ru.plumsoftware.avocado.ui.screen.main.shopping.ShoppingScreen
@@ -142,6 +145,7 @@ class MainActivity : ComponentActivity() {
             ) {
                 val startState by mainViewModel.startDestination.collectAsState()
                 var isAdLoading by remember { mutableStateOf(false) }
+                val context = LocalContext.current
 
                 // Отслеживаем, проходил ли юзер онбординг сейчас
                 if (startState == MainViewModel.StartDestination.Onboarding) {
@@ -185,6 +189,27 @@ class MainActivity : ComponentActivity() {
                             appOpenAdLoader.setAdLoadListener(appOpenAdLoadListener)
                             appOpenAdLoader.loadAd(adRequestConfiguration)
                         }
+                    }
+                }
+
+                // Update dialog
+                var showUpdateDialog by remember { mutableStateOf(false) }
+
+                LaunchedEffect(Unit) {
+                    try {
+                        // Получаем версию УСТАНОВЛЕННОГО приложения
+                        val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+                        val currentVersionCode = pInfo.versionCode
+
+                        // Сравниваем с Remote Config
+                        if (App.actualVersionCode > currentVersionCode) {
+                            showUpdateDialog = true
+                        }
+                        if (BuildConfig.DEBUG) {
+                            showUpdateDialog = true
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                     }
                 }
 
@@ -243,7 +268,7 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
-                    // 🔥 ЕДИНЫЙ NAVHOST ДЛЯ ВСЕГО ПРИЛОЖЕНИЯ
+                    // ЕДИНЫЙ NAVHOST ДЛЯ ВСЕГО ПРИЛОЖЕНИЯ
                     NavHost(
                         navController = navController,
                         startDestination = startRoute
@@ -368,6 +393,17 @@ class MainActivity : ComponentActivity() {
                 }
                 if (isAdLoading) {
                     IOSLoadingDialog()
+                }
+                if (showUpdateDialog) {
+                    IOSUpdateDialog(
+                        onUpdateClick = {
+                            openAppStore(context)
+                            showUpdateDialog = false // Закрываем, чтобы не заставить обновиться
+                        },
+                        onCancelClick = {
+                            showUpdateDialog = false
+                        }
+                    )
                 }
             }
         }
