@@ -145,25 +145,20 @@ fun calculateContrastRatio(foreground: Int, background: Int): Double {
 fun openAppStore(context: Context) {
     val packageName = context.packageName
 
-    try {
-        // Пытаемся открыть нативное приложение магазина (Google Play / RuStore)
-        val intent = Intent(Intent.ACTION_VIEW, "market://details?id=$packageName".toUri())
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        context.startActivity(intent)
-    } catch (e: android.content.ActivityNotFoundException) {
-        val marketUrl = if (BuildConfig.PLATFORM == 1) {
-            "https://www.rustore.ru/catalog/app/ru.plumsoftware.avocado"
-        } else if (BuildConfig.PLATFORM == 2) {
-            "https://appgallery.huawei.com/app/C117173047"
-        } else if (BuildConfig.PLATFORM == 3) {
-            "https://play.google.com/store/apps/details?id=ru.plumsoftware.avocado"
-        } else {
-            "https://www.rustore.ru/catalog/app/ru.plumsoftware.avocado"
-        }
-        // Если магазинов нет (странно, но бывает), открываем браузер (по умолчанию Google Play)
-        val intent = Intent(Intent.ACTION_VIEW,
-            marketUrl.toUri())
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        context.startActivity(intent)
+    val marketUrl = if (BuildConfig.PLATFORM == 1) {
+        "https://www.rustore.ru/catalog/app/ru.plumsoftware.avocado"
+    } else if (BuildConfig.PLATFORM == 2) {
+        "https://appgallery.huawei.com/app/C117173047"
+    } else if (BuildConfig.PLATFORM == 3) {
+        "https://play.google.com/store/apps/details?id=ru.plumsoftware.avocado"
+    } else {
+        "https://www.rustore.ru/catalog/app/ru.plumsoftware.avocado"
     }
+    // Если магазинов нет (странно, но бывает), открываем браузер (по умолчанию Google Play)
+    val intent = Intent(
+        Intent.ACTION_VIEW,
+        marketUrl.toUri()
+    )
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    context.startActivity(intent)
 }

@@ -55,7 +55,7 @@ class App : Application() {
 
         remoteConfigClient.init()
 
-        initRuStorePushClient()
+        //initRuStorePushClient()
     }
 
     private fun initYaMetrica() {
